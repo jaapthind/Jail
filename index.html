@@ -3,326 +3,580 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>JAIL: EXISTENTIAL REALISM - EXTENDED CUT</title>
+<title>JAIL: EXISTENTIAL REALISM - ULTIMATE EDITION</title>
 <style>
 /* ==========================================================================
-   JAIL: EXISTENTIAL REALISM - EXTREME CSS ARCHITECTURE
+   JAIL: EXISTENTIAL REALISM - CASCADING STYLE SHEETS
+   MODULE: CORE VARIABLES & RESET
    ========================================================================== */
-
 :root {
-    --bg-void: #020202;
-    --text-primary: #e0e0e0;
-    --text-dim: #4a4a4a;
-    --text-alert: #d01010;
-    --text-safe: #106030;
-    --ui-panel-bg: rgba(5, 5, 5, 0.85);
-    --ui-border-color: #222222;
-    --ui-border-glow: #444444;
+    --bg-void: #030303;
+    --bg-panel: rgba(10, 10, 12, 0.85);
+    --bg-panel-solid: #0a0a0c;
     
-    --font-sys: 'Courier New', Courier, monospace;
-    --font-size-micro: 10px;
-    --font-size-sm: 12px;
-    --font-size-md: 16px;
-    --font-size-lg: 24px;
-    --font-size-xl: 36px;
-    --font-size-xxl: 64px;
+    --color-text-main: #e8e8e8;
+    --color-text-dim: #6b6b6b;
+    --color-text-dark: #333333;
     
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 16px;
-    --space-4: 24px;
-    --space-5: 32px;
-    --space-6: 48px;
-    --space-7: 64px;
+    --color-alert-high: #ff2a2a;
+    --color-alert-med: #ffaa00;
+    --color-safe: #2aff55;
+    --color-info: #2a88ff;
     
-    --layer-canvas: 1;
-    --layer-crt: 10;
-    --layer-vignette: 20;
-    --layer-dirt: 30;
-    --layer-hud: 40;
-    --layer-menus: 100;
-    --layer-fade: 200;
+    --border-thin: 1px solid rgba(255, 255, 255, 0.1);
+    --border-thick: 2px solid rgba(255, 255, 255, 0.2);
+    --border-alert: 1px solid var(--color-alert-high);
     
-    --glitch-x: 0px;
-    --glitch-y: 0px;
+    --font-primary: 'Courier New', Courier, monospace;
+    --font-secondary: 'Lucida Console', Monaco, monospace;
+    
+    --space-xxs: 2px;
+    --space-xs: 4px;
+    --space-s: 8px;
+    --space-m: 16px;
+    --space-l: 24px;
+    --space-xl: 32px;
+    --space-xxl: 64px;
+    --space-max: 128px;
+    
+    --z-canvas: 0;
+    --z-crt: 10;
+    --z-vignette: 20;
+    --z-noise: 30;
+    --z-hud-base: 40;
+    --z-hud-top: 50;
+    --z-subtitles: 60;
+    --z-menus: 100;
+    --z-fade: 200;
+    --z-debug: 999;
 }
 
-/* Base Resets */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 html, body {
-    width: 100vw; height: 100vh;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
     background-color: var(--bg-void);
-    font-family: var(--font-sys);
-    color: var(--text-primary);
+    font-family: var(--font-primary);
+    color: var(--color-text-main);
     user-select: none;
-    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    cursor: default;
+    touch-action: none;
 }
 
-/* Canvas Layer */
+/* ==========================================================================
+   MODULE: CANVAS & RENDER TARGET
+   ========================================================================== */
 #game-canvas {
     position: absolute;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    z-index: var(--layer-canvas);
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: var(--z-canvas);
     outline: none;
     display: block;
+    background-color: var(--bg-void);
 }
 
-/* Post-Processing Overlays (CSS Based for Performance) */
-.crt-scanlines {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: var(--layer-crt);
+/* ==========================================================================
+   MODULE: POST-PROCESSING PIPELINE (CSS)
+   ========================================================================== */
+.fx-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     pointer-events: none;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
-    background-size: 100% 3px, 4px 100%;
+}
+
+#fx-crt {
+    z-index: var(--z-crt);
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 3px, 6px 100%;
     opacity: 0.6;
+    mix-blend-mode: overlay;
 }
 
-.crt-flicker {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: var(--layer-crt);
-    pointer-events: none;
-    background-color: rgba(255,255,255,0.01);
-    animation: crt-flicker-anim 0.15s infinite;
-}
-
-.vignette-heavy {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: var(--layer-vignette);
-    pointer-events: none;
-    background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.95) 120%);
+#fx-vignette {
+    z-index: var(--z-vignette);
+    background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.98) 120%);
     box-shadow: inset 0 0 200px rgba(0,0,0,0.9);
 }
 
-.lens-dirt {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: var(--layer-dirt);
-    pointer-events: none;
-    opacity: 0.1;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+#fx-noise {
+    z-index: var(--z-noise);
+    opacity: 0.15;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     mix-blend-mode: multiply;
 }
 
-/* Global Screen Fade */
-#master-fade {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-    background-color: #000;
-    z-index: var(--layer-fade);
-    pointer-events: none;
+#fx-flicker {
+    z-index: var(--z-crt);
+    background-color: rgba(255,255,255,0.01);
+    animation: crtFlicker 0.15s infinite;
+}
+
+#fx-fade {
+    z-index: var(--z-fade);
+    background-color: #000000;
     opacity: 1;
     transition: opacity 3s cubic-bezier(0.1, 0.7, 0.1, 1);
 }
 
 /* ==========================================================================
-   MAIN MENU & INITIALIZATION SCREEN
+   MODULE: MAIN MENU & INITIALIZATION
    ========================================================================== */
-#init-screen {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-    background-color: rgba(0, 0, 0, 0.98);
-    z-index: var(--layer-menus);
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    backdrop-filter: blur(8px);
-    transition: opacity 1.5s ease;
+#menu-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: var(--z-menus);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(2, 2, 2, 0.95);
+    backdrop-filter: blur(10px);
+    transition: opacity 2s ease-in-out;
 }
 
-.terminal-container {
-    width: 800px;
-    max-width: 90vw;
-    border: 1px solid var(--ui-border-color);
-    background-color: var(--ui-panel-bg);
-    padding: var(--space-6);
-    box-shadow: 0 0 30px rgba(0,0,0,1), inset 0 0 20px rgba(0,0,0,0.8);
+.terminal-box {
+    width: 900px;
+    max-width: 95vw;
+    background-color: var(--bg-panel);
+    border: var(--border-thick);
+    padding: var(--space-xxl);
+    box-shadow: 0 0 50px rgba(0,0,0,1), inset 0 0 30px rgba(0,0,0,0.8);
     position: relative;
+    overflow: hidden;
 }
 
-.terminal-container::before {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-    background: linear-gradient(90deg, transparent, #555, transparent);
+.terminal-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: scanlineMenu 4s linear infinite;
 }
-
-.title-block { text-align: center; margin-bottom: var(--space-6); }
 
 .game-title {
-    font-size: var(--font-size-xxl);
+    font-size: 84px;
     font-weight: 900;
-    letter-spacing: 24px;
-    color: #fff;
-    text-shadow: 0 0 10px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.2), 0 0 40px rgba(255,255,255,0.1);
-    animation: title-pulse 4s infinite alternate;
+    letter-spacing: 32px;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.3);
+    text-align: center;
+    margin-bottom: var(--space-s);
+    animation: titlePulse 5s infinite alternate;
 }
 
 .game-subtitle {
-    font-size: var(--font-size-md);
-    letter-spacing: 8px;
-    color: var(--text-dim);
-    margin-top: var(--space-2);
+    font-size: 20px;
+    color: var(--color-text-dim);
+    letter-spacing: 12px;
+    text-align: center;
+    margin-bottom: var(--space-xxl);
+    text-transform: uppercase;
 }
 
-.sys-info {
-    font-size: var(--font-size-sm);
-    color: var(--text-dim);
+.sys-info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-3);
-    margin-bottom: var(--space-5);
-    border-bottom: 1px dashed var(--ui-border-color);
-    padding-bottom: var(--space-3);
+    gap: var(--space-l);
+    margin-bottom: var(--space-xl);
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+    padding-bottom: var(--space-xl);
 }
 
-.sys-info span { color: #888; }
+.sys-info-item {
+    font-size: 14px;
+    color: var(--color-text-dim);
+    display: flex;
+    justify-content: space-between;
+}
 
-.instruction-grid {
+.sys-info-item span.lbl { color: #555; }
+.sys-info-item span.val { color: #aaa; font-weight: bold; }
+
+.controls-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    margin-bottom: var(--space-xxl);
+}
+
+.control-row {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-4) var(--space-5);
-    margin-bottom: var(--space-6);
+    grid-template-columns: 120px 1fr;
+    gap: var(--space-l);
+    align-items: center;
 }
 
-.key-bind {
-    background-color: #111; border: 1px solid #333;
-    padding: var(--space-1) var(--space-3);
-    border-radius: 2px; font-weight: bold; color: #ccc;
-    text-align: center; box-shadow: 0 2px 0 #000;
-    align-self: start;
+.ctrl-key {
+    background-color: #111;
+    border: 1px solid #333;
+    color: #fff;
+    padding: var(--space-s) var(--space-m);
+    text-align: center;
+    font-weight: bold;
+    border-radius: 2px;
+    box-shadow: 0 4px 0 #000;
+    letter-spacing: 2px;
 }
 
-.key-desc { color: #999; line-height: 1.6; }
-.key-desc span { color: var(--text-dim); font-size: var(--font-size-sm); display: block; }
+.ctrl-desc {
+    color: #888;
+    line-height: 1.5;
+    font-size: 15px;
+}
+.ctrl-desc span {
+    display: block;
+    color: #444;
+    font-size: 12px;
+    margin-top: var(--space-xxs);
+}
 
-.boot-sequence {
-    text-align: center; margin-top: var(--space-5);
+.action-container {
+    text-align: center;
+    min-height: 60px;
 }
 
 #btn-init {
-    background: transparent; border: 1px solid var(--text-dim);
-    color: var(--text-primary); font-family: var(--font-sys);
-    font-size: var(--font-size-lg); letter-spacing: 4px;
-    padding: var(--space-3) var(--space-5); cursor: pointer;
-    transition: all 0.2s;
+    display: none;
+    background-color: transparent;
+    border: 2px solid var(--color-text-dim);
+    color: var(--color-text-main);
+    font-family: var(--font-primary);
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 6px;
+    padding: var(--space-m) var(--space-xl);
+    cursor: pointer;
+    transition: all 0.3s ease;
     text-transform: uppercase;
-    animation: blink-soft 2s infinite;
+    animation: btnBlink 2s infinite;
 }
 
-#btn-init:hover { background-color: var(--text-primary); color: #000; box-shadow: 0 0 15px rgba(255,255,255,0.3); animation: none; }
+#btn-init:hover {
+    background-color: var(--color-text-main);
+    color: #000;
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+    animation: none;
+}
+
+#loading-seq {
+    font-size: 18px;
+    color: var(--color-alert-high);
+    letter-spacing: 4px;
+    animation: btnBlink 1s infinite;
+}
 
 /* ==========================================================================
-   HEADS UP DISPLAY (HUD)
+   MODULE: IN-GAME HEADS UP DISPLAY (HUD)
    ========================================================================== */
 #hud-layer {
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: var(--layer-hud); pointer-events: none; display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: var(--z-hud-base);
+    pointer-events: none;
+    display: none;
 }
 
-.hud-panel {
-    background-color: rgba(5,5,5,0.7);
-    border: 1px solid var(--ui-border-color);
-    padding: var(--space-3);
-    backdrop-filter: blur(2px);
+.hud-group {
+    position: absolute;
+    background-color: var(--bg-panel);
+    border: var(--border-thin);
+    padding: var(--space-m);
+    backdrop-filter: blur(4px);
 }
 
-/* Top Left: Date/Time/State */
-.hud-tl { position: absolute; top: var(--space-4); left: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
-
-.hud-stat-box {
-    border-left: 3px solid var(--text-dim); padding-left: var(--space-3);
-    background: linear-gradient(90deg, rgba(20,20,20,0.8), transparent);
-    padding-top: var(--space-2); padding-bottom: var(--space-2); padding-right: var(--space-5);
+/* Top Left: Time & Phase */
+#hud-tl {
+    top: var(--space-l);
+    left: var(--space-l);
+    border-left: 4px solid var(--color-text-dim);
+    min-width: 280px;
 }
 
-.stat-label { font-size: var(--font-size-micro); color: var(--text-dim); letter-spacing: 2px; margin-bottom: 2px; }
-.stat-value { font-size: var(--font-size-lg); font-weight: bold; letter-spacing: 1px; }
+.hud-data-row {
+    margin-bottom: var(--space-m);
+}
+.hud-data-row:last-child { margin-bottom: 0; }
 
-#val-day { color: #fff; }
-#val-time { color: #aaa; font-size: var(--font-size-md); }
-#val-state { color: #777; transition: color 1s; }
+.data-lbl {
+    font-size: 10px;
+    color: var(--color-text-dim);
+    letter-spacing: 2px;
+    margin-bottom: var(--space-xxs);
+    text-transform: uppercase;
+}
 
-.state-lockdown { color: #555 !important; }
-.state-meal { color: #aa8844 !important; text-shadow: 0 0 5px rgba(170,136,68,0.5); }
-.state-yard { color: #44aa55 !important; }
-.state-sleep { color: #4455aa !important; }
+.data-val {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--color-text-main);
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px #000;
+}
 
-/* Top Right: Biological Data */
-.hud-tr { position: absolute; top: var(--space-4); right: var(--space-4); width: 250px; display: flex; flex-direction: column; gap: var(--space-3); }
+#val-time { color: #aaaaaa; font-size: 20px; }
+#val-state { font-size: 20px; transition: color 1s ease; }
 
-.meter-block { background-color: rgba(0,0,0,0.8); border: 1px solid #222; padding: var(--space-2); }
-.meter-header { display: flex; justify-content: space-between; margin-bottom: var(--space-1); }
-.meter-title { font-size: var(--font-size-micro); color: var(--text-dim); letter-spacing: 1px; }
-.meter-pct { font-size: var(--font-size-micro); color: #888; }
+.state-LOCKDOWN { color: #555555 !important; }
+.state-MEAL { color: #aa8844 !important; text-shadow: 0 0 10px rgba(170,136,68,0.3) !important; }
+.state-YARD { color: #44aa55 !important; }
+.state-SLEEP { color: #444488 !important; }
 
-.meter-track { width: 100%; height: 6px; background-color: #111; border: 1px solid #000; position: relative; overflow: hidden; }
-.meter-fill { height: 100%; transition: width 0.3s ease, background-color 0.5s ease; }
+/* Top Right: Biological Metrics */
+#hud-tr {
+    top: var(--space-l);
+    right: var(--space-l);
+    width: 320px;
+    border-right: 4px solid var(--color-text-dim);
+}
 
-#fill-sanity { background-color: #aaa; }
-#fill-nutrition { background-color: #a84; }
+.metric-block {
+    margin-bottom: var(--space-m);
+    background-color: rgba(0,0,0,0.6);
+    padding: var(--space-s);
+    border: 1px solid #1a1a1a;
+}
+.metric-block:last-child { margin-bottom: 0; }
 
-.sanity-warn { background-color: #a44 !important; animation: pulse-bg 1s infinite alternate; }
-.sanity-crit { background-color: #f00 !important; animation: flicker-bg 0.1s infinite; box-shadow: 0 0 10px #f00; }
+.metric-hdr {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-xs);
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+.metric-hdr span.title { color: var(--color-text-dim); }
+.metric-hdr span.pct { color: #888; font-family: var(--font-secondary); }
 
-/* Center: Crosshair & Interaction */
-#crosshair {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 4px; height: 4px; background-color: rgba(255,255,255,0.3); border-radius: 50%;
+.metric-track {
+    width: 100%;
+    height: 10px;
+    background-color: #050505;
+    border: 1px solid #222;
+    position: relative;
+    overflow: hidden;
+}
+
+.metric-fill {
+    height: 100%;
+    background-color: #ffffff;
+    transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.5s ease;
+}
+
+#fill-sanity { background-color: #cccccc; }
+#fill-nutrition { background-color: #a88844; }
+#fill-stamina { background-color: #4488aa; }
+
+.status-warning { background-color: var(--color-alert-med) !important; animation: warnPulse 1s infinite alternate; }
+.status-critical { background-color: var(--color-alert-high) !important; animation: critFlicker 0.1s infinite; box-shadow: 0 0 10px var(--color-alert-high); }
+
+/* Center: Crosshair */
+#crosshair-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    pointer-events: none;
+    z-index: var(--z-hud-top);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.crosshair-dot {
+    width: 4px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
     transition: all 0.2s ease;
 }
-#crosshair.active-target {
-    width: 16px; height: 16px; background-color: transparent; border: 1px solid rgba(255,255,255,0.8);
-    animation: rotate-slow 4s linear infinite;
+
+.crosshair-ring {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 1px solid rgba(255, 255, 255, 0);
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
-.hud-bc { position: absolute; bottom: var(--space-7); left: 50%; transform: translateX(-50%); text-align: center; width: 600px; }
-
-#interaction-box {
-    display: inline-block; background-color: rgba(0,0,0,0.8); border: 1px solid #444;
-    padding: var(--space-2) var(--space-4); opacity: 0; transform: translateY(20px);
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+#crosshair-container.active .crosshair-dot {
+    background-color: transparent;
 }
-#interaction-box.show { opacity: 1; transform: translateY(0); }
+#crosshair-container.active .crosshair-ring {
+    border-color: rgba(255, 255, 255, 0.8);
+    width: 24px;
+    height: 24px;
+    animation: rotateRing 4s linear infinite;
+}
 
-.interact-key { color: #fff; font-weight: bold; background: #333; padding: 2px 6px; margin-right: var(--space-2); border-radius: 2px; }
-.interact-action { color: #ccc; letter-spacing: 1px; text-transform: uppercase; }
-.interact-detail { display: block; font-size: var(--font-size-sm); color: var(--text-dim); margin-top: var(--space-1); }
+/* Bottom Center: Interaction Prompt */
+#interaction-prompt {
+    position: absolute;
+    bottom: var(--space-max);
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background-color: var(--bg-panel-solid);
+    border: 1px solid #333;
+    padding: var(--space-m) var(--space-xl);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+}
 
-/* Temporary Notifications / Subtitles */
+#interaction-prompt.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.prompt-key {
+    background-color: #222;
+    color: #fff;
+    padding: var(--space-xs) var(--space-s);
+    border-radius: 3px;
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+    font-size: 18px;
+}
+
+.prompt-text-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.prompt-action {
+    color: #e0e0e0;
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.prompt-desc {
+    color: var(--color-text-dim);
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+/* Subtitles / Internal Monologue */
 #subtitle-box {
-    position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
-    text-align: center; font-size: var(--font-size-md); color: #fff;
-    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
-    opacity: 0; transition: opacity 0.5s; letter-spacing: 1px;
-    background: rgba(0,0,0,0.5); padding: var(--space-1) var(--space-3); border-left: 2px solid #fff;
+    position: absolute;
+    bottom: var(--space-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 800px;
+    text-align: center;
+    z-index: var(--z-subtitles);
+    pointer-events: none;
 }
 
-/* Body Glitch Modifier */
-body.sanity-break { animation: master-glitch 0.2s infinite; }
+.subtitle-text {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #ffffff;
+    font-size: 20px;
+    padding: var(--space-s) var(--space-m);
+    border-left: 3px solid #ffffff;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    letter-spacing: 1px;
+}
+.subtitle-text.show { opacity: 1; }
+
+.subtitle-thought {
+    border-left: 3px solid var(--color-info);
+    color: #aaddff;
+    font-style: italic;
+}
+
+.subtitle-system {
+    border-left: 3px solid var(--color-alert-high);
+    color: #ffaaaa;
+    font-family: var(--font-secondary);
+}
 
 /* ==========================================================================
-   KEYFRAME ANIMATIONS
+   MODULE: EXTREME BODY GLITCH & INSANITY MODIFIERS
    ========================================================================== */
-@keyframes crt-flicker-anim {
-    0% { opacity: 0.01; } 50% { opacity: 0.03; } 100% { opacity: 0.01; }
+body.insanity-tier-1 { animation: minorGlitch 5s infinite; filter: saturate(0.8) contrast(1.1); }
+body.insanity-tier-2 { animation: majorGlitch 2s infinite; filter: saturate(0.5) contrast(1.3) sepia(0.2); }
+body.insanity-tier-3 { animation: severeGlitch 0.2s infinite; filter: saturate(0.2) contrast(1.5) sepia(0.5) hue-rotate(-20deg); }
+
+/* ==========================================================================
+   MODULE: KEYFRAME ANIMATIONS
+   ========================================================================== */
+@keyframes crtFlicker { 0% { opacity: 0.01; } 50% { opacity: 0.04; } 100% { opacity: 0.01; } }
+@keyframes scanlineMenu { 0% { top: -10%; } 100% { top: 110%; } }
+@keyframes titlePulse { 0% { opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.2); } 100% { opacity: 1; text-shadow: 0 0 25px rgba(255,255,255,0.7), 0 0 50px rgba(255,255,255,0.3); } }
+@keyframes btnBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes warnPulse { 0% { background-color: #664400; } 100% { background-color: #ffaa00; box-shadow: 0 0 10px #ffaa00; } }
+@keyframes critFlicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes rotateRing { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+
+/* Glitch Kernels */
+@keyframes minorGlitch {
+    0%, 98% { transform: translate(0,0); }
+    99% { transform: translate(2px, -1px); filter: hue-rotate(90deg); }
+    100% { transform: translate(-1px, 1px); filter: none; }
 }
-@keyframes title-pulse {
-    0% { opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-    100% { opacity: 1; text-shadow: 0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.2); }
+@keyframes majorGlitch {
+    0%, 90% { transform: translate(0,0); }
+    91% { transform: translate(4px, 2px) skewX(2deg); filter: invert(0.1); }
+    93% { transform: translate(-4px, -2px) skewX(-2deg); filter: hue-rotate(-90deg); }
+    95% { transform: translate(0,0); filter: none; }
 }
-@keyframes blink-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-@keyframes pulse-bg { 0% { background-color: #622; } 100% { background-color: #a33; } }
-@keyframes flicker-bg { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-@keyframes rotate-slow { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-@keyframes master-glitch {
-    0% { transform: translate(2px, 1px) skewX(2deg); filter: hue-rotate(90deg); }
-    20% { transform: translate(-2px, -2px) skewX(-2deg); filter: hue-rotate(-90deg); }
-    40% { transform: translate(1px, 2px) skewX(1deg); filter: hue-rotate(0deg); }
-    60% { transform: translate(-1px, -1px) skewX(-1deg); filter: invert(0.2); }
-    80% { transform: translate(2px, -2px) skewX(3deg); filter: none; }
+@keyframes severeGlitch {
+    0% { transform: translate(5px, 3px) skewX(5deg); filter: hue-rotate(90deg) invert(0.2); }
+    20% { transform: translate(-5px, -3px) skewX(-5deg); filter: hue-rotate(-90deg); }
+    40% { transform: translate(3px, 5px) skewX(2deg); filter: hue-rotate(180deg); }
+    60% { transform: translate(-3px, -5px) skewX(-2deg); filter: invert(0.4); }
+    80% { transform: translate(5px, -5px) skewX(4deg); filter: none; }
     100% { transform: translate(0, 0) skewX(0); filter: none; }
 }
 
-/* Media Queries for HUD */
-@media (max-width: 1200px) {
-    :root { --font-size-xxl: 48px; --font-size-lg: 18px; }
-    .terminal-container { padding: var(--space-4); }
+/* ==========================================================================
+   MODULE: DEBUG / PERFORMANCE
+   ========================================================================== */
+#debug-panel {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    font-size: 10px;
+    color: #00ff00;
+    z-index: var(--z-debug);
+    font-family: var(--font-secondary);
+    pointer-events: none;
+    opacity: 0.5;
 }
 </style>
 </head>
@@ -330,88 +584,98 @@ body.sanity-break { animation: master-glitch 0.2s infinite; }
 
 <canvas id="game-canvas"></canvas>
 
-<div class="crt-scanlines"></div>
-<div class="crt-flicker"></div>
-<div class="vignette-heavy"></div>
-<div class="lens-dirt"></div>
-<div id="master-fade"></div>
+<div class="fx-layer" id="fx-crt"></div>
+<div class="fx-layer" id="fx-vignette"></div>
+<div class="fx-layer" id="fx-noise"></div>
+<div class="fx-layer" id="fx-flicker"></div>
+<div class="fx-layer" id="fx-fade"></div>
 
 <div id="hud-layer">
-    <div class="hud-tl">
-        <div class="hud-stat-box">
-            <div class="stat-label">TIME INCARCERATED</div>
-            <div class="stat-value" id="val-day">DAY 001</div>
+    <div class="hud-group" id="hud-tl">
+        <div class="hud-data-row">
+            <div class="data-lbl">CONFINEMENT DURATION</div>
+            <div class="data-val" id="val-day">DAY 0001</div>
         </div>
-        <div class="hud-stat-box">
-            <div class="stat-label">CYCLE PHASE</div>
-            <div class="stat-value" id="val-time">06:00 AM</div>
+        <div class="hud-data-row">
+            <div class="data-lbl">LOCAL CYCLE</div>
+            <div class="data-val" id="val-time">06:00 AM</div>
         </div>
-        <div class="hud-stat-box" style="border-left-color: #555;">
-            <div class="stat-label">CURRENT DIRECTIVE</div>
-            <div class="stat-value state-lockdown" id="val-state">LOCKDOWN</div>
-        </div>
-    </div>
-
-    <div class="hud-tr">
-        <div class="meter-block">
-            <div class="meter-header">
-                <span class="meter-title">PSYCHOLOGICAL STABILITY</span>
-                <span class="meter-pct" id="pct-sanity">100%</span>
-            </div>
-            <div class="meter-track"><div class="meter-fill" id="fill-sanity" style="width: 100%;"></div></div>
-        </div>
-        <div class="meter-block">
-            <div class="meter-header">
-                <span class="meter-title">NUTRITIONAL INDEX</span>
-                <span class="meter-pct" id="pct-nutrition">100%</span>
-            </div>
-            <div class="meter-track"><div class="meter-fill" id="fill-nutrition" style="width: 100%;"></div></div>
+        <div class="hud-data-row">
+            <div class="data-lbl">CURRENT PROTOCOL</div>
+            <div class="data-val state-LOCKDOWN" id="val-state">LOCKDOWN</div>
         </div>
     </div>
 
-    <div id="crosshair"></div>
-
-    <div class="hud-bc">
-        <div id="interaction-box">
-            <span class="interact-key">[E]</span>
-            <span class="interact-action" id="interact-action">EXAMINE</span>
-            <span class="interact-detail" id="interact-detail">Object specifics</span>
+    <div class="hud-group" id="hud-tr">
+        <div class="metric-block">
+            <div class="metric-hdr"><span class="title">NEURAL STABILITY</span><span class="pct" id="pct-sanity">100%</span></div>
+            <div class="metric-track"><div class="metric-fill" id="fill-sanity" style="width: 100%;"></div></div>
+        </div>
+        <div class="metric-block">
+            <div class="metric-hdr"><span class="title">CALORIC RESERVES</span><span class="pct" id="pct-nutrition">100%</span></div>
+            <div class="metric-track"><div class="metric-fill" id="fill-nutrition" style="width: 100%;"></div></div>
+        </div>
+        <div class="metric-block" style="opacity: 0.5;">
+            <div class="metric-hdr"><span class="title">PHYSICAL STAMINA</span><span class="pct" id="pct-stamina">100%</span></div>
+            <div class="metric-track"><div class="metric-fill" id="fill-stamina" style="width: 100%;"></div></div>
         </div>
     </div>
 
-    <div id="subtitle-box">...</div>
+    <div id="crosshair-container">
+        <div class="crosshair-ring"></div>
+        <div class="crosshair-dot"></div>
+    </div>
+
+    <div id="interaction-prompt">
+        <div class="prompt-key">[E]</div>
+        <div class="prompt-text-group">
+            <div class="prompt-action" id="prompt-action">EXAMINE</div>
+            <div class="prompt-desc" id="prompt-desc">Investigate anomalies.</div>
+        </div>
+    </div>
+
+    <div id="subtitle-box">
+        <div class="subtitle-text" id="subtitle-element">...</div>
+    </div>
 </div>
 
-<div id="init-screen">
-    <div class="terminal-container">
-        <div class="title-block">
-            <div class="game-title">JAIL</div>
-            <div class="game-subtitle">EXISTENTIAL REALISM : EXTENDED</div>
-        </div>
+<div id="menu-layer">
+    <div class="terminal-box">
+        <div class="game-title">J A I L</div>
+        <div class="game-subtitle">EXISTENTIAL REALISM // BUILD 9.9.4</div>
         
-        <div class="sys-info">
-            <div><span>OS:</span> PENAL_CORP_UNIX_V9.2</div>
-            <div><span>FACILITY:</span> SECTOR_7G_MAX_SEC</div>
-            <div><span>INMATE ID:</span> 8472-A</div>
-            <div><span>SENTENCE:</span> LIFE_WITHOUT_PAROLE</div>
+        <div class="sys-info-grid">
+            <div class="sys-info-item"><span class="lbl">HOST OS:</span><span class="val">PENAL_SYS_V4</span></div>
+            <div class="sys-info-item"><span class="lbl">BLOCK:</span><span class="val">ISOLATION_UNIT_7</span></div>
+            <div class="sys-info-item"><span class="lbl">SUBJECT ID:</span><span class="val">#8472-OMEGA</span></div>
+            <div class="sys-info-item"><span class="lbl">TERM:</span><span class="val">INDEFINITE_HOLD</span></div>
+            <div class="sys-info-item"><span class="lbl">SENSORY DEP:</span><span class="val">ACTIVE</span></div>
+            <div class="sys-info-item"><span class="lbl">GRAVITY:</span><span class="val">9.81 m/s²</span></div>
         </div>
 
-        <div class="instruction-grid">
-            <div class="key-bind">W A S D</div>
-            <div class="key-desc">AMBULATE<span>Movement is heavily restricted and simulated with physical mass. Time flows strictly.</span></div>
-            
-            <div class="key-bind">MOUSE</div>
-            <div class="key-desc">OBSERVE<span>Interact with your limited environment. Monitor visual degradation.</span></div>
-            
-            <div class="key-bind">E</div>
-            <div class="key-desc">INTERACT / CONSUME<span>Perform daily routines. Await the Officer for sustenance delivery.</span></div>
+        <div class="controls-wrapper">
+            <div class="control-row">
+                <div class="ctrl-key">W A S D</div>
+                <div class="ctrl-desc">AMBULATE<span>Physical mass simulation active. Movement drains stamina.</span></div>
+            </div>
+            <div class="control-row">
+                <div class="ctrl-key">MOUSE</div>
+                <div class="ctrl-desc">OBSERVE<span>Head tracking active. Prolonged staring may induce hallucinations.</span></div>
+            </div>
+            <div class="control-row">
+                <div class="ctrl-key">E</div>
+                <div class="ctrl-desc">INTERACT / CONSUME<span>Engage with environment. Accept sustenance when delivered.</span></div>
+            </div>
         </div>
 
-        <div class="boot-sequence">
-            <button id="btn-init">INITIATE INTAKE SEQUENCE</button>
+        <div class="action-container">
+            <div id="loading-seq">COMPILING NEURAL PATHWAYS... PLEASE WAIT</div>
+            <button id="btn-init">COMMENCE INCARCERATION</button>
         </div>
     </div>
 </div>
+
+<div id="debug-panel">FPS: 00 | POS: 0.00, 0.00, 0.00 | DIR: 00</div>
 
 <script type="importmap">
 {
@@ -426,987 +690,1399 @@ body.sanity-break { animation: master-glitch 0.2s infinite; }
 <script type="module">
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
-import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import * as TWEEN from '@tweenjs/tween.js';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
 
 /* ==========================================================================
-   SYSTEM CONFIGURATION & EXTREME DETAILING MATRICES
+   MODULE 1: CORE CONFIGURATION & CONSTANTS
    ========================================================================== */
 const CONFIG = {
+    ENGINE: {
+        TICK_RATE: 1/60,
+        RENDER_SCALE: 1.0,
+        DEBUG_MODE: false
+    },
     TIME: {
-        REAL_SEC_PER_GAME_HOUR: 10,     // 10 sec = 1 hour -> 240 sec (4 min) = 1 Day
-        WAKE_HOUR: 6,
-        MEAL_HOUR: 12,
-        SLEEP_HOUR: 22,
-        OFFICER_DELIVERY_DURATION: 15   // Time it takes officer to walk, deliver, leave
+        REAL_SEC_PER_GAME_HOUR: 12.0, // 12 seconds real time = 1 hour game time. 1 Day = 288 seconds (4.8 mins)
+        WAKE_HOUR: 6.0,
+        MEAL_HOUR_1: 12.0,
+        MEAL_HOUR_2: 18.0,
+        SLEEP_HOUR: 22.0,
+        REC_INTERVAL_DAYS: 5,
+        REC_DURATION_HOURS: 1.5
     },
     PHYSICS: {
-        GRAVITY: 9.8,
-        PLAYER_MASS: 80,
+        GRAVITY: 9.81,
+        MASS: 85.0,
         PLAYER_HEIGHT: 1.75,
         PLAYER_RADIUS: 0.35,
-        WALK_SPEED: 1.8,                // Sluggish
-        HEAD_BOB_FREQ: 4.0,
-        HEAD_BOB_AMP: 0.035
+        WALK_SPEED: 1.6,
+        RUN_SPEED: 2.8,
+        DECELERATION: 12.0,
+        HEAD_BOB_FREQ: 4.5,
+        HEAD_BOB_AMP: 0.035,
+        BREATH_FREQ: 1.5,
+        BREATH_AMP: 0.005
     },
     STATS: {
-        SANITY_DECAY_RATE: 0.5,         // Per game hour
-        NUTRITION_DECAY_RATE: 1.5,      // Per game hour
-        STARVATION_SANITY_MULT: 3.0     // Multiplier for sanity loss when hungry
+        MAX_SANITY: 100.0,
+        MAX_NUTRI: 100.0,
+        MAX_STAMINA: 100.0,
+        SANITY_DECAY_BASE: 0.8, // Per game hour
+        NUTRI_DECAY_BASE: 1.5,
+        STAMINA_REGEN: 20.0,    // Per real second
+        STAMINA_DRAIN: 15.0,
+        STARVATION_MULTIPLIER: 3.5,
+        SLEEP_RESTORE: 10.0
     },
     WORLD: {
-        CELL_W: 3.0, CELL_L: 4.0, CELL_H: 2.6,
-        HALL_W: 2.5, HALL_L: 20.0, HALL_H: 3.0,
-        WALL_THICKNESS: 0.5
+        CELL_WIDTH: 3.2,
+        CELL_LENGTH: 4.5,
+        CELL_HEIGHT: 2.7,
+        WALL_THICKNESS: 0.5,
+        HALL_WIDTH: 2.8,
+        HALL_LENGTH: 30.0,
+        HALL_HEIGHT: 3.0,
+        BAR_SPACING: 0.25,
+        BAR_RADIUS: 0.035
     }
 };
 
-// Daily Lighting Matrix - Simulates passing of days affecting perception
-const DAY_LIGHTING_MATRIX = [
-    { day: 1, sun: 0xfff5e6, ambient: 0x222222, intensityMult: 1.0, fog: 0x050505, fogDens: 0.05 }, // Normal, stark
-    { day: 2, sun: 0xe6d5b8, ambient: 0x1f1f1f, intensityMult: 0.95, fog: 0x070707, fogDens: 0.06 }, // Slightly dingy
-    { day: 3, sun: 0xc4b7a3, ambient: 0x1c1c1c, intensityMult: 0.90, fog: 0x090909, fogDens: 0.07 }, // Fading
-    { day: 4, sun: 0x999083, ambient: 0x181818, intensityMult: 0.85, fog: 0x0b0b0b, fogDens: 0.08 }, // Oppressive
-    { day: 5, sun: 0x736c62, ambient: 0x141414, intensityMult: 0.80, fog: 0x0d0d0d, fogDens: 0.09 }, // Depressing
-    { day: 6, sun: 0x555555, ambient: 0x111111, intensityMult: 0.70, fog: 0x101010, fogDens: 0.10 }  // Grayscale descent
-];
+/* ==========================================================================
+   MODULE 2: EXTENSIVE DATA ARRAYS (CONTENT INJECTION)
+   ========================================================================== */
 
-// Daily Food Delivery Matrix - Highly detailed procedural food logic
-const FOOD_MATRIX = [
-    { day: 1, type: 'BREAD', name: "Stale Bread & Water", nutri: 20, sanity: 5, desc: "Tough, dry, flavorless.", color: 0xddbba8, shape: 'squash' },
-    { day: 2, type: 'SLOP', name: "Grey Nutrient Slop", nutri: 25, sanity: 2, desc: "Viscous and smells of sulfur.", color: 0x777777, shape: 'bowl' },
-    { day: 3, type: 'MEAT', name: "Suspicious Meat Block", nutri: 30, sanity: -5, desc: "Gelatinous. Unidentifiable origin.", color: 0x884444, shape: 'cube' },
-    { day: 4, type: 'CHEESE', name: "Hard Cheese & Crackers", nutri: 15, sanity: 10, desc: "A rare, small comfort. Very salty.", color: 0xddcc55, shape: 'wedge' },
-    { day: 5, type: 'APPLE', name: "Bruised Apple", nutri: 10, sanity: 15, desc: "Soft brown spots, but sweet.", color: 0xaa3333, shape: 'sphere' },
-    { day: 6, type: 'MOLD', name: "Moldy Rations", nutri: 5, sanity: -15, desc: "Fuzzy green patches. Nauseating.", color: 0x446644, shape: 'squash' }
+// 50 Days of procedurally deteriorating food deliveries
+const FOOD_DATABASE = [
+    { d:1, t:'BREAD', c:0xddbb99, h:20, s:5, m:"Standard ration. Stale bread and water.", n:"Ration #01" },
+    { d:2, t:'SLUDGE', c:0x888888, h:25, s:2, m:"Grey, lukewarm nutrient sludge. Tasteless.", n:"Nutrient Paste" },
+    { d:3, t:'MEAT', c:0xaa4444, h:30, s:-5, m:"A gelatinous block of protein. It smells of rust.", n:"Protein Block" },
+    { d:4, t:'CHEESE', c:0xddcc44, h:15, s:10, m:"Hard cheese. A rare comfort, though highly salted.", n:"Hard Cheese" },
+    { d:5, t:'MUSH', c:0x665544, h:20, s:0, m:"Brown oatmeal-like substance. Gritty.", n:"Oat Mush" },
+    { d:6, t:'APPLE', c:0xcc3333, h:10, s:15, m:"A slightly bruised apple. The sweetness is overwhelming.", n:"Fresh Fruit" },
+    { d:7, t:'SLUDGE', c:0x777777, h:25, s:0, m:"More grey sludge. It's colder today.", n:"Nutrient Paste" },
+    { d:8, t:'BONE', c:0xddddcc, h:5, s:-15, m:"A boiled bone with scraps of gristle. Insulting.", n:"Scraps" },
+    { d:9, t:'PILLS', c:0xeeeeee, h:0, s:40, m:"Two white pills instead of food. You feel numb.", n:"Compliance Meds" },
+    { d:10, t:'MEAT', c:0x552222, h:25, s:-10, m:"The meat block is darker today. Hard to chew.", n:"Old Protein" },
+    { d:11, t:'MOLD', c:0x446644, h:10, s:-20, m:"The bread is covered in green fuzz. You have to eat.", n:"Spoiled Ration" },
+    { d:12, t:'SLUDGE', c:0x555555, h:20, s:-5, m:"The sludge has chunks in it today. Best not to look.", n:"Chunky Paste" },
+    { d:13, t:'INSECT', c:0x222222, h:15, s:-25, m:"A bowl of roasted insects. Crunchy, bitter.", n:"Alternative Protein" },
+    { d:14, t:'WATER', c:0xaaddff, h:5, s:0, m:"Just dirty water today. The stomach cramps begin.", n:"Dirty Water" },
+    { d:15, t:'FEAST', c:0xffaa00, h:50, s:50, m:"A hot plate of chicken and potatoes. Is it a mistake?", n:"Mistaken Identity" },
+    { d:16, t:'SLUDGE', c:0x444444, h:20, s:-10, m:"Back to sludge. The memory of yesterday makes it worse.", n:"Nutrient Paste" },
+    { d:17, t:'EYE', c:0xffffff, h:10, s:-40, m:"There is an eyeball in the soup. It stares back.", n:"Visual Soup" },
+    { d:18, t:'PILLS', c:0xffaaaa, h:0, s:30, m:"Red pills this time. The walls seem to breathe less.", n:"Sedatives" },
+    { d:19, t:'BREAD', c:0x887766, h:15, s:-5, m:"Bread so hard it cuts the roof of your mouth.", n:"Hardtack" },
+    { d:20, t:'MEAT', c:0x220000, h:10, s:-30, m:"Blackened, foul-smelling flesh. You retch while eating.", n:"Putrid Meat" }
+];
+// Fill the rest of the 50 days procedurally
+for(let i=21; i<=50; i++) {
+    FOOD_DATABASE.push({
+        d: i,
+        t: Math.random() > 0.5 ? 'SLUDGE' : 'MOLD',
+        c: 0x333333 + Math.floor(Math.random()*0x222222),
+        h: Math.floor(Math.random()*15) + 5,
+        s: -Math.floor(Math.random()*20) - 10,
+        m: "Unrecognizable mass of sustenance. You ingest it mechanically.",
+        n: `Bio-Mass #${i}`
+    });
+}
+
+const THOUGHT_DATABASE = [
+    "How long has it been?",
+    "The dripping water sounds like a clock.",
+    "Did I hear a scream, or was that in my head?",
+    "I can't remember my mother's face.",
+    "The walls are closing in by a millimeter every day.",
+    "If I stop breathing, will they notice?",
+    "I should count the bars again. Maybe I missed one.",
+    "One, two, three, four... twenty-two. Still twenty-two.",
+    "The guard's footsteps are off rhythm today.",
+    "I am a ghost haunting a concrete box.",
+    "My hands don't look like my own anymore.",
+    "What if I've been dead this whole time?",
+    "They are watching through the cracks.",
+    "I must maintain my routine. Routine is survival."
 ];
 
 /* ==========================================================================
-   PROCEDURAL TEXTURE SYNTHESIZER (EXTREME DETAIL)
+   MODULE 3: COMPLEX MATH & NOISE GENERATION (No external noise libs)
+   Implementation of Simplex/Perlin noise algorithms for texture gen.
    ========================================================================== */
-class TextureSynthesizer {
-    static getContext(w, h) {
-        const cvs = document.createElement('canvas');
-        cvs.width = w; cvs.height = h;
+class PRNG {
+    constructor(seed) { this.m = 0x80000000; this.a = 1103515245; this.c = 12345; this.state = seed ? seed : Math.floor(Math.random() * (this.m - 1)); }
+    nextInt() { this.state = (this.a * this.state + this.c) % this.m; return this.state; }
+    nextFloat() { return this.nextInt() / (this.m - 1); }
+}
+
+class SimplexNoise {
+    constructor(seed=1) {
+        this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
+        this.p = []; for (let i=0; i<256; i++) this.p[i] = Math.floor(Math.random()*256);
+        this.perm = []; for(let i=0; i<512; i++) this.perm[i] = this.p[i & 255];
+    }
+    dot(g, x, y) { return g[0]*x + g[1]*y; }
+    noise2D(xin, yin) {
+        let n0, n1, n2; const F2 = 0.5*(Math.sqrt(3.0)-1.0), G2 = (3.0-Math.sqrt(3.0))/6.0;
+        let s = (xin+yin)*F2, i = Math.floor(xin+s), j = Math.floor(yin+s);
+        let t = (i+j)*G2, X0 = i-t, Y0 = j-t, x0 = xin-X0, y0 = yin-Y0;
+        let i1, j1; if(x0>y0) {i1=1; j1=0;} else {i1=0; j1=1;}
+        let x1 = x0 - i1 + G2, y1 = y0 - j1 + G2, x2 = x0 - 1.0 + 2.0 * G2, y2 = y0 - 1.0 + 2.0 * G2;
+        let ii = i & 255, jj = j & 255;
+        let gi0 = this.perm[ii+this.perm[jj]] % 12, gi1 = this.perm[ii+i1+this.perm[jj+j1]] % 12, gi2 = this.perm[ii+1+this.perm[jj+1]] % 12;
+        let t0 = 0.5 - x0*x0-y0*y0; if(t0<0) n0 = 0.0; else { t0 *= t0; n0 = t0 * t0 * this.dot(this.grad3[gi0], x0, y0); }
+        let t1 = 0.5 - x1*x1-y1*y1; if(t1<0) n1 = 0.0; else { t1 *= t1; n1 = t1 * t1 * this.dot(this.grad3[gi1], x1, y1); }
+        let t2 = 0.5 - x2*x2-y2*y2; if(t2<0) n2 = 0.0; else { t2 *= t2; n2 = t2 * t2 * this.dot(this.grad3[gi2], x2, y2); }
+        return 70.0 * (n0 + n1 + n2);
+    }
+}
+
+const SN = new SimplexNoise();
+
+/* ==========================================================================
+   MODULE 4: PROCEDURAL TEXTURE SYNTHESIS (CANVAS DRAWING)
+   ========================================================================== */
+class TextureEngine {
+    static getCtx(w, h) {
+        const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h;
         return { cvs, ctx: cvs.getContext('2d', { willReadFrequently: true }) };
     }
 
-    static createConcrete(w=512, h=512, baseCol='#555555', noiseInt=40, cracks=true) {
-        const { cvs, ctx } = this.getContext(w, h);
-        ctx.fillStyle = baseCol; ctx.fillRect(0, 0, w, h);
-        const imgData = ctx.getImageData(0,0,w,h);
-        const d = imgData.data;
-        
-        // Base Noise
-        for(let i=0; i<d.length; i+=4) {
-            const noise = (Math.random() - 0.5) * noiseInt;
-            d[i] = Math.max(0, Math.min(255, d[i] + noise));
-            d[i+1] = Math.max(0, Math.min(255, d[i+1] + noise));
-            d[i+2] = Math.max(0, Math.min(255, d[i+2] + noise));
-        }
-        ctx.putImageData(imgData, 0, 0);
-
-        // Procedural Cracks
-        if (cracks) {
-            ctx.lineWidth = 1.5;
-            for(let c=0; c<15; c++) {
-                ctx.beginPath();
-                let cx = Math.random()*w, cy = Math.random()*h;
-                ctx.moveTo(cx, cy);
-                for(let seg=0; seg<10; seg++) {
-                    cx += (Math.random()-0.5)*40; cy += (Math.random()-0.5)*40;
-                    ctx.lineTo(cx, cy);
-                }
-                ctx.strokeStyle = `rgba(10,10,10,${Math.random()*0.6+0.2})`;
-                ctx.stroke();
-            }
-        }
-        // Stains
-        for(let s=0; s<20; s++) {
-            ctx.fillStyle = `rgba(30,25,20,${Math.random()*0.1})`;
-            ctx.beginPath();
-            ctx.arc(Math.random()*w, Math.random()*h, Math.random()*50+10, 0, Math.PI*2);
-            ctx.fill();
-        }
-        const tex = new THREE.CanvasTexture(cvs);
-        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-        return tex;
-    }
-
-    static createRustMetal(w=256, h=256) {
-        const { cvs, ctx } = this.getContext(w, h);
-        ctx.fillStyle = '#333333'; ctx.fillRect(0,0,w,h);
-        const imgData = ctx.getImageData(0,0,w,h);
-        const d = imgData.data;
-        
-        for(let i=0; i<d.length; i+=4) {
-            if(Math.random() > 0.4) {
-                // Rust patch
-                d[i] = 90 + Math.random()*40;   // R
-                d[i+1] = 40 + Math.random()*20; // G
-                d[i+2] = 20 + Math.random()*10; // B
-            } else {
-                // Base metal noise
-                const n = (Math.random()-0.5)*20;
-                d[i]+=n; d[i+1]+=n; d[i+2]+=n;
-            }
-        }
-        ctx.putImageData(imgData, 0, 0);
-        const tex = new THREE.CanvasTexture(cvs);
-        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-        return tex;
-    }
-
-    static createOfficerFabric(w=256, h=256) {
-        const { cvs, ctx } = this.getContext(w, h);
-        ctx.fillStyle = '#112233'; // Dark navy uniform
-        ctx.fillRect(0,0,w,h);
-        const imgData = ctx.getImageData(0,0,w,h);
-        const d = imgData.data;
+    static generateConcrete(w=512, h=512, baseCol=[80,80,80], scale=0.02, detail=3) {
+        const { cvs, ctx } = this.getCtx(w, h);
+        const imgData = ctx.createImageData(w, h); const d = imgData.data;
         for(let y=0; y<h; y++) {
             for(let x=0; x<w; x++) {
-                const i = (y*w+x)*4;
-                const weave = (x%2===0 && y%2===0) ? 15 : -5;
-                d[i] = Math.max(0, d[i]+weave);
-                d[i+1] = Math.max(0, d[i+1]+weave);
-                d[i+2] = Math.max(0, d[i+2]+weave);
+                let n = 0, amp = 1, f = scale;
+                for(let i=0; i<detail; i++) {
+                    n += SN.noise2D(x*f, y*f) * amp;
+                    amp *= 0.5; f *= 2.0;
+                }
+                const v = Math.max(0, Math.min(255, baseCol[0] + n * 40));
+                const idx = (y*w+x)*4;
+                d[idx]=v; d[idx+1]=v; d[idx+2]=v; d[idx+3]=255;
             }
         }
         ctx.putImageData(imgData, 0, 0);
-        return new THREE.CanvasTexture(cvs);
+        
+        // Procedural Cracks
+        ctx.lineWidth = 1; ctx.lineJoin = 'round';
+        for(let c=0; c<15; c++) {
+            ctx.beginPath();
+            let cx = Math.random()*w, cy = Math.random()*h; ctx.moveTo(cx, cy);
+            for(let s=0; s<15; s++) {
+                cx += (Math.random()-0.5)*50; cy += (Math.random()-0.5)*50;
+                ctx.lineTo(cx, cy);
+            }
+            ctx.strokeStyle = `rgba(15,15,15,${Math.random()*0.8})`; ctx.stroke();
+        }
+        const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; return tex;
     }
-    
-    static createFoodTexture(type, colorHex) {
-        const { cvs, ctx } = this.getContext(128, 128);
-        ctx.fillStyle = '#' + new THREE.Color(colorHex).getHexString();
-        ctx.fillRect(0,0,128,128);
-        const imgData = ctx.getImageData(0,0,128,128);
-        const d = imgData.data;
-        for(let i=0; i<d.length; i+=4) {
-            const n = (Math.random()-0.5)*30;
-            d[i]+=n; d[i+1]+=n; d[i+2]+=n;
+
+    static generateRust(w=256, h=256) {
+        const { cvs, ctx } = this.getCtx(w, h);
+        const imgData = ctx.createImageData(w, h); const d = imgData.data;
+        for(let y=0; y<h; y++) {
+            for(let x=0; x<w; x++) {
+                const n = SN.noise2D(x*0.05, y*0.05);
+                const isRust = n > 0.1;
+                const idx = (y*w+x)*4;
+                if(isRust) {
+                    const rVar = Math.random()*30;
+                    d[idx]=80+rVar; d[idx+1]=30+rVar*0.5; d[idx+2]=15; d[idx+3]=255;
+                } else {
+                    const mVar = Math.random()*20;
+                    d[idx]=40+mVar; d[idx+1]=40+mVar; d[idx+2]=40+mVar; d[idx+3]=255;
+                }
+            }
         }
         ctx.putImageData(imgData, 0, 0);
+        const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; return tex;
+    }
+
+    static generateFabric(w=256, h=256, r=10, g=15, b=25) {
+        const { cvs, ctx } = this.getCtx(w, h);
+        const imgData = ctx.createImageData(w, h); const d = imgData.data;
+        for(let y=0; y<h; y++) {
+            for(let x=0; x<w; x++) {
+                const idx = (y*w+x)*4;
+                const weave = (x%2===0 && y%2===0) || (x%2!==0 && y%2!==0) ? 15 : -10;
+                const noise = (Math.random()-0.5)*10;
+                d[idx]=Math.max(0,r+weave+noise); d[idx+1]=Math.max(0,g+weave+noise); d[idx+2]=Math.max(0,b+weave+noise); d[idx+3]=255;
+            }
+        }
+        ctx.putImageData(imgData, 0, 0);
+        const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; return tex;
+    }
+
+    static generatePorcelain(w=128, h=128) {
+        const { cvs, ctx } = this.getCtx(w, h);
+        ctx.fillStyle = '#e8e8e0'; ctx.fillRect(0,0,w,h);
+        // Stains
+        for(let i=0; i<10; i++) {
+            ctx.fillStyle = `rgba(100,90,50,${Math.random()*0.1})`;
+            ctx.beginPath(); ctx.arc(Math.random()*w, Math.random()*h, Math.random()*30+5, 0, Math.PI*2); ctx.fill();
+        }
         return new THREE.CanvasTexture(cvs);
     }
 }
 
 /* ==========================================================================
-   ADVANCED AUDIO SYNTHESIS ENGINE (Web Audio API)
+   MODULE 5: ADVANCED AUDIO SYNTHESIS (WEB AUDIO API)
+   Generates all sound effects algorithmically to save file size.
    ========================================================================== */
 class AudioEngine {
     constructor() {
-        this.ctx = null; this.masterGain = null;
-        this.camera = null; this.isInit = false;
-        this.nodes = { drone: null, heart: null };
+        this.ctx = null; this.ready = false; this.nodes = {};
+        this.listener = null;
     }
 
     init(camera) {
-        if(this.isInit) return;
-        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        this.masterGain = this.ctx.createGain();
-        this.masterGain.gain.value = 0.8;
-        this.masterGain.connect(this.ctx.destination);
+        if(this.ready) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AudioContext();
+        
+        // Master Gain
+        this.master = this.ctx.createGain();
+        this.master.gain.value = 0.8;
+        this.master.connect(this.ctx.destination);
+        
+        this.listener = this.ctx.listener;
         this.camera = camera;
         
-        this.setupDrone();
-        this.isInit = true;
+        this.buildAmbientDrone();
+        this.buildHeartbeat();
+        this.ready = true;
     }
 
-    setupDrone() {
-        // Deep, existential hum
-        const osc = this.ctx.createOscillator();
-        osc.type = 'sine'; osc.frequency.value = 55;
-        const lfo = this.ctx.createOscillator();
-        lfo.type = 'sine'; lfo.frequency.value = 0.1;
-        const lfoGain = this.ctx.createGain();
-        lfoGain.gain.value = 5;
-        lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
-        
-        const gain = this.ctx.createGain();
-        gain.gain.value = 0.05; // Very quiet
-        osc.connect(gain); gain.connect(this.masterGain);
-        
-        osc.start(); lfo.start();
-        this.nodes.droneGain = gain;
-    }
-
-    playFootstep(material, distanceRatio = 1.0) {
-        if(!this.isInit) return;
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        const filter = this.ctx.createBiquadFilter();
-
-        if(material === 'boot') { // Officer boots
-            osc.type = 'square'; osc.frequency.setValueAtTime(100, t);
-            osc.frequency.exponentialRampToValueAtTime(20, t + 0.1);
-            filter.type = 'lowpass'; filter.frequency.value = 300;
-        } else { // Player bare feet/socks
-            osc.type = 'triangle'; osc.frequency.setValueAtTime(80, t);
-            osc.frequency.exponentialRampToValueAtTime(40, t + 0.05);
-            filter.type = 'lowpass'; filter.frequency.value = 150;
+    updateSpatial(camPos, camDir) {
+        if(!this.ready) return;
+        if(this.listener.positionX) {
+            this.listener.positionX.value = camPos.x; this.listener.positionY.value = camPos.y; this.listener.positionZ.value = camPos.z;
+            this.listener.forwardX.value = camDir.x; this.listener.forwardY.value = camDir.y; this.listener.forwardZ.value = camDir.z;
+        } else {
+            this.listener.setPosition(camPos.x, camPos.y, camPos.z);
+            this.listener.setOrientation(camDir.x, camDir.y, camDir.z, 0, 1, 0);
         }
-
-        const vol = 0.1 * (1.0 - distanceRatio);
-        gain.gain.setValueAtTime(vol, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-
-        osc.connect(filter); filter.connect(gain); gain.connect(this.masterGain);
-        osc.start(t); osc.stop(t + 0.15);
     }
 
-    playDoorGrind() {
-        if(!this.isInit) return;
+    buildAmbientDrone() {
+        // Complex existential hum using detuned oscillators and LFOs
+        const osc1 = this.ctx.createOscillator(); osc1.type = 'sine'; osc1.frequency.value = 40; // Sub
+        const osc2 = this.ctx.createOscillator(); osc2.type = 'triangle'; osc2.frequency.value = 40.5; // Beating
+        const osc3 = this.ctx.createOscillator(); osc3.type = 'sawtooth'; osc3.frequency.value = 120; // Harmonic grit
+        
+        const lfo = this.ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.05; // Very slow sweep
+        const lfoGain = this.ctx.createGain(); lfoGain.gain.value = 5;
+        lfo.connect(lfoGain); lfoGain.connect(osc2.frequency);
+
+        const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 150;
+        
+        const masterDroneGain = this.ctx.createGain(); masterDroneGain.gain.value = 0.08;
+
+        osc1.connect(filter); osc2.connect(filter); osc3.connect(filter);
+        filter.connect(masterDroneGain); masterDroneGain.connect(this.master);
+        
+        osc1.start(); osc2.start(); osc3.start(); lfo.start();
+        this.nodes.droneGain = masterDroneGain;
+        this.nodes.droneFilter = filter;
+    }
+
+    buildHeartbeat() {
+        this.nodes.hbOsc = this.ctx.createOscillator(); this.nodes.hbOsc.type = 'sine'; this.nodes.hbOsc.frequency.value = 45;
+        this.nodes.hbGain = this.ctx.createGain(); this.nodes.hbGain.gain.value = 0;
+        this.nodes.hbOsc.connect(this.nodes.hbGain); this.nodes.hbGain.connect(this.master);
+        this.nodes.hbOsc.start();
+    }
+
+    triggerHeartbeat() {
+        if(!this.ready) return;
         const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(200, t);
-        osc.frequency.linearRampToValueAtTime(150, t + 1.0);
+        this.nodes.hbGain.gain.cancelScheduledValues(t);
+        this.nodes.hbGain.gain.setValueAtTime(0, t);
+        this.nodes.hbGain.gain.linearRampToValueAtTime(0.5, t + 0.05);
+        this.nodes.hbGain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+        
+        this.nodes.hbGain.gain.setValueAtTime(0, t + 0.25);
+        this.nodes.hbGain.gain.linearRampToValueAtTime(0.4, t + 0.3);
+        this.nodes.hbGain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+    }
+
+    updateSanityModulation(sanityRatio) {
+        if(!this.ready) return;
+        // As sanity drops, drone gets louder and higher pitched filter
+        const targetVol = 0.08 + (1.0 - sanityRatio) * 0.15;
+        const targetFreq = 150 + (1.0 - sanityRatio) * 400;
+        this.nodes.droneGain.gain.setTargetAtTime(targetVol, this.ctx.currentTime, 1.0);
+        this.nodes.droneFilter.frequency.setTargetAtTime(targetFreq, this.ctx.currentTime, 1.0);
+    }
+
+    createNoiseBuffer(durationStr) {
+        const bSize = this.ctx.sampleRate * durationStr;
+        const b = this.ctx.createBuffer(1, bSize, this.ctx.sampleRate);
+        const d = b.getChannelData(0);
+        for(let i=0; i<bSize; i++) d[i] = Math.random()*2 - 1;
+        return b;
+    }
+
+    playFootstep(type, vol=0.2, pannerNode=null) {
+        if(!this.ready) return;
+        const t = this.ctx.currentTime;
+        const src = this.ctx.createBufferSource();
+        src.buffer = this.createNoiseBuffer(0.15);
+        
+        const filter = this.ctx.createBiquadFilter();
+        if(type === 'boot') { filter.type = 'lowpass'; filter.frequency.value = 250; } // Heavy guard boot
+        else { filter.type = 'bandpass'; filter.frequency.value = 400; filter.Q.value = 0.8; } // Barefoot/sock
+        
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(vol, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+
+        src.connect(filter); filter.connect(gain);
+        
+        if(pannerNode) {
+            gain.connect(pannerNode); pannerNode.connect(this.master);
+        } else {
+            gain.connect(this.master);
+        }
+        src.start(t);
+    }
+
+    playMetalDoorSlam() {
+        if(!this.ready) return;
+        const t = this.ctx.currentTime;
+        
+        // Massive low-end thud
+        const osc1 = this.ctx.createOscillator(); osc1.type = 'square';
+        osc1.frequency.setValueAtTime(120, t); osc1.frequency.exponentialRampToValueAtTime(10, t+0.5);
+        
+        // Metallic clatter
+        const src = this.ctx.createBufferSource(); src.buffer = this.createNoiseBuffer(0.6);
+        const filter = this.ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1200; filter.Q.value = 5.0;
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(1.0, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.6);
+
+        osc1.connect(gain); src.connect(filter); filter.connect(gain); gain.connect(this.master);
+        osc1.start(t); osc1.stop(t+0.6); src.start(t);
+    }
+
+    playDoorGrind(duration) {
+        if(!this.ready) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator(); osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(250, t); osc.frequency.linearRampToValueAtTime(180, t+duration);
         
         const gain = this.ctx.createGain();
         gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.2, t + 0.1);
-        gain.gain.linearRampToValueAtTime(0, t + 1.0);
-        
-        osc.connect(gain); gain.connect(this.masterGain);
-        osc.start(t); osc.stop(t + 1.0);
+        gain.gain.linearRampToValueAtTime(0.4, t+0.1);
+        gain.gain.setValueAtTime(0.4, t+duration-0.1);
+        gain.gain.linearRampToValueAtTime(0, t+duration);
+
+        osc.connect(gain); gain.connect(this.master);
+        osc.start(t); osc.stop(t+duration);
     }
 
-    playEat() {
-        if(!this.isInit) return;
-        for(let i=0; i<3; i++) {
+    playEatSlop() {
+        if(!this.ready) return;
+        for(let i=0; i<4; i++) {
             setTimeout(() => {
                 const t = this.ctx.currentTime;
-                const osc = this.ctx.createOscillator();
-                osc.type = 'sine'; osc.frequency.setValueAtTime(400, t);
-                osc.frequency.exponentialRampToValueAtTime(100, t + 0.1);
+                const osc = this.ctx.createOscillator(); osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, t); osc.frequency.exponentialRampToValueAtTime(80, t+0.15);
                 const gain = this.ctx.createGain();
-                gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.1);
-                osc.connect(gain); gain.connect(this.masterGain);
-                osc.start(t); osc.stop(t+0.1);
-            }, i * 150);
+                gain.gain.setValueAtTime(0.3, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.15);
+                osc.connect(gain); gain.connect(this.master);
+                osc.start(t); osc.stop(t+0.15);
+            }, i * 180 + Math.random()*50);
         }
     }
 }
 
 /* ==========================================================================
-   PROCEDURAL 3D ENTITIES: THE OFFICER & THE FOOD
+   MODULE 6: PROCEDURAL ENTITIES (GUARD, FOOD, CELL OBJECTS)
    ========================================================================== */
-class Officer extends THREE.Group {
+class GuardAI extends THREE.Group {
     constructor(materials) {
         super();
         this.mats = materials;
-        this.isWalking = false;
-        this.walkCycle = 0;
+        this.state = 'IDLE'; // IDLE, PATROL, DELIVER
+        this.animCycle = 0;
         this.buildRig();
     }
 
     buildRig() {
-        // Hierarchy setup for procedural animation
-        this.pelvis = new THREE.Group(); this.pelvis.position.y = 1.0; this.add(this.pelvis);
+        this.root = new THREE.Group(); this.root.position.y = 1.05; this.add(this.root);
         
         // Torso
-        const torsoGeo = new THREE.BoxGeometry(0.5, 0.6, 0.3);
-        this.torsoMesh = new THREE.Mesh(torsoGeo, this.mats.fabric);
-        this.torsoMesh.position.y = 0.3;
-        this.pelvis.add(this.torsoMesh);
-
+        this.torso = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.7, 0.35), this.mats.fabricDark);
+        this.torso.position.y = 0.35; this.root.add(this.torso);
+        
         // Head
-        const headGeo = new THREE.BoxGeometry(0.25, 0.3, 0.25);
-        this.headMesh = new THREE.Mesh(headGeo, new THREE.MeshStandardMaterial({color: 0xffccaa, roughness: 0.6}));
-        this.headMesh.position.y = 0.75;
-        this.pelvis.add(this.headMesh);
+        this.head = new THREE.Group(); this.head.position.y = 0.85; this.root.add(this.head);
+        const headMesh = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.3, 0.25), this.mats.skin);
+        this.head.add(headMesh);
+        
+        // Featureless void face to simulate existential dread
+        const faceVoid = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.2), new THREE.MeshBasicMaterial({color:0x000000}));
+        faceVoid.position.set(0, 0.0, 0.126); this.head.add(faceVoid);
+        
+        // Officer Hat
+        const hatBase = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.1, 16), new THREE.MeshStandardMaterial({color:0x111111}));
+        hatBase.position.y = 0.2; this.head.add(hatBase);
+        const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.02, 16), new THREE.MeshStandardMaterial({color:0x000000}));
+        hatBrim.position.set(0, -0.05, 0.05); hatBase.add(hatBrim);
 
-        // Hat
-        const hatGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.1, 16);
-        const hatMesh = new THREE.Mesh(hatGeo, new THREE.MeshStandardMaterial({color: 0x111111}));
-        hatMesh.position.y = 0.2;
-        this.headMesh.add(hatMesh);
-        const brimGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.02, 16);
-        const brimMesh = new THREE.Mesh(brimGeo, new THREE.MeshStandardMaterial({color: 0x000000}));
-        brimMesh.position.set(0, -0.05, 0.05);
-        hatMesh.add(brimMesh);
-
-        // Arms (Pivot at shoulders)
-        this.armL = new THREE.Group(); this.armL.position.set(-0.35, 0.5, 0); this.pelvis.add(this.armL);
-        this.armR = new THREE.Group(); this.armR.position.set(0.35, 0.5, 0); this.pelvis.add(this.armR);
+        // Arms
+        this.armL = new THREE.Group(); this.armL.position.set(-0.35, 0.65, 0); this.root.add(this.armL);
+        this.armR = new THREE.Group(); this.armR.position.set(0.35, 0.65, 0); this.root.add(this.armR);
         const armGeo = new THREE.BoxGeometry(0.15, 0.6, 0.15);
-        const armMeshL = new THREE.Mesh(armGeo, this.mats.fabric); armMeshL.position.y = -0.3; this.armL.add(armMeshL);
-        const armMeshR = new THREE.Mesh(armGeo, this.mats.fabric); armMeshR.position.y = -0.3; this.armR.add(armMeshR);
+        const armMeshL = new THREE.Mesh(armGeo, this.mats.fabricDark); armMeshL.position.y = -0.3; this.armL.add(armMeshL);
+        const armMeshR = new THREE.Mesh(armGeo, this.mats.fabricDark); armMeshR.position.y = -0.3; this.armR.add(armMeshR);
 
-        // Legs (Pivot at pelvis)
-        this.legL = new THREE.Group(); this.legL.position.set(-0.15, 0, 0); this.pelvis.add(this.legL);
-        this.legR = new THREE.Group(); this.legR.position.set(0.15, 0, 0); this.pelvis.add(this.legR);
-        const legGeo = new THREE.BoxGeometry(0.2, 1.0, 0.2);
-        const legMeshL = new THREE.Mesh(legGeo, this.mats.fabric); legMeshL.position.y = -0.5; this.legL.add(legMeshL);
-        const legMeshR = new THREE.Mesh(legGeo, this.mats.fabric); legMeshR.position.y = -0.5; this.legR.add(legMeshR);
-        
+        // Legs
+        this.legL = new THREE.Group(); this.legL.position.set(-0.15, 0, 0); this.root.add(this.legL);
+        this.legR = new THREE.Group(); this.legR.position.set(0.15, 0, 0); this.root.add(this.legR);
+        const legGeo = new THREE.BoxGeometry(0.22, 0.9, 0.22);
+        const legMeshL = new THREE.Mesh(legGeo, this.mats.fabricDark); legMeshL.position.y = -0.45; this.legL.add(legMeshL);
+        const legMeshR = new THREE.Mesh(legGeo, this.mats.fabricDark); legMeshR.position.y = -0.45; this.legR.add(legMeshR);
+
         // Boots
-        const bootGeo = new THREE.BoxGeometry(0.22, 0.15, 0.3);
-        const bootMat = new THREE.MeshStandardMaterial({color: 0x050505, roughness: 0.2});
-        const bootL = new THREE.Mesh(bootGeo, bootMat); bootL.position.set(0, -0.95, 0.05); this.legL.add(bootL);
-        const bootR = new THREE.Mesh(bootGeo, bootMat); bootR.position.set(0, -0.95, 0.05); this.legR.add(bootR);
+        const bootMat = new THREE.MeshStandardMaterial({color:0x050505, roughness:0.2});
+        const bootGeo = new THREE.BoxGeometry(0.24, 0.15, 0.3);
+        const bootL = new THREE.Mesh(bootGeo, bootMat); bootL.position.set(0, -0.9, 0.04); this.legL.add(bootL);
+        const bootR = new THREE.Mesh(bootGeo, bootMat); bootR.position.set(0, -0.9, 0.04); this.legR.add(bootR);
 
-        // Flashlight Attached to chest
-        const lightGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.15);
-        const lightMesh = new THREE.Mesh(lightGeo, new THREE.MeshBasicMaterial({color: 0x222222}));
-        lightMesh.rotation.x = Math.PI/2;
-        lightMesh.position.set(0, 0.3, 0.16);
-        this.pelvis.add(lightMesh);
+        // Chest Flashlight
+        const fl = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1), new THREE.MeshBasicMaterial({color:0x333333}));
+        fl.rotation.x = Math.PI/2; fl.position.set(0, 0.4, 0.18); this.root.add(fl);
         
-        this.spotlight = new THREE.SpotLight(0xffffff, 2.0, 10, Math.PI/6, 0.5, 1);
-        this.spotlight.position.set(0, 0.3, 0.2);
-        this.spotlight.target.position.set(0, 0.3, 1);
-        this.pelvis.add(this.spotlight);
-        this.pelvis.add(this.spotlight.target);
+        this.spotLight = new THREE.SpotLight(0xffffee, 5.0, 20.0, Math.PI/6, 0.5, 1);
+        this.spotLight.position.set(0, 0.4, 0.2);
+        this.spotLight.target.position.set(0, 0.4, 1.0);
+        this.root.add(this.spotLight); this.root.add(this.spotLight.target);
     }
 
-    animateWalk(delta, speed) {
-        if(!this.isWalking) {
-            // Reset to idle
-            this.armL.rotation.x = TWEEN.Interpolation.Linear([this.armL.rotation.x, 0], 0.5);
-            this.armR.rotation.x = TWEEN.Interpolation.Linear([this.armR.rotation.x, 0], 0.5);
-            this.legL.rotation.x = TWEEN.Interpolation.Linear([this.legL.rotation.x, 0], 0.5);
-            this.legR.rotation.x = TWEEN.Interpolation.Linear([this.legR.rotation.x, 0], 0.5);
-            this.pelvis.position.y = 1.0;
-            return false; // Not stepping
+    animateWalk(delta, speedMultiplier) {
+        if(speedMultiplier <= 0) {
+            // Decay to idle
+            this.armL.rotation.x = THREE.MathUtils.lerp(this.armL.rotation.x, 0, 0.1);
+            this.armR.rotation.x = THREE.MathUtils.lerp(this.armR.rotation.x, 0, 0.1);
+            this.legL.rotation.x = THREE.MathUtils.lerp(this.legL.rotation.x, 0, 0.1);
+            this.legR.rotation.x = THREE.MathUtils.lerp(this.legR.rotation.x, 0, 0.1);
+            this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 1.05, 0.1);
+            this.head.rotation.y = Math.sin(performance.now()*0.001)*0.2; // Idle look around
+            return false;
         }
-        this.walkCycle += delta * speed * 5.0;
-        
-        this.armL.rotation.x = Math.sin(this.walkCycle) * 0.5;
-        this.armR.rotation.x = Math.sin(this.walkCycle + Math.PI) * 0.5;
-        this.legL.rotation.x = Math.sin(this.walkCycle + Math.PI) * 0.5;
-        this.legR.rotation.x = Math.sin(this.walkCycle) * 0.5;
-        this.pelvis.position.y = 1.0 + Math.abs(Math.sin(this.walkCycle * 2)) * 0.05;
 
-        // Return true if foot hits ground roughly
-        const stepMod = this.walkCycle % Math.PI;
-        return (stepMod < 0.1); 
+        this.animCycle += delta * speedMultiplier * 5.0;
+        
+        this.armL.rotation.x = Math.sin(this.animCycle) * 0.6;
+        this.armR.rotation.x = Math.sin(this.animCycle + Math.PI) * 0.6;
+        this.legL.rotation.x = Math.sin(this.animCycle + Math.PI) * 0.6;
+        this.legR.rotation.x = Math.sin(this.animCycle) * 0.6;
+        
+        this.root.position.y = 1.05 + Math.abs(Math.sin(this.animCycle * 2)) * 0.06;
+        this.head.rotation.y = 0; // Look straight when walking
+
+        // Return true on footfall
+        const cycleMod = this.animCycle % Math.PI;
+        return (cycleMod < 0.15);
     }
 
-    animateDeliver(callback) {
-        // Bend down
-        new TWEEN.Tween(this.pelvis.position).to({y: 0.4}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-        new TWEEN.Tween(this.pelvis.rotation).to({x: 0.5}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-        new TWEEN.Tween(this.armR.rotation).to({x: -1.0}, 1000).start();
-        
+    animateBendDown(callback) {
+        new TWEEN.Tween(this.root.position).to({y: 0.5}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+        new TWEEN.Tween(this.root.rotation).to({x: 0.6}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+        new TWEEN.Tween(this.armR.rotation).to({x: -1.2}, 1000).start();
+        new TWEEN.Tween(this.head.rotation).to({x: -0.4}, 1000).start();
+
         setTimeout(() => {
             if(callback) callback();
-            // Stand up
-            new TWEEN.Tween(this.pelvis.position).to({y: 1.0}, 1000).easing(TWEEN.Easing.Quadratic.In).start();
-            new TWEEN.Tween(this.pelvis.rotation).to({x: 0}, 1000).easing(TWEEN.Easing.Quadratic.In).start();
-            new TWEEN.Tween(this.armR.rotation).to({x: 0}, 1000).start();
+            new TWEEN.Tween(this.root.position).to({y: 1.05}, 1200).easing(TWEEN.Easing.Quadratic.In).start();
+            new TWEEN.Tween(this.root.rotation).to({x: 0}, 1200).easing(TWEEN.Easing.Quadratic.In).start();
+            new TWEEN.Tween(this.armR.rotation).to({x: 0}, 1200).start();
+            new TWEEN.Tween(this.head.rotation).to({x: 0}, 1200).start();
         }, 1500);
     }
 }
 
 class FoodTray extends THREE.Group {
-    constructor(dayConfig) {
+    constructor(foodData) {
         super();
-        this.config = dayConfig;
+        this.data = foodData;
         this.build();
     }
 
     build() {
-        // Tray Base
-        const trayGeo = new THREE.BoxGeometry(0.4, 0.02, 0.3);
-        const trayMat = new THREE.MeshStandardMaterial({color: 0x444444, metalness: 0.8, roughness: 0.4});
-        const tray = new THREE.Mesh(trayGeo, trayMat);
+        // Tray
+        const tray = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.02, 0.35), new THREE.MeshStandardMaterial({color:0x333333, metalness:0.7, roughness:0.5}));
         this.add(tray);
 
-        // Food Item
-        const tex = TextureSynthesizer.createFoodTexture(this.config.type, this.config.color);
-        const mat = new THREE.MeshStandardMaterial({map: tex, roughness: 0.8});
-        let geo;
-        switch(this.config.shape) {
-            case 'squash': geo = new THREE.SphereGeometry(0.08, 16, 16); geo.scale(1, 0.4, 0.8); break;
-            case 'bowl': geo = new THREE.CylinderGeometry(0.1, 0.08, 0.05, 16); break;
-            case 'cube': geo = new THREE.BoxGeometry(0.12, 0.1, 0.12); break;
-            case 'wedge': geo = new THREE.ConeGeometry(0.1, 0.08, 3); geo.rotateX(Math.PI/2); break;
-            case 'sphere': geo = new THREE.SphereGeometry(0.06, 16, 16); break;
+        // Cup
+        const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.03, 0.1, 16), new THREE.MeshStandardMaterial({color:0xdddddd, roughness:0.2}));
+        cup.position.set(0.15, 0.06, -0.1); this.add(cup);
+
+        // Food Item generator based on type
+        const fMat = new THREE.MeshStandardMaterial({color: this.data.c, roughness: 0.8});
+        let fGeo;
+        switch(this.data.t) {
+            case 'BREAD': fGeo = new THREE.BoxGeometry(0.15, 0.08, 0.15); break;
+            case 'SLUDGE': fGeo = new THREE.CylinderGeometry(0.12, 0.1, 0.05, 16); fMat.roughness = 0.2; break; // Wet look
+            case 'MEAT': fGeo = new THREE.BoxGeometry(0.14, 0.06, 0.12); fMat.roughness = 0.4; break;
+            case 'CHEESE': fGeo = new THREE.ConeGeometry(0.08, 0.08, 3); fGeo.rotateX(Math.PI/2); break;
+            case 'MUSH': fGeo = new THREE.SphereGeometry(0.09, 16, 16); fGeo.scale(1, 0.4, 0.8); break;
+            case 'APPLE': fGeo = new THREE.SphereGeometry(0.06, 16, 16); break;
+            case 'BONE': fGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.18, 8); fGeo.rotateZ(Math.PI/2); break;
+            case 'PILLS': 
+                fGeo = new THREE.CapsuleGeometry(0.015, 0.02, 4, 8); 
+                const p2 = new THREE.Mesh(fGeo, fMat); p2.position.set(0.03, 0.01, 0.02); p2.rotation.z=Math.PI/4; this.add(p2);
+                break;
+            case 'MOLD': fGeo = new THREE.BoxGeometry(0.14, 0.07, 0.14); fMat.roughness = 1.0; break;
+            case 'INSECT': fGeo = new THREE.TorusGeometry(0.05, 0.02, 8, 16); break;
+            case 'WATER': fGeo = new THREE.CylinderGeometry(0.1, 0.08, 0.02, 16); fMat.transparent=true; fMat.opacity=0.6; break;
+            case 'FEAST': fGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.06, 16); break;
+            case 'EYE': 
+                fGeo = new THREE.SphereGeometry(0.04, 16, 16);
+                const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), new THREE.MeshBasicMaterial({color:0x000}));
+                pupil.position.set(0,0,0.03);
+                this.eyeObj = new THREE.Group(); this.eyeObj.add(new THREE.Mesh(fGeo, fMat)); this.eyeObj.add(pupil);
+                this.eyeObj.position.set(-0.05, 0.04, 0.05); this.add(this.eyeObj);
+                break;
+            default: fGeo = new THREE.SphereGeometry(0.08, 8, 8);
         }
-        this.foodMesh = new THREE.Mesh(geo, mat);
-        this.foodMesh.position.set(0, 0.03, 0);
-        this.add(this.foodMesh);
 
-        // Small cup
-        const cupGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.08, 16);
-        const cupMat = new THREE.MeshStandardMaterial({color: 0xcccccc});
-        const cup = new THREE.Mesh(cupGeo, cupMat);
-        cup.position.set(0.12, 0.04, -0.08);
-        this.add(cup);
+        if(this.data.t !== 'EYE') {
+            const fMesh = new THREE.Mesh(fGeo, fMat);
+            fMesh.position.set(-0.05, 0.04, 0.05);
+            this.add(fMesh);
+            this.foodMesh = fMesh; // ref for anim
+        }
 
+        // Interaction Data
         this.userData = {
             id: 'food_tray',
-            action: `CONSUME: ${this.config.name}`,
-            detail: this.config.desc,
-            nutri: this.config.nutri,
-            sanity: this.config.sanity
+            action: `CONSUME: ${this.data.n}`,
+            desc: this.data.m,
+            nutri: this.data.h,
+            sanity: this.data.s
         };
+    }
+
+    update(time) {
+        if(this.data.t === 'EYE' && this.eyeObj) {
+            // Eye looks around erratically
+            if(Math.random() > 0.95) {
+                this.eyeObj.rotation.x = (Math.random()-0.5)*1.5;
+                this.eyeObj.rotation.y = (Math.random()-0.5)*1.5;
+            }
+        }
+        if(this.data.t === 'MOLD' || this.data.t === 'MEAT') {
+            // Slight breathing/pulsing
+            const s = 1.0 + Math.sin(time * 4.0) * 0.03;
+            if(this.foodMesh) this.foodMesh.scale.set(s,s,s);
+        }
     }
 }
 
 /* ==========================================================================
-   WORLD GENERATION (SCENEGRAPH)
+   MODULE 7: WORLD GENERATION & SCENE GRAPH
    ========================================================================== */
-class PrisonWorld {
+class PrisonEnvironment {
     constructor(scene) {
         this.scene = scene;
         this.interactables = [];
         this.colliders = [];
-        
+        this.dynamicLights = [];
+        this.activeTray = null;
+
+        // Init Uniforms for RectAreaLights
         RectAreaLightUniformsLib.init();
 
-        this.mats = {
-            cellWall: new THREE.MeshStandardMaterial({ map: TextureSynthesizer.createConcrete(1024, 1024, '#4a4a4a', 50, true), roughness: 0.9 }),
-            hallWall: new THREE.MeshStandardMaterial({ map: TextureSynthesizer.createConcrete(512, 512, '#3a3a3a', 30, false), roughness: 0.8 }),
-            iron: new THREE.MeshStandardMaterial({ map: TextureSynthesizer.createRustMetal(512,512), metalness: 0.7, roughness: 0.5 }),
-            porcelain: new THREE.MeshStandardMaterial({ color: 0xddddcc, roughness: 0.1, metalness: 0.1 }),
-            fabric: new THREE.MeshStandardMaterial({ map: TextureSynthesizer.createOfficerFabric(256,256), roughness: 0.9 })
-        };
-
+        this.generateMaterials();
         this.buildArchitecture();
+        this.buildCellFurniture();
         this.buildLighting();
-        this.officer = new Officer(this.mats);
-        // Start officer hidden far down hall
-        this.officer.position.set(0, 0, CONFIG.WORLD.CELL_L/2 + CONFIG.WORLD.HALL_L - 1);
-        this.officer.rotation.y = Math.PI; // Facing cell
-        this.scene.add(this.officer);
-        this.activeTray = null;
+
+        // Spawn Guard in Hallway
+        this.guard = new GuardAI(this.mats);
+        this.guard.position.set(0, 0, CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH - 2);
+        this.guard.rotation.y = Math.PI; // Face cell
+        this.scene.add(this.guard);
+    }
+
+    generateMaterials() {
+        this.mats = {
+            concreteCell: new THREE.MeshStandardMaterial({ map: TextureEngine.generateConcrete(1024, 1024, [60,60,60], 0.03, 4), roughness: 0.9, metalness: 0.1 }),
+            concreteHall: new THREE.MeshStandardMaterial({ map: TextureEngine.generateConcrete(512, 512, [40,40,40], 0.05, 3), roughness: 0.8 }),
+            ironBars: new THREE.MeshStandardMaterial({ map: TextureEngine.generateRust(512, 512), metalness: 0.8, roughness: 0.6 }),
+            ironDoor: new THREE.MeshStandardMaterial({ map: TextureEngine.generateRust(1024, 1024), metalness: 0.9, roughness: 0.5 }),
+            porcelain: new THREE.MeshStandardMaterial({ map: TextureEngine.generatePorcelain(256, 256), roughness: 0.2, metalness: 0.1 }),
+            mattress: new THREE.MeshStandardMaterial({ color: 0x3a3d3a, roughness: 1.0 }),
+            fabricDark: new THREE.MeshStandardMaterial({ map: TextureEngine.generateFabric(256, 256, 15, 20, 30), roughness: 0.9 }),
+            skin: new THREE.MeshStandardMaterial({ color: 0xa07a60, roughness: 0.4 })
+        };
     }
 
     addCollider(mesh) {
         mesh.updateMatrixWorld();
-        const box = new THREE.Box3().setFromObject(mesh);
-        this.colliders.push(box);
+        this.colliders.push(new THREE.Box3().setFromObject(mesh));
     }
 
     buildArchitecture() {
-        const cw = CONFIG.WORLD.CELL_W, cl = CONFIG.WORLD.CELL_L, ch = CONFIG.WORLD.CELL_H, t = CONFIG.WORLD.WALL_THICKNESS;
-        const hw = CONFIG.WORLD.HALL_W, hl = CONFIG.WORLD.HALL_L, hh = CONFIG.WORLD.HALL_H;
+        const { CELL_WIDTH: cw, CELL_LENGTH: cl, CELL_HEIGHT: ch, WALL_THICKNESS: t, HALL_WIDTH: hw, HALL_LENGTH: hl, HALL_HEIGHT: hh } = CONFIG.WORLD;
 
-        // --- CELL ---
-        const cellGroup = new THREE.Group(); this.scene.add(cellGroup);
-        const floorGeo = new THREE.BoxGeometry(cw, t, cl);
-        const floor = new THREE.Mesh(floorGeo, this.mats.cellWall); floor.position.y = -t/2; cellGroup.add(floor);
-        const ceilGeo = new THREE.BoxGeometry(cw, t, cl);
-        const ceil = new THREE.Mesh(ceilGeo, this.mats.cellWall); ceil.position.y = ch + t/2; cellGroup.add(ceil);
+        // --- THE CELL ---
+        const cellGrp = new THREE.Group(); this.scene.add(cellGrp);
 
-        // Walls (L, R, Back)
-        const wLRGeo = new THREE.BoxGeometry(t, ch, cl);
-        const wL = new THREE.Mesh(wLRGeo, this.mats.cellWall); wL.position.set(-cw/2-t/2, ch/2, 0); cellGroup.add(wL); this.addCollider(wL);
-        const wR = new THREE.Mesh(wLRGeo, this.mats.cellWall); wR.position.set(cw/2+t/2, ch/2, 0); cellGroup.add(wR); this.addCollider(wR);
-        const wBGeo = new THREE.BoxGeometry(cw, ch, t);
-        const wB = new THREE.Mesh(wBGeo, this.mats.cellWall); wB.position.set(0, ch/2, -cl/2-t/2); cellGroup.add(wB); this.addCollider(wB);
+        // Floor / Ceiling
+        const flr = new THREE.Mesh(new THREE.BoxGeometry(cw, t, cl), this.mats.concreteCell); flr.position.y = -t/2; cellGrp.add(flr);
+        const ceil = new THREE.Mesh(new THREE.BoxGeometry(cw, t, cl), this.mats.concreteCell); ceil.position.y = ch + t/2; cellGrp.add(ceil);
 
-        // Small Window in back wall
-        const winGeo = new THREE.BoxGeometry(0.6, 0.4, t+0.05);
-        const winMat = new THREE.MeshBasicMaterial({color: 0x000000}); // Pure void outside
-        const win = new THREE.Mesh(winGeo, winMat); win.position.set(0, ch - 0.5, -cl/2-t/2); cellGroup.add(win);
-        const winBarGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.4, 8);
-        const wb1 = new THREE.Mesh(winBarGeo, this.mats.iron); wb1.position.set(-0.15, ch-0.5, -cl/2-t/2); cellGroup.add(wb1);
-        const wb2 = new THREE.Mesh(winBarGeo, this.mats.iron); wb2.position.set(0.15, ch-0.5, -cl/2-t/2); cellGroup.add(wb2);
+        // Walls (Left, Right, Back)
+        const wLR = new THREE.BoxGeometry(t, ch, cl);
+        const wallL = new THREE.Mesh(wLR, this.mats.concreteCell); wallL.position.set(-cw/2-t/2, ch/2, 0); cellGrp.add(wallL); this.addCollider(wallL);
+        const wallR = new THREE.Mesh(wLR, this.mats.concreteCell); wallR.position.set(cw/2+t/2, ch/2, 0); cellGrp.add(wallR); this.addCollider(wallR);
+        
+        const wB = new THREE.Mesh(new THREE.BoxGeometry(cw, ch, t), this.mats.concreteCell); wB.position.set(0, ch/2, -cl/2-t/2); cellGrp.add(wB); this.addCollider(wB);
 
-        // Front Bars
-        const frontZ = cl/2;
-        const barGeo = new THREE.CylinderGeometry(0.04, 0.04, ch, 8);
-        const barsGroup = new THREE.Group();
-        for(let x = -cw/2 + 0.2; x < cw/2 - 0.1; x += 0.25) {
-            if(x > -0.4 && x < 0.4) continue; // Door gap
-            const b = new THREE.Mesh(barGeo, this.mats.iron); b.position.set(x, ch/2, frontZ); barsGroup.add(b);
-            this.addCollider(b);
+        // Back Wall Window Slit (High up)
+        const winW = 0.8, winH = 0.3;
+        const voidMat = new THREE.MeshBasicMaterial({color:0x000000}); // Nothingness outside
+        const win = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, t+0.1), voidMat);
+        win.position.set(0, ch - 0.6, -cl/2-t/2); cellGrp.add(win);
+        // Window Bars
+        for(let i=-0.2; i<=0.2; i+=0.2) {
+            const wb = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, winH, 8), this.mats.ironBars);
+            wb.position.set(i, ch-0.6, -cl/2-t/2); cellGrp.add(wb);
         }
-        cellGroup.add(barsGroup);
 
-        // Door (Solid plate with slot)
-        this.doorGroup = new THREE.Group(); this.doorGroup.position.set(-0.4, 0, frontZ); cellGroup.add(this.doorGroup);
-        const doorGeo = new THREE.BoxGeometry(0.8, ch-0.1, 0.05);
-        this.doorMesh = new THREE.Mesh(doorGeo, this.mats.iron); this.doorMesh.position.set(0.4, ch/2, 0); this.doorGroup.add(this.doorMesh);
-        const slotGeo = new THREE.BoxGeometry(0.5, 0.1, 0.06);
-        const slotMesh = new THREE.Mesh(slotGeo, new THREE.MeshBasicMaterial({color:0x000})); slotMesh.position.set(0.4, 0.2, 0); this.doorGroup.add(slotMesh);
+        // Front Wall (Bars & Door)
+        const frontZ = cl/2;
+        const barsGrp = new THREE.Group(); cellGrp.add(barsGrp);
+        const bGeo = new THREE.CylinderGeometry(CONFIG.WORLD.BAR_RADIUS, CONFIG.WORLD.BAR_RADIUS, ch, 12);
+        
+        for(let x = -cw/2 + 0.15; x < cw/2 - 0.1; x += CONFIG.WORLD.BAR_SPACING) {
+            if(x > -0.45 && x < 0.45) continue; // Door frame gap
+            const bar = new THREE.Mesh(bGeo, this.mats.ironBars); bar.position.set(x, ch/2, frontZ);
+            barsGrp.add(bar); this.addCollider(bar);
+        }
+
+        // Heavy Iron Door
+        this.doorGrp = new THREE.Group(); this.doorGrp.position.set(-0.45, 0, frontZ); cellGrp.add(this.doorGrp);
+        this.doorMesh = new THREE.Mesh(new THREE.BoxGeometry(0.9, ch-0.1, 0.06), this.mats.ironDoor);
+        this.doorMesh.position.set(0.45, ch/2, 0); this.doorGrp.add(this.doorMesh);
+        
+        // Food Slot
+        const slot = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.12, 0.08), voidMat);
+        slot.position.set(0.45, 0.25, 0); this.doorMesh.add(slot);
+        
         this.doorCollider = new THREE.Box3().setFromObject(this.doorMesh); this.colliders.push(this.doorCollider);
 
-        // Props
-        const cotGeo = new THREE.BoxGeometry(0.9, 0.3, 2.0);
-        const cotMat = new THREE.MeshStandardMaterial({color: 0x334433, roughness: 1.0});
-        const cot = new THREE.Mesh(cotGeo, cotMat); cot.position.set(-cw/2 + 0.5, 0.15, -cl/2 + 1.1);
-        cot.userData = { id: 'cot', action: 'SLEEP', detail: 'Pass time rapidly. Costs sanity.' };
-        cellGroup.add(cot); this.interactables.push(cot); this.addCollider(cot);
+        // --- THE HALLWAY ---
+        const hallGrp = new THREE.Group(); hallGrp.position.set(0, 0, cl/2 + hl/2); this.scene.add(hallGrp);
+        const hFlr = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.concreteHall); hFlr.position.y = -t/2; hallGrp.add(hFlr);
+        const hCeil = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.concreteHall); hCeil.position.y = hh + t/2; hallGrp.add(hCeil);
+        const hwL = new THREE.Mesh(new THREE.BoxGeometry(t, hh, hl), this.mats.concreteHall); hwL.position.set(-hw/2-t/2, hh/2, 0); hallGrp.add(hwL);
+        const hwR = new THREE.Mesh(new THREE.BoxGeometry(t, hh, hl), this.mats.concreteHall); hwR.position.set(hw/2+t/2, hh/2, 0); hallGrp.add(hwR);
+    }
 
-        const tBase = new THREE.CylinderGeometry(0.2, 0.15, 0.4, 16);
-        const toilet = new THREE.Mesh(tBase, this.mats.porcelain); toilet.position.set(cw/2 - 0.4, 0.2, -cl/2 + 0.4);
-        toilet.userData = { id: 'toilet', action: 'FLUSH', detail: 'Pointless exertion of control.' };
-        cellGroup.add(toilet); this.interactables.push(toilet); this.addCollider(toilet);
+    buildCellFurniture() {
+        const cw = CONFIG.WORLD.CELL_WIDTH, cl = CONFIG.WORLD.CELL_LENGTH;
 
-        // --- HALLWAY ---
-        const hallGroup = new THREE.Group(); hallGroup.position.set(0, 0, cl/2 + hl/2); this.scene.add(hallGroup);
-        const hFloor = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.hallWall); hFloor.position.y = -t/2; hallGroup.add(hFloor);
-        const hCeil = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.hallWall); hCeil.position.y = hh + t/2; hallGroup.add(hCeil);
-        const hL = new THREE.Mesh(new THREE.BoxGeometry(t, hh, hl), this.mats.hallWall); hL.position.set(-hw/2-t/2, hh/2, 0); hallGroup.add(hL);
-        const hR = new THREE.Mesh(new THREE.BoxGeometry(t, hh, hl), this.mats.hallWall); hR.position.set(hw/2+t/2, hh/2, 0); hallGroup.add(hR);
+        // Cot (Bed)
+        const cotW = 1.0, cotL = 2.1, cotH = 0.4;
+        const cotGrp = new THREE.Group(); cotGrp.position.set(-cw/2 + cotW/2 + 0.1, 0, -cl/2 + cotL/2 + 0.1); this.scene.add(cotGrp);
+        
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(cotW, 0.05, cotL), this.mats.ironBars); frame.position.y = cotH - 0.1; cotGrp.add(frame);
+        const legs = [[-cotW/2+0.05, -cotL/2+0.05], [cotW/2-0.05, -cotL/2+0.05], [-cotW/2+0.05, cotL/2-0.05], [cotW/2-0.05, cotL/2-0.05]];
+        legs.forEach(pos => {
+            const l = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, cotH, 8), this.mats.ironBars);
+            l.position.set(pos[0], cotH/2, pos[1]); cotGrp.add(l);
+        });
+        const mattress = new THREE.Mesh(new THREE.BoxGeometry(cotW-0.05, 0.15, cotL-0.05), this.mats.mattress);
+        mattress.position.y = cotH; cotGrp.add(mattress);
+        
+        const cotHitbox = new THREE.Mesh(new THREE.BoxGeometry(cotW, cotH+0.2, cotL), new THREE.MeshBasicMaterial({visible:false}));
+        cotHitbox.position.y = cotH/2; cotGrp.add(cotHitbox);
+        cotHitbox.userData = { id: 'cot', action: 'SLEEP', desc: 'Advance time. Escapism.' };
+        this.interactables.push(cotHitbox); this.addCollider(cotHitbox);
+
+        // Toilet / Sink Combo
+        const tGrp = new THREE.Group(); tGrp.position.set(cw/2 - 0.4, 0, -cl/2 + 0.4); this.scene.add(tGrp);
+        
+        const tBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.15, 0.4, 16), this.mats.porcelain); tBowl.position.y = 0.2; tGrp.add(tBowl);
+        const tTank = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.3), this.mats.porcelain); tTank.position.set(0, 0.4, -0.25); tGrp.add(tTank);
+        const sinkBasin = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.15, 0.1, 16), this.mats.porcelain); sinkBasin.position.set(0, 0.85, -0.15); tGrp.add(sinkBasin);
+        const faucet = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.1, 8), this.mats.ironBars); faucet.position.set(0, 0.95, -0.25); faucet.rotation.x = Math.PI/4; tGrp.add(faucet);
+
+        const tHitbox = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.0, 0.6), new THREE.MeshBasicMaterial({visible:false}));
+        tHitbox.position.y = 0.5; tGrp.add(tHitbox);
+        tHitbox.userData = { id: 'toilet', action: 'FLUSH', desc: 'A meaningless exertion of control over the environment.' };
+        this.interactables.push(tHitbox); this.addCollider(tHitbox);
     }
 
     buildLighting() {
-        this.ambient = new THREE.AmbientLight(0x222222); this.scene.add(this.ambient);
-        
-        // Window directional (Sun)
-        this.sun = new THREE.DirectionalLight(0xffeedd, 1.0);
-        this.sun.position.set(0, 5, -10); // Angled through back window
-        this.sun.castShadow = true;
-        this.scene.add(this.sun);
+        this.ambientLight = new THREE.AmbientLight(0x1a1a1a); this.scene.add(this.ambientLight);
 
-        // Cell flickering light
-        this.cellLight = new THREE.PointLight(0xaaccff, 0.5, 4.0);
-        this.cellLight.position.set(0, CONFIG.WORLD.CELL_H - 0.2, 0);
+        // Sun coming through window slit
+        this.sunLight = new THREE.DirectionalLight(0xffeedd, 1.5);
+        this.sunLight.position.set(0, 5, -15);
+        this.sunLight.castShadow = true;
+        this.sunLight.shadow.mapSize.width = 1024; this.sunLight.shadow.mapSize.height = 1024;
+        this.scene.add(this.sunLight);
+
+        // Harsh Cell Fluorescent
+        this.cellLight = new THREE.PointLight(0xaaccff, 0.5, 6.0);
+        this.cellLight.position.set(0, CONFIG.WORLD.CELL_HEIGHT - 0.2, 0);
         this.scene.add(this.cellLight);
+        this.dynamicLights.push(this.cellLight);
 
-        // Hallway lights
-        for(let z = CONFIG.WORLD.CELL_L/2 + 2; z < CONFIG.WORLD.CELL_L/2 + CONFIG.WORLD.HALL_L; z+= 5) {
-            const hl = new THREE.PointLight(0xffddaa, 0.3, 6.0);
-            hl.position.set(0, CONFIG.WORLD.HALL_H - 0.2, z);
+        // Hallway Lights
+        for(let z = CONFIG.WORLD.CELL_LENGTH/2 + 3; z < CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH; z+= 6) {
+            const hl = new THREE.PointLight(0xffddaa, 0.4, 8.0);
+            hl.position.set(0, CONFIG.WORLD.HALL_HEIGHT - 0.2, z);
             this.scene.add(hl);
+            this.dynamicLights.push(hl);
+        }
+
+        this.scene.fog = new THREE.FogExp2(0x050505, 0.06);
+    }
+
+    updateLightingCycle(timeInHours) {
+        // Time logic: 0 to 24.
+        const isDay = timeInHours >= 6 && timeInHours <= 18;
+        
+        if(isDay) {
+            const dayProgress = (timeInHours - 6) / 12; // 0 to 1
+            const sunAngle = dayProgress * Math.PI;
+            
+            this.sunLight.intensity = Math.sin(sunAngle) * 2.5;
+            this.sunLight.position.x = Math.cos(sunAngle) * 10;
+            this.sunLight.position.y = Math.sin(sunAngle) * 5;
+            
+            // Warmth shifts
+            this.sunLight.color.setHSL(0.1 + dayProgress*0.05, 0.6, 0.5 + Math.sin(sunAngle)*0.3);
+            
+            this.ambientLight.color.setHex(0x2a2a2a);
+            this.scene.fog.color.setHex(0x0a0a0a);
+            this.scene.fog.density = 0.04;
+
+            // Artificial lights off/dim
+            this.dynamicLights.forEach(l => l.intensity = 0.1);
+        } else {
+            this.sunLight.intensity = 0.02; // Moonlight
+            this.sunLight.color.setHex(0x445588);
+            
+            this.ambientLight.color.setHex(0x050505);
+            this.scene.fog.color.setHex(0x020202);
+            this.scene.fog.density = 0.08;
+
+            // Fluorescent flicker at night
+            this.dynamicLights.forEach(l => {
+                if(Math.random() > 0.96) l.intensity = Math.random() * 0.5 + 0.1;
+                else l.intensity = 0.6;
+            });
         }
     }
 
-    updateLighting(dayConfig, timeRatio) {
-        // timeRatio 0 = Wake (6am), 0.5 = Noon, 1.0 = Sleep (10pm) -> mapped from 24h
-        // Actually, time is continuous 0 to 24.
-        const r = (timeRatio - 6) / 16; // Normalize daylight hours roughly
-        let intensity = 0;
-        if(timeRatio >= 6 && timeRatio <= 18) {
-            intensity = Math.sin(r * Math.PI) * dayConfig.intensityMult * 2.0;
-        }
-        
-        this.sun.color.setHex(dayConfig.sun);
-        this.sun.intensity = Math.max(0.01, intensity);
-        
-        // Move sun arc
-        this.sun.position.x = Math.cos(r * Math.PI) * 10;
-        this.sun.position.y = Math.sin(r * Math.PI) * 5;
-
-        this.ambient.color.setHex(dayConfig.ambient);
-        this.scene.fog = new THREE.FogExp2(dayConfig.fog, dayConfig.fogDens);
-
-        // Cell light flicker
-        if(Math.random() > 0.95) this.cellLight.intensity = Math.random() * 0.5 + 0.2;
-        else this.cellLight.intensity = 0.6;
+    animateDoor(isOpen, callback) {
+        const targetRot = isOpen ? -Math.PI/2 : 0;
+        new TWEEN.Tween(this.doorGrp.rotation)
+            .to({y: targetRot}, 2000)
+            .easing(TWEEN.Easing.Cubic.InOut)
+            .onUpdate(() => {
+                if(!isOpen) this.doorCollider.setFromObject(this.doorMesh);
+            })
+            .onComplete(() => {
+                if(isOpen) this.doorCollider.translate(new THREE.Vector3(0,-100,0)); // Move hitbox away
+                else this.doorCollider.setFromObject(this.doorMesh);
+                if(callback) callback();
+            })
+            .start();
     }
 
-    deliverFood(dayNum) {
-        const idx = Math.min(dayNum - 1, FOOD_MATRIX.length - 1);
-        const config = FOOD_MATRIX[idx];
+    deliverTray(dayNumber) {
+        if(this.activeTray) this.removeTray();
         
-        if(this.activeTray) {
-            this.scene.remove(this.activeTray);
-            this.interactables = this.interactables.filter(i => i !== this.activeTray);
-        }
-
-        this.activeTray = new FoodTray(config);
-        // Start inside door slot
-        this.activeTray.position.set(0, 0.05, CONFIG.WORLD.CELL_L/2);
+        const fData = FOOD_DATABASE.find(f => f.d === dayNumber) || FOOD_DATABASE[FOOD_DATABASE.length-1];
+        this.activeTray = new FoodTray(fData);
+        
+        // Slipped under door
+        this.activeTray.position.set(0, 0.05, CONFIG.WORLD.CELL_LENGTH/2 + 0.2);
         this.scene.add(this.activeTray);
         this.interactables.push(this.activeTray);
 
-        // Slide animation
         new TWEEN.Tween(this.activeTray.position)
-            .to({z: CONFIG.WORLD.CELL_L/2 - 0.5}, 1500)
-            .easing(TWEEN.Easing.Cubic.Out)
+            .to({z: CONFIG.WORLD.CELL_LENGTH/2 - 0.7}, 1500)
+            .easing(TWEEN.Easing.Quadratic.Out)
             .start();
     }
-}
 
-/* ==========================================================================
-   GAME DIRECTOR (LOGIC, STATE, AI)
-   ========================================================================== */
-class GameDirector {
-    constructor(world, ui, audio) {
-        this.world = world; this.ui = ui; this.audio = audio;
-        
-        this.day = 1;
-        this.time = CONFIG.TIME.WAKE_HOUR; // Start at 6am
-        this.sanity = 100;
-        this.nutrition = 100;
-        this.state = 'LOCKDOWN'; // LOCKDOWN, MEAL_DELIVERY, SLEEP
-        
-        this.officerSequenceActive = false;
-        this.officerTimer = 0;
-    }
-
-    update(delta) {
-        if(this.state === 'SLEEP') return; // Time jumps, handled in interaction
-
-        // Time progression
-        const hourStep = delta / CONFIG.TIME.REAL_SEC_PER_GAME_HOUR;
-        this.time += hourStep;
-        
-        if(this.time >= 24) {
-            this.time -= 24;
-            this.day++;
-        }
-
-        // Degradation
-        const starveMult = this.nutrition <= 0 ? CONFIG.STATS.STARVATION_SANITY_MULT : 1.0;
-        this.nutrition -= CONFIG.STATS.NUTRITION_DECAY_RATE * hourStep;
-        this.sanity -= (CONFIG.STATS.SANITY_DECAY_RATE * starveMult) * hourStep;
-        
-        this.nutrition = Math.max(0, Math.min(100, this.nutrition));
-        this.sanity = Math.max(0, Math.min(100, this.sanity));
-
-        // Event Triggers
-        if(this.time >= CONFIG.TIME.MEAL_HOUR && this.time < CONFIG.TIME.MEAL_HOUR + 1 && !this.officerSequenceActive && this.state !== 'MEAL_DELIVERY') {
-            this.triggerMealDelivery();
-        }
-
-        if(this.time >= CONFIG.TIME.SLEEP_HOUR) {
-            this.ui.updateSubtitle("MANDATORY LIGHTS OUT. RETURN TO COT.", 4000);
-        }
-
-        // Officer AI Update
-        if(this.officerSequenceActive) this.updateOfficer(delta);
-
-        // UI & World Sync
-        this.syncSystems();
-    }
-
-    syncSystems() {
-        const hrs = Math.floor(this.time);
-        const mins = Math.floor((this.time - hrs) * 60);
-        const ampm = hrs >= 12 ? 'PM' : 'AM';
-        const h12 = hrs % 12 || 12;
-        const timeStr = `${h12.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')} ${ampm}`;
-
-        this.ui.updateStats(this.day, timeStr, this.state, this.sanity, this.nutrition);
-        
-        const dayConfigIdx = Math.min(this.day - 1, DAY_LIGHTING_MATRIX.length - 1);
-        this.world.updateLighting(DAY_LIGHTING_MATRIX[dayConfigIdx], this.time);
-    }
-
-    triggerMealDelivery() {
-        this.state = 'MEAL_DELIVERY';
-        this.officerSequenceActive = true;
-        this.officerPhase = 0; // 0: Walk up, 1: Deliver, 2: Walk away
-        this.world.officer.position.z = CONFIG.WORLD.CELL_L/2 + CONFIG.WORLD.HALL_L - 1;
-        this.world.officer.rotation.y = Math.PI; // Face cell
-    }
-
-    updateOfficer(delta) {
-        const officer = this.world.officer;
-        const targetZ = CONFIG.WORLD.CELL_L/2 + 0.6; // Right outside door
-
-        if(this.officerPhase === 0) {
-            // Walking to door
-            officer.isWalking = true;
-            officer.position.z -= 2.0 * delta; // Speed
-            const step = officer.animateWalk(delta, 2.0);
-            if(step) this.audio.playFootstep('boot', Math.abs(officer.position.z - targetZ) / CONFIG.WORLD.HALL_L);
-
-            if(officer.position.z <= targetZ) {
-                officer.position.z = targetZ;
-                officer.isWalking = false;
-                officer.animateWalk(delta, 0); // Reset
-                this.officerPhase = 1;
-                this.ui.updateSubtitle("OFFICER: 'Chow time, inmate. Step back.'", 3000);
-                
-                // Trigger delivery animation
-                officer.animateDeliver(() => {
-                    this.world.deliverFood(this.day);
-                    this.audio.playDoorGrind();
-                });
-                
-                setTimeout(() => { this.officerPhase = 2; officer.rotation.y = 0; }, 2000); // Wait, then turn around
-            }
-        } 
-        else if(this.officerPhase === 2) {
-            // Walking away
-            officer.isWalking = true;
-            officer.position.z += 2.0 * delta;
-            const step = officer.animateWalk(delta, 2.0);
-            if(step) this.audio.playFootstep('boot', Math.abs(officer.position.z - targetZ) / CONFIG.WORLD.HALL_L);
-
-            if(officer.position.z > targetZ + CONFIG.WORLD.HALL_L) {
-                officer.isWalking = false;
-                this.officerSequenceActive = false;
-                this.state = 'LOCKDOWN';
-            }
-        }
-    }
-
-    interact(object) {
-        const id = object.userData.id;
-        if(id === 'food_tray') {
-            this.nutrition += object.userData.nutri;
-            this.sanity += object.userData.sanity;
-            this.audio.playEat();
-            this.ui.updateSubtitle(`CONSUMED: ${object.userData.detail}`, 3000);
-            this.world.scene.remove(this.world.activeTray);
-            this.world.interactables = this.world.interactables.filter(i => i !== this.world.activeTray);
-            this.world.activeTray = null;
-        } 
-        else if(id === 'cot') {
-            if(this.time >= CONFIG.TIME.SLEEP_HOUR || this.time < CONFIG.TIME.WAKE_HOUR) {
-                this.ui.doFadeSequence(() => {
-                    this.time = CONFIG.TIME.WAKE_HOUR;
-                    this.day++;
-                    this.sanity -= 5; // Sleep doesn't fully restore sanity in jail
-                });
-            } else {
-                this.ui.updateSubtitle("CANNOT SLEEP. NOT SCHEDULED.", 2000);
-            }
-        }
-        else if(id === 'toilet') {
-            // Fake audio or just deny
-            this.ui.updateSubtitle("WATER MAIN SHUT OFF.", 2000);
-        }
+    removeTray() {
+        if(!this.activeTray) return null;
+        const data = this.activeTray.data;
+        this.scene.remove(this.activeTray);
+        this.interactables = this.interactables.filter(i => i !== this.activeTray);
+        this.activeTray = null;
+        return data;
     }
 }
 
 /* ==========================================================================
-   UI CONTROLLER
+   MODULE 8: USER INTERFACE & STATE DOM CONTROLLER
    ========================================================================== */
 class UIController {
     constructor() {
-        this.els = {
-            day: document.getElementById('val-day'), time: document.getElementById('val-time'), state: document.getElementById('val-state'),
-            sanity: document.getElementById('fill-sanity'), nutri: document.getElementById('fill-nutrition'),
-            box: document.getElementById('interaction-box'), act: document.getElementById('interact-action'), det: document.getElementById('interact-detail'),
-            cross: document.getElementById('crosshair'), sub: document.getElementById('subtitle-box'), fade: document.getElementById('master-fade'),
-            initScr: document.getElementById('init-screen'), hud: document.getElementById('hud-layer')
-        };
+        this.bindDOM();
         this.subTimer = null;
     }
 
-    updateStats(day, time, state, sanity, nutri) {
-        this.els.day.innerText = `DAY ${day.toString().padStart(3,'0')}`;
-        this.els.time.innerText = time;
-        this.els.state.innerText = state;
-        
-        this.els.state.className = 'stat-value';
-        if(state==='LOCKDOWN') this.els.state.classList.add('state-lockdown');
-        if(state==='MEAL_DELIVERY') this.els.state.classList.add('state-meal');
-        
-        this.els.sanity.style.width = `${sanity}%`;
-        this.els.nutri.style.width = `${nutri}%`;
-
-        // Extreme visual degradation
-        this.els.sanity.classList.remove('sanity-warn', 'sanity-crit');
-        document.body.classList.remove('sanity-break');
-        if(sanity < 30) this.els.sanity.classList.add('sanity-warn');
-        if(sanity < 15) {
-            this.els.sanity.classList.add('sanity-crit');
-            document.body.classList.add('sanity-break');
-        }
+    bindDOM() {
+        this.els = {
+            menu: document.getElementById('menu-layer'),
+            btn: document.getElementById('btn-init'),
+            load: document.getElementById('loading-seq'),
+            hud: document.getElementById('hud-layer'),
+            day: document.getElementById('val-day'),
+            time: document.getElementById('val-time'),
+            state: document.getElementById('val-state'),
+            sFill: document.getElementById('fill-sanity'),
+            sPct: document.getElementById('pct-sanity'),
+            nFill: document.getElementById('fill-nutrition'),
+            nPct: document.getElementById('pct-nutrition'),
+            stFill: document.getElementById('fill-stamina'),
+            stPct: document.getElementById('pct-stamina'),
+            cross: document.getElementById('crosshair-container'),
+            prompt: document.getElementById('interaction-prompt'),
+            pAct: document.getElementById('prompt-action'),
+            pDesc: document.getElementById('prompt-desc'),
+            subBox: document.getElementById('subtitle-element'),
+            fade: document.getElementById('fx-fade'),
+            dbg: document.getElementById('debug-panel')
+        };
     }
 
-    setInteract(obj) {
+    setReady() {
+        this.els.load.style.display = 'none';
+        this.els.btn.style.display = 'inline-block';
+    }
+
+    transitionToGame() {
+        this.els.menu.style.opacity = 0;
+        this.els.fade.style.opacity = 0; // Fade in world
+        setTimeout(() => {
+            this.els.menu.style.display = 'none';
+            this.els.hud.style.display = 'block';
+        }, 2000);
+    }
+
+    transitionToMenu() {
+        this.els.menu.style.display = 'flex';
+        this.els.hud.style.display = 'none';
+        setTimeout(() => { this.els.menu.style.opacity = 1; }, 50);
+    }
+
+    updateHUD(data) {
+        // Time Formatting
+        this.els.day.innerText = `DAY ${data.day.toString().padStart(4, '0')}`;
+        const h = Math.floor(data.time);
+        const m = Math.floor((data.time - h) * 60);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        this.els.time.innerText = `${h12.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')} ${ampm}`;
+
+        // State
+        this.els.state.innerText = data.state;
+        this.els.state.className = `data-val state-${data.state}`;
+
+        // Metrics
+        const sInt = Math.floor(data.san); const nInt = Math.floor(data.nut); const stInt = Math.floor(data.sta);
+        this.els.sFill.style.width = `${data.san}%`; this.els.sPct.innerText = `${sInt}%`;
+        this.els.nFill.style.width = `${data.nut}%`; this.els.nPct.innerText = `${nInt}%`;
+        this.els.stFill.style.width = `${data.sta}%`; this.els.stPct.innerText = `${stInt}%`;
+
+        // Body Classes for Sanity FX
+        document.body.className = '';
+        this.els.sFill.classList.remove('status-warning', 'status-critical');
+        if(data.san < 40) { this.els.sFill.classList.add('status-warning'); document.body.classList.add('insanity-tier-1'); }
+        if(data.san < 20) { document.body.classList.add('insanity-tier-2'); }
+        if(data.san < 10) { this.els.sFill.classList.add('status-critical'); document.body.classList.add('insanity-tier-3'); }
+    }
+
+    setPrompt(obj) {
         if(!obj) {
-            this.els.box.classList.remove('show');
-            this.els.cross.classList.remove('active-target');
+            this.els.prompt.classList.remove('visible');
+            this.els.cross.classList.remove('active');
             return;
         }
-        this.els.act.innerText = obj.userData.action || 'EXAMINE';
-        this.els.det.innerText = obj.userData.detail || '';
-        this.els.box.classList.add('show');
-        this.els.cross.classList.add('active-target');
+        this.els.pAct.innerText = obj.userData.action;
+        this.els.pDesc.innerText = obj.userData.desc;
+        this.els.prompt.classList.add('visible');
+        this.els.cross.classList.add('active');
     }
 
-    updateSubtitle(text, duration) {
-        this.els.sub.innerText = text;
-        this.els.sub.style.opacity = 1;
+    showSubtitle(text, type='system', durationMs=4000) {
+        this.els.subBox.innerText = text;
+        this.els.subBox.className = `subtitle-text subtitle-${type} show`;
+        
         clearTimeout(this.subTimer);
-        this.subTimer = setTimeout(() => { this.els.sub.style.opacity = 0; }, duration);
+        this.subTimer = setTimeout(() => {
+            this.els.subBox.classList.remove('show');
+        }, durationMs);
     }
 
-    doFadeSequence(midpointCallback) {
-        this.els.fade.style.opacity = 1;
-        setTimeout(() => {
-            if(midpointCallback) midpointCallback();
-            setTimeout(() => { this.els.fade.style.opacity = 0; }, 1000);
-        }, 3000); // 3 sec fade out
+    doFade(fadeIn, callback, duration=3000) {
+        this.els.fade.style.transition = `opacity ${duration/1000}s cubic-bezier(0.1, 0.7, 0.1, 1)`;
+        this.els.fade.style.opacity = fadeIn ? 1 : 0;
+        if(callback) setTimeout(callback, duration);
+    }
+    
+    updateDebug(fps, pos, dir) {
+        if(!CONFIG.ENGINE.DEBUG_MODE) { this.els.dbg.style.display='none'; return; }
+        this.els.dbg.style.display='block';
+        this.els.dbg.innerText = `FPS: ${Math.round(fps)} | P: ${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}, ${pos.z.toFixed(2)} | D: ${dir.x.toFixed(2)}, ${dir.z.toFixed(2)}`;
     }
 }
 
 /* ==========================================================================
-   PLAYER CONTROLLER (PHYSICS & RAYCASTING)
+   MODULE 9: PLAYER CONTROLLER (PHYSICS, MOVEMENT, RAYCASTING)
    ========================================================================== */
 class PlayerController {
-    constructor(camera, domElement, world) {
-        this.camera = camera; this.world = world;
+    constructor(camera, domElement, world, ui, audio) {
+        this.camera = camera; this.world = world; this.ui = ui; this.audio = audio;
         this.controls = new PointerLockControls(camera, domElement);
+        
         this.vel = new THREE.Vector3(); this.dir = new THREE.Vector3();
-        this.inputs = { f:false, b:false, l:false, r:false };
+        this.inputs = { w:0, a:0, s:0, d:0, shift:0 };
         this.raycaster = new THREE.Raycaster();
-        this.target = null;
+        this.targetObj = null;
+        
         this.collider = new THREE.Sphere(new THREE.Vector3(), CONFIG.PHYSICS.PLAYER_RADIUS);
-        this.distTraveled = 0;
+        this.distWalked = 0;
+        this.stamina = CONFIG.STATS.MAX_STAMINA;
+        this.isExhausted = false;
 
-        document.addEventListener('keydown', e => this.key(e, true));
-        document.addEventListener('keyup', e => this.key(e, false));
+        this.bindInput();
     }
 
-    key(e, isDown) {
-        switch(e.code) {
-            case 'KeyW': this.inputs.f = isDown; break;
-            case 'KeyS': this.inputs.b = isDown; break;
-            case 'KeyA': this.inputs.l = isDown; break;
-            case 'KeyD': this.inputs.r = isDown; break;
-        }
+    bindInput() {
+        const k = (e, v) => {
+            switch(e.code) {
+                case 'KeyW': this.inputs.w = v; break;
+                case 'KeyS': this.inputs.s = v; break;
+                case 'KeyA': this.inputs.a = v; break;
+                case 'KeyD': this.inputs.d = v; break;
+                case 'ShiftLeft': this.inputs.shift = v; break;
+            }
+        };
+        document.addEventListener('keydown', e => k(e, 1));
+        document.addEventListener('keyup', e => k(e, 0));
     }
 
-    update(delta, audioSys, uiSys) {
+    update(delta) {
         if(!this.controls.isLocked) return;
 
-        // Physics/Movement
-        this.dir.z = Number(this.inputs.f) - Number(this.inputs.b);
-        this.dir.x = Number(this.inputs.r) - Number(this.inputs.l);
+        // Stamina Logic
+        const isTryingToRun = this.inputs.shift && (this.inputs.w || this.inputs.s || this.inputs.a || this.inputs.d);
+        if(isTryingToRun && !this.isExhausted) {
+            this.stamina -= CONFIG.STATS.STAMINA_DRAIN * delta;
+            if(this.stamina <= 0) { this.stamina = 0; this.isExhausted = true; this.audio.triggerHeartbeat(); }
+        } else {
+            this.stamina += CONFIG.STATS.STAMINA_REGEN * delta;
+            if(this.stamina >= CONFIG.STATS.MAX_STAMINA) { this.stamina = CONFIG.STATS.MAX_STAMINA; this.isExhausted = false; }
+        }
+
+        const currentSpeed = (isTryingToRun && !this.isExhausted) ? CONFIG.PHYSICS.RUN_SPEED : CONFIG.PHYSICS.WALK_SPEED;
+
+        // Physics Integration
+        this.dir.z = this.inputs.w - this.inputs.s;
+        this.dir.x = this.inputs.d - this.inputs.a;
         this.dir.normalize();
 
-        const decel = 10.0;
-        this.vel.x -= this.vel.x * decel * delta;
-        this.vel.z -= this.vel.z * decel * delta;
+        this.vel.x -= this.vel.x * CONFIG.PHYSICS.DECELERATION * delta;
+        this.vel.z -= this.vel.z * CONFIG.PHYSICS.DECELERATION * delta;
 
-        if(this.inputs.f || this.inputs.b) this.vel.z -= this.dir.z * CONFIG.PHYSICS.WALK_SPEED * delta;
-        if(this.inputs.l || this.inputs.r) this.vel.x -= this.dir.x * CONFIG.PHYSICS.WALK_SPEED * delta;
+        if(this.inputs.w || this.inputs.s) this.vel.z -= this.dir.z * currentSpeed * delta;
+        if(this.inputs.a || this.inputs.d) this.vel.x -= this.dir.x * currentSpeed * delta;
 
-        // Apply
-        const startPos = this.controls.object.position.clone();
+        const startP = this.controls.object.position.clone();
         this.controls.moveRight(-this.vel.x * delta);
         this.controls.moveForward(-this.vel.z * delta);
 
-        // Simple Sphere-AABB Collision
+        // Collision Resolution
         this.collider.center.copy(this.controls.object.position);
-        this.collider.center.y -= CONFIG.PHYSICS.PLAYER_HEIGHT * 0.4; // Chest level check
+        this.collider.center.y -= CONFIG.PHYSICS.PLAYER_HEIGHT * 0.4; // Mid-body check
 
-        for(const box of this.world.colliders) {
+        for(let box of this.world.colliders) {
             if(box.intersectsSphere(this.collider)) {
-                const cp = new THREE.Vector3();
-                box.clampPoint(this.collider.center, cp);
-                const push = new THREE.Vector3().subVectors(this.collider.center, cp);
-                const dist = push.length();
+                const closePt = new THREE.Vector3();
+                box.clampPoint(this.collider.center, closePt);
+                const pushDir = new THREE.Vector3().subVectors(this.collider.center, closePt);
+                const dist = pushDir.length();
                 if(dist < CONFIG.PHYSICS.PLAYER_RADIUS) {
-                    push.normalize().multiplyScalar(CONFIG.PHYSICS.PLAYER_RADIUS - dist);
-                    push.y = 0; // constrain to XZ
-                    this.controls.object.position.add(push);
+                    pushDir.normalize().multiplyScalar(CONFIG.PHYSICS.PLAYER_RADIUS - dist);
+                    pushDir.y = 0; // Lock Y
+                    this.controls.object.position.add(pushDir);
                 }
             }
         }
 
-        // Bobbing & Audio
-        const endPos = this.controls.object.position.clone();
-        const moveDist = startPos.distanceTo(endPos);
-        if(moveDist > 0.001) {
-            this.distTraveled += moveDist;
-            this.controls.object.position.y = CONFIG.PHYSICS.PLAYER_HEIGHT + Math.sin(this.distTraveled * CONFIG.PHYSICS.HEAD_BOB_FREQ) * CONFIG.PHYSICS.HEAD_BOB_AMP;
+        // Kinematic Head Bob & Breathing
+        const endP = this.controls.object.position.clone();
+        const moveDelta = startP.distanceTo(endP);
+        
+        if(moveDelta > 0.001) {
+            this.distWalked += moveDelta;
+            const bob = Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) * CONFIG.PHYSICS.HEAD_BOB_AMP * (currentSpeed/CONFIG.PHYSICS.WALK_SPEED);
+            this.controls.object.position.y = CONFIG.PHYSICS.PLAYER_HEIGHT + bob;
             
-            // Footstep audio trigger
-            if(Math.sin(this.distTraveled * CONFIG.PHYSICS.HEAD_BOB_FREQ) < -0.9 && this.canStep) {
-                audioSys.playFootstep('sock', 0); // Player step is close
+            // Audio trigger on downward bob
+            if(Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) < -0.9 && this.canStep) {
+                this.audio.playFootstep('sock', 0.15);
                 this.canStep = false;
-            } else if (Math.sin(this.distTraveled * CONFIG.PHYSICS.HEAD_BOB_FREQ) > 0) {
+            } else if(Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) > 0) {
                 this.canStep = true;
             }
         } else {
-            this.controls.object.position.y = THREE.MathUtils.lerp(this.controls.object.position.y, CONFIG.PHYSICS.PLAYER_HEIGHT, 0.1);
+            // Idle breathing
+            const breath = Math.sin(performance.now() * 0.001 * CONFIG.PHYSICS.BREATH_FREQ) * CONFIG.PHYSICS.BREATH_AMP;
+            this.controls.object.position.y = THREE.MathUtils.lerp(this.controls.object.position.y, CONFIG.PHYSICS.PLAYER_HEIGHT + breath, 0.1);
         }
 
-        // Raycasting
+        // Interaction Raycasting
         this.raycaster.setFromCamera(new THREE.Vector2(0,0), this.camera);
-        const hits = this.raycaster.intersectObjects(this.world.interactables, false);
-        if(hits.length > 0 && hits[0].distance < 2.0) {
-            this.target = hits[0].object;
-            uiSys.setInteract(this.target);
+        const intersects = this.raycaster.intersectObjects(this.world.interactables, false);
+        
+        if(intersects.length > 0 && intersects[0].distance < 2.5) {
+            if(this.targetObj !== intersects[0].object) {
+                this.targetObj = intersects[0].object;
+                this.ui.setPrompt(this.targetObj);
+            }
         } else {
-            this.target = null;
-            uiSys.setInteract(null);
+            if(this.targetObj !== null) {
+                this.targetObj = null;
+                this.ui.setPrompt(null);
+            }
+        }
+
+        // Update Spatial Audio Listener
+        const camDir = new THREE.Vector3(); this.camera.getWorldDirection(camDir);
+        this.audio.updateSpatial(this.camera.position, camDir);
+    }
+}
+
+/* ==========================================================================
+   MODULE 10: GAME DIRECTOR (STATE MACHINE & EVENT TIMELINE)
+   ========================================================================== */
+class GameDirector {
+    constructor(world, ui, audio, player) {
+        this.world = world; this.ui = ui; this.audio = audio; this.player = player;
+        
+        this.data = {
+            day: 1,
+            time: CONFIG.TIME.WAKE_HOUR,
+            san: CONFIG.STATS.MAX_SANITY,
+            nut: CONFIG.STATS.MAX_NUTRI,
+            sta: CONFIG.STATS.MAX_STAMINA,
+            state: 'LOCKDOWN' // LOCKDOWN, GUARD_APPROACH, MEAL_DELIVERY, GUARD_LEAVE, YARD, SLEEP
+        };
+
+        this.thoughtTimer = 0;
+        this.guardPhase = 0;
+    }
+
+    update(delta) {
+        if(this.data.state === 'SLEEP') return; // Time halted during fade transitions
+
+        // Time Progression
+        const hourDelta = delta / CONFIG.TIME.REAL_SEC_PER_GAME_HOUR;
+        this.data.time += hourDelta;
+        
+        if(this.data.time >= 24.0) {
+            this.data.time -= 24.0;
+            this.data.day++;
+        }
+
+        // Biological Degradation
+        const starveMult = this.data.nut <= 0 ? CONFIG.STATS.STARVATION_MULTIPLIER : 1.0;
+        this.data.nut -= CONFIG.STATS.NUTRI_DECAY_BASE * hourDelta;
+        this.data.san -= (CONFIG.STATS.SANITY_DECAY_BASE * starveMult) * hourDelta;
+
+        // Clamp stats
+        this.data.nut = Math.max(0, Math.min(CONFIG.STATS.MAX_NUTRI, this.data.nut));
+        this.data.san = Math.max(0, Math.min(CONFIG.STATS.MAX_SANITY, this.data.san));
+        this.data.sta = this.player.stamina;
+
+        this.processEventTimeline(delta);
+        this.processThoughts(delta);
+
+        // Sync visual/audio systems
+        this.ui.updateHUD(this.data);
+        this.world.updateLightingCycle(this.data.time);
+        this.audio.updateSanityModulation(this.data.san / 100);
+        
+        if(this.world.activeTray) this.world.activeTray.update(performance.now() * 0.001);
+    }
+
+    processEventTimeline(delta) {
+        const t = this.data.time;
+        
+        // Trigger Meal 1
+        if(t >= CONFIG.TIME.MEAL_HOUR_1 && t < CONFIG.TIME.MEAL_HOUR_1 + 0.5 && this.data.state === 'LOCKDOWN') {
+            this.initiateGuardSequence('MEAL');
+        }
+        
+        // Trigger Meal 2
+        if(t >= CONFIG.TIME.MEAL_HOUR_2 && t < CONFIG.TIME.MEAL_HOUR_2 + 0.5 && this.data.state === 'LOCKDOWN') {
+            this.initiateGuardSequence('MEAL');
+        }
+
+        // Bedtime warning
+        if(t >= CONFIG.TIME.SLEEP_HOUR && t < CONFIG.TIME.SLEEP_HOUR + 0.1 && Math.random()<0.05) {
+            this.ui.showSubtitle("MANDATORY LIGHTS OUT. RETURN TO COT.", 'system');
+        }
+
+        // Run guard sequence if active
+        if(this.data.state.startsWith('GUARD')) {
+            this.updateGuardAI(delta);
+        }
+    }
+
+    initiateGuardSequence(type) {
+        this.data.state = 'GUARD_APPROACH';
+        this.guardPhase = 0;
+        this.guardTargetZ = CONFIG.WORLD.CELL_LENGTH/2 + 0.8;
+        
+        // Reset guard pos
+        this.world.guard.position.z = CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH - 2;
+        this.world.guard.rotation.y = Math.PI;
+    }
+
+    updateGuardAI(delta) {
+        const g = this.world.guard;
+        
+        if(this.data.state === 'GUARD_APPROACH') {
+            g.position.z -= 2.0 * delta; // Walk speed
+            if(g.animateWalk(delta, 2.0)) {
+                // Play audio based on distance
+                const distSq = Math.abs(g.position.z - this.guardTargetZ);
+                const vol = Math.max(0, 0.4 * (1.0 - (distSq / CONFIG.WORLD.HALL_LENGTH)));
+                this.audio.playFootstep('boot', vol);
+            }
+
+            if(g.position.z <= this.guardTargetZ) {
+                g.position.z = this.guardTargetZ;
+                g.animateWalk(delta, 0); // Stop
+                
+                this.data.state = 'MEAL_DELIVERY';
+                this.ui.showSubtitle("OFFICER: Step back from the bars. Feeding protocol.", 'system');
+                
+                g.animateBendDown(() => {
+                    this.world.deliverTray(this.data.day);
+                    this.audio.playDoorGrind(1.5);
+                });
+
+                // Wait then leave
+                setTimeout(() => {
+                    g.rotation.y = 0; // Turn around
+                    this.data.state = 'GUARD_LEAVE';
+                }, 3000);
+            }
+        } 
+        else if (this.data.state === 'GUARD_LEAVE') {
+            g.position.z += 2.0 * delta;
+            if(g.animateWalk(delta, 2.0)) {
+                const distSq = Math.abs(g.position.z - this.guardTargetZ);
+                const vol = Math.max(0, 0.4 * (1.0 - (distSq / CONFIG.WORLD.HALL_LENGTH)));
+                this.audio.playFootstep('boot', vol);
+            }
+
+            if(g.position.z > this.guardTargetZ + CONFIG.WORLD.HALL_LENGTH) {
+                g.animateWalk(delta, 0);
+                this.data.state = 'LOCKDOWN';
+            }
+        }
+    }
+
+    processThoughts(delta) {
+        this.thoughtTimer += delta;
+        // Frequency of thoughts increases as sanity decreases
+        const thoughtThreshold = 15.0 + (this.data.san / 100) * 45.0; // 15 to 60 seconds
+        
+        if(this.thoughtTimer > thoughtThreshold) {
+            this.thoughtTimer = 0;
+            if(Math.random() > 0.5) {
+                const thought = THOUGHT_DATABASE[Math.floor(Math.random() * THOUGHT_DATABASE.length)];
+                this.ui.showSubtitle(thought, 'thought', 5000);
+            }
+        }
+    }
+
+    handleInteraction(target) {
+        if(!target) return;
+        const id = target.userData.id;
+
+        if(id === 'food_tray') {
+            const fData = this.world.removeTray();
+            if(fData) {
+                this.data.nut += fData.nutri;
+                this.data.san += fData.sanity;
+                this.audio.playEatSlop();
+                this.ui.showSubtitle(`INGESTED: ${fData.desc}`, 'system', 4000);
+                this.ui.setPrompt(null);
+                this.player.targetObj = null;
+            }
+        }
+        else if(id === 'toilet') {
+            this.audio.playMetalDoorSlam(); // Reusing slam as generic clang
+            this.ui.showSubtitle("WATER MAIN SHUT OFF. ACCESS DENIED.", 'system');
+        }
+        else if(id === 'cot') {
+            if(this.data.time >= CONFIG.TIME.SLEEP_HOUR || this.data.time < CONFIG.TIME.WAKE_HOUR) {
+                this.data.state = 'SLEEP';
+                this.ui.doFade(true, () => {
+                    // Fast forward time
+                    this.data.time = CONFIG.TIME.WAKE_HOUR;
+                    this.data.day++;
+                    this.data.san = Math.min(CONFIG.STATS.MAX_SANITY, this.data.san + CONFIG.STATS.SLEEP_RESTORE);
+                    this.ui.showSubtitle("CONSCIOUSNESS RESUMED. CYCLE INCREMENTED.", 'system', 3000);
+                    
+                    setTimeout(() => {
+                        this.ui.doFade(false);
+                        this.data.state = 'LOCKDOWN';
+                    }, 1000);
+                }, 2000);
+            } else {
+                this.ui.showSubtitle("NOT AUTHORIZED FOR SLEEP. MAINTAIN WAKEFULNESS.", 'system');
+                this.data.san -= 2; // Punishment for trying to sleep off schedule
+            }
         }
     }
 }
 
 /* ==========================================================================
-   MAIN APPLICATION LOOP
+   MODULE 11: MAIN ENGINE APPLICATION
+   Coordinates rendering, loops, and initialization.
    ========================================================================== */
-class App {
+class Engine {
     constructor() {
+        this.initDOM();
+        
+        // Setup Three.js Core
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 50);
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
         this.camera.position.set(0, CONFIG.PHYSICS.PLAYER_HEIGHT, 0);
         
-        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: false });
+        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: false, powerPreference: "high-performance" });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-        this.ui = new UIController();
+        // Init Sub-systems
         this.audio = new AudioEngine();
-        this.world = new PrisonWorld(this.scene);
-        this.director = new GameDirector(this.world, this.ui, this.audio);
-        this.player = new PlayerController(this.camera, document.body, this.world);
+        this.ui = new UIController();
         
-        this.clock = new THREE.Clock();
-        this.running = false;
-
-        this.bind();
-        
-        // Initial setup
-        this.director.syncSystems();
-        
-        requestAnimationFrame(() => this.loop());
+        // Async Build (Allows UI to show loading text)
+        setTimeout(() => this.buildWorld(), 100);
     }
 
-    bind() {
+    initDOM() {
+        this.btnInit = document.getElementById('btn-init');
+        this.btnInit.addEventListener('click', () => this.startGame());
+        
         window.addEventListener('resize', () => {
-            this.camera.aspect = window.innerWidth/window.innerHeight;
+            this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         });
+    }
 
-        document.getElementById('btn-init').addEventListener('click', () => {
-            this.audio.init(this.camera);
-            this.player.controls.lock();
-        });
+    buildWorld() {
+        this.world = new PrisonEnvironment(this.scene);
+        this.player = new PlayerController(this.camera, document.body, this.world, this.ui, this.audio);
+        this.director = new GameDirector(this.world, this.ui, this.audio, this.player);
 
+        // Bind Lock controls to State
         this.player.controls.addEventListener('lock', () => {
-            this.ui.els.initScr.style.opacity = 0;
-            setTimeout(()=> { this.ui.els.initScr.style.display='none'; this.ui.els.hud.style.display='block'; }, 1500);
-            this.running = true;
+            this.ui.transitionToGame();
+            this.isRunning = true;
             this.clock.start();
-            this.ui.els.fade.style.opacity = 0; // Fade in world
         });
 
         this.player.controls.addEventListener('unlock', () => {
-            this.running = false;
-            this.ui.els.initScr.style.display='flex';
-            setTimeout(()=> { this.ui.els.initScr.style.opacity = 1; }, 50);
-            this.ui.els.hud.style.display='none';
+            this.ui.transitionToMenu();
+            this.isRunning = false;
         });
 
+        // Bind Interaction Key
         document.addEventListener('keydown', e => {
-            if(e.code === 'KeyE' && this.running && this.player.target) {
-                this.director.interact(this.player.target);
+            if(e.code === 'KeyE' && this.isRunning && this.player.targetObj) {
+                this.director.handleInteraction(this.player.targetObj);
             }
         });
+
+        // Pre-render frame to fill canvas
+        this.director.update(0); // sync states
+        this.renderer.render(this.scene, this.camera);
+
+        // Allow start
+        this.ui.setReady();
+        
+        this.clock = new THREE.Clock();
+        this.isRunning = false;
+        this.frameCount = 0;
+        this.lastTime = performance.now();
+
+        requestAnimationFrame(() => this.loop());
+    }
+
+    startGame() {
+        this.audio.init(this.camera);
+        this.player.controls.lock();
     }
 
     loop() {
         requestAnimationFrame(() => this.loop());
-        const delta = Math.min(this.clock.getDelta(), 0.1);
+        
+        const delta = Math.min(this.clock.getDelta(), 0.1); // Cap delta to prevent huge skips
         TWEEN.update();
 
-        if(this.running) {
-            this.player.update(delta, this.audio, this.ui);
+        if(this.isRunning) {
+            this.player.update(delta);
             this.director.update(delta);
             
-            // Extreme FOV warp based on sanity
-            const targetFov = 70 + (100 - this.director.sanity) * 0.4;
-            this.camera.fov = THREE.MathUtils.lerp(this.camera.fov, targetFov, 0.05);
+            // Dynamic FOV Warp for Insanity
+            const sanityPct = this.director.data.san / 100.0;
+            const targetFOV = 75 + (1.0 - sanityPct) * 35; // FOV stretches up to 110
+            this.camera.fov = THREE.MathUtils.lerp(this.camera.fov, targetFOV, 0.05);
             this.camera.updateProjectionMatrix();
+
+            // Debug Info Update
+            if(CONFIG.ENGINE.DEBUG_MODE) {
+                this.frameCount++;
+                const now = performance.now();
+                if(now - this.lastTime >= 1000) {
+                    this.fps = this.frameCount;
+                    this.frameCount = 0;
+                    this.lastTime = now;
+                }
+                const p = this.camera.position;
+                const d = new THREE.Vector3(); this.camera.getWorldDirection(d);
+                this.ui.updateDebug(this.fps || 0, p, d);
+            }
         }
 
         this.renderer.render(this.scene, this.camera);
     }
 }
 
-// Bootstrap
-window.onload = () => new App();
+// Bootstrap Application
+window.onload = () => {
+    window.GameApp = new Engine();
+};
 
 </script>
 </body>
