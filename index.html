@@ -1774,23 +1774,33 @@ class GameEngine {
         setTimeout(() => this.initPipeline(), 100);
     }
 
-    async initPipeline() {
+   async initPipeline() {
         try {
+            // THE FIX: We use a small timeout to allow the browser to 
+            // actually render the "0%" UI before the heavy math starts.
+            await new Promise(r => setTimeout(r, 100));
+
             this.ui.updateProgress(10, 'GENERATING TERRAIN');
             const texGrass = await TextureLab.generateGrassLayer(256, 256, () => this.ui.updateProgress(30, 'SYNTHESIZING BARK'));
             
+            await TextureLab.yieldThread(); // Force a break
             const texBark = await TextureLab.generateBark(128, 256, () => this.ui.updateProgress(45, 'POURING CONCRETE'));
             
+            await TextureLab.yieldThread(); // Force a break
             const texConcrete = await TextureLab.generateConcrete(256, 256, () => this.ui.updateProgress(60, 'GROWING FOLIAGE'));
             
+            await TextureLab.yieldThread(); // Force a break
             const texLeaves = await TextureLab.generateLeafPattern(128, 128, () => this.ui.updateProgress(75, 'WEAVING FUR'));
             
+            await TextureLab.yieldThread(); // Force a break
             const furGrey = await TextureLab.generateFurTexture(128, 128, [130, 130, 135], [90, 90, 95]);
-            this.ui.updateProgress(85, 'WEAVING FUR');
-            const furBrown = await TextureLab.generateFurTexture(128, 128, [160, 110, 70], [100, 60, 30]);
-            this.ui.updateProgress(95, 'WEAVING FUR');
-            const furRed = await TextureLab.generateFurTexture(128, 128, [190, 85, 40], [130, 45, 20]);
+            this.ui.updateProgress(85, 'DYEING GREY FUR');
             
+            await TextureLab.yieldThread(); // Force a break
+            const furBrown = await TextureLab.generateFurTexture(128, 128, [160, 110, 70], [100, 60, 30]);
+            this.ui.updateProgress(95, 'DYEING BROWN FUR');
+            
+            const furRed = await TextureLab.generateFurTexture(128, 128, [190, 85, 40], [130, 45, 20]);
             this.ui.updateProgress(100, 'ASSEMBLING WORLD');
 
             const mats = {
@@ -1804,7 +1814,7 @@ class GameEngine {
 
             const squirrelMats = { greyFur: furGrey, brownFur: furBrown, redFur: furRed };
 
-            // Give the browser a tick to paint the 100% bar before building massive 3D arrays
+            // Give the browser one last moment to show the 100% bar
             setTimeout(() => this.buildWorld(mats, squirrelMats), 100);
             
         } catch (e) {
