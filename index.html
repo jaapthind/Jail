@@ -1749,6 +1749,70 @@ class UIController {
 /* ==========================================================================
    MODULE 9: MASTER GAME ENGINE (ASYNC BOOTSTRAP)
    ========================================================================== */
+
+   /* ==========================================================================
+   MODULE 8.5: PLAYER CONTROLLER (MISSING LOGIC)
+   ========================================================================== */
+class PlayerController {
+    constructor(camera, scene) {
+        this.camera = camera;
+        this.rig = new HumanoidRig();
+        scene.add(this.rig);
+        
+        this.keys = {};
+        this.mouse = { x: 0, y: 0 };
+        this.phi = 0; 
+        this.theta = 0;
+        
+        this.currentSpeed = 0;
+        this.isSneaking = false;
+
+        document.addEventListener('keydown', (e) => this.keys[e.code] = true);
+        document.addEventListener('keyup', (e) => this.keys[e.code] = false);
+        document.addEventListener('mousemove', (e) => {
+            if (document.pointerLockElement) {
+                this.phi -= e.movementY * 0.002;
+                this.theta -= e.movementX * 0.002;
+                this.phi = Math.max(-Math.PI/3, Math.min(Math.PI/4, this.phi));
+            }
+        });
+    }
+
+    update(delta, bounds) {
+        const input = new THREE.Vector3();
+        if (this.keys['KeyW'] || this.keys['ArrowUp']) input.z -= 1;
+        if (this.keys['KeyS'] || this.keys['ArrowDown']) input.z += 1;
+        if (this.keys['KeyA'] || this.keys['ArrowLeft']) input.x -= 1;
+        if (this.keys['KeyD'] || this.keys['ArrowRight']) input.x += 1;
+
+        this.isSneaking = this.keys['ShiftLeft'] || this.keys['ShiftRight'];
+        let targetSpeed = input.length() > 0 ? (this.isSneaking ? 2.5 : 7.0) : 0;
+        this.currentSpeed = THREE.MathUtils.lerp(this.currentSpeed, targetSpeed, 0.1);
+
+        if (input.length() > 0) {
+            input.normalize();
+            const angle = Math.atan2(input.x, input.z) + this.theta;
+            this.rig.position.x += Math.sin(angle) * this.currentSpeed * delta;
+            this.rig.position.z += Math.cos(angle) * this.currentSpeed * delta;
+            this.rig.rotation.y = angle + Math.PI;
+        }
+
+        // Boundary Check
+        this.rig.position.x = Math.max(-bounds, Math.min(bounds, this.rig.position.x));
+        this.rig.position.z = Math.max(-bounds, Math.min(bounds, this.rig.position.z));
+        this.rig.position.y = PHYSICS.getGroundHeight(this.rig.position.x, this.rig.position.z);
+
+        this.rig.updateAnimation(delta, this.currentSpeed);
+
+        // Orbit Camera Logic
+        const idealOffset = new THREE.Vector3(0, 2.5, 6);
+        idealOffset.applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(this.phi, this.theta, 0)));
+        idealOffset.add(this.rig.position);
+        
+        this.camera.position.lerp(idealOffset, 0.1);
+        this.camera.lookAt(this.rig.position.x, this.rig.position.y + 1.5, this.rig.position.z);
+    }
+}
 class GameEngine {
     constructor() {
         this.ui = new UIController();
