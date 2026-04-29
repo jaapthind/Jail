@@ -3,52 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NEON JAIL: VIBRANT EXISTENCE - ULTIMATE EDITION</title>
+<title>SQUIRREL: REALISTIC PARK SIMULATOR</title>
 <style>
 /* ==========================================================================
-   NEON JAIL - CASCADING STYLE SHEETS
-   MODULE: CORE VARIABLES & RESET (VIBRANT NEON THEME)
+   SQUIRREL: REALISTIC PARK SIMULATOR - CASCADING STYLE SHEETS
    ========================================================================== */
 :root {
-    --bg-void: #02000a;
-    --bg-panel: rgba(10, 0, 25, 0.85);
-    --bg-panel-solid: #0f0020;
-    
-    --color-text-main: #00ffff;
-    --color-text-dim: #ff00ff;
-    --color-text-dark: #aa00aa;
-    
-    --color-alert-high: #ff003c;
-    --color-alert-med: #ffea00;
-    --color-safe: #00ff55;
-    --color-info: #00eaff;
-    
-    --border-thin: 1px solid rgba(0, 255, 255, 0.3);
-    --border-thick: 2px solid rgba(255, 0, 255, 0.5);
-    --border-alert: 1px solid var(--color-alert-high);
-    
-    --font-primary: 'Courier New', Courier, monospace;
-    --font-secondary: 'Lucida Console', Monaco, monospace;
-    
-    --space-xxs: 2px;
-    --space-xs: 4px;
-    --space-s: 8px;
-    --space-m: 16px;
-    --space-l: 24px;
-    --space-xl: 32px;
-    --space-xxl: 64px;
-    --space-max: 128px;
-    
-    --z-canvas: 0;
-    --z-crt: 10;
-    --z-vignette: 20;
-    --z-noise: 30;
-    --z-hud-base: 40;
-    --z-hud-top: 50;
-    --z-subtitles: 60;
-    --z-fade: 70;
-    --z-menus: 100;
-    --z-debug: 999;
+    --ui-primary: rgba(240, 245, 240, 0.9);
+    --ui-bg: rgba(20, 25, 20, 0.75);
+    --ui-border: rgba(100, 150, 100, 0.5);
+    --ui-accent: #4caf50;
+    --ui-accent-glow: #81c784;
+    --ui-warn: #ff9800;
+    --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-display: 'Impact', sans-serif;
 }
 
 *, *::before, *::after {
@@ -61,558 +29,285 @@ html, body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    background-color: var(--bg-void);
-    font-family: var(--font-primary);
-    color: var(--color-text-main);
+    background-color: #000;
+    font-family: var(--font-main);
+    color: var(--ui-primary);
     user-select: none;
     -webkit-user-select: none;
-    -moz-user-select: none;
-    cursor: default;
     touch-action: none;
 }
 
-/* ==========================================================================
-   MODULE: CANVAS & RENDER TARGET
-   ========================================================================== */
 #game-canvas {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: var(--z-canvas);
-    outline: none;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
     display: block;
-    background-color: var(--bg-void);
 }
 
-/* ==========================================================================
-   MODULE: POST-PROCESSING PIPELINE (CSS)
-   ========================================================================== */
-.fx-layer {
-    position: fixed;
+/* --- MENU OVERLAYS --- */
+#main-menu {
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-#fx-crt {
-    z-index: var(--z-crt);
-    background: linear-gradient(rgba(18, 16, 25, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 128, 0.06), rgba(0, 255, 255, 0.04), rgba(255, 255, 0, 0.06));
-    background-size: 100% 3px, 6px 100%;
-    opacity: 0.8;
-    mix-blend-mode: overlay;
-}
-
-#fx-vignette {
-    z-index: var(--z-vignette);
-    background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(20,0,30,0.8) 150%);
-    box-shadow: inset 0 0 150px rgba(255,0,255,0.1);
-}
-
-#fx-noise {
-    z-index: var(--z-noise);
-    opacity: 0.1;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    mix-blend-mode: color-dodge;
-}
-
-#fx-flicker {
-    z-index: var(--z-crt);
-    background-color: rgba(0,255,255,0.02);
-    animation: crtFlicker 0.12s infinite;
-}
-
-#fx-fade {
-    z-index: var(--z-fade);
-    background-color: var(--bg-void);
-    opacity: 1;
-    transition: opacity 1.5s cubic-bezier(0.1, 0.7, 0.1, 1);
-}
-
-/* ==========================================================================
-   MODULE: MAIN MENU & INITIALIZATION
-   ========================================================================== */
-#menu-layer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: var(--z-menus);
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+    background: radial-gradient(circle, rgba(30,40,30,0.8) 0%, rgba(10,15,10,0.95) 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(5, 0, 15, 0.95);
-    backdrop-filter: blur(12px);
-    transition: opacity 1s ease-in-out;
+    backdrop-filter: blur(8px);
+    transition: opacity 1s ease;
 }
 
-.terminal-box {
-    width: 900px;
-    max-width: 95vw;
-    background-color: var(--bg-panel);
-    border: var(--border-thick);
-    padding: var(--space-xxl);
-    box-shadow: 0 0 60px rgba(255,0,255,0.4), inset 0 0 30px rgba(0,255,255,0.2);
-    position: relative;
-    overflow: hidden;
-}
-
-.terminal-box::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, rgba(0,255,255,0.8), transparent);
-    animation: scanlineMenu 3s linear infinite;
+.title-container {
+    text-align: center;
+    margin-bottom: 50px;
 }
 
 .game-title {
-    font-size: 84px;
-    font-weight: 900;
-    letter-spacing: 32px;
+    font-family: var(--font-display);
+    font-size: 100px;
     color: #fff;
-    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #ff00ff, 0 0 80px #ff00ff;
-    text-align: center;
-    margin-bottom: var(--space-s);
-    animation: titlePulse 3s infinite alternate;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 40px rgba(100,200,100,0.4);
+    letter-spacing: 15px;
+    margin-bottom: 10px;
 }
 
 .game-subtitle {
     font-size: 20px;
-    color: var(--color-safe);
-    letter-spacing: 12px;
-    text-align: center;
-    margin-bottom: var(--space-xxl);
+    letter-spacing: 5px;
+    color: #aaa;
     text-transform: uppercase;
-    text-shadow: 0 0 10px var(--color-safe);
 }
 
-.sys-info-grid {
+.instructions {
+    background: var(--ui-bg);
+    border: 1px solid var(--ui-border);
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 600px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.instructions h3 {
+    color: var(--ui-accent);
+    margin-bottom: 15px;
+    font-size: 24px;
+    border-bottom: 1px solid var(--ui-border);
+    padding-bottom: 5px;
+}
+
+.controls-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-l);
-    margin-bottom: var(--space-xl);
-    border-bottom: 2px dashed var(--color-text-dim);
-    padding-bottom: var(--space-xl);
-}
-
-.sys-info-item {
+    grid-template-columns: auto 1fr;
+    gap: 15px 30px;
     font-size: 16px;
-    color: var(--color-text-main);
-    display: flex;
-    justify-content: space-between;
-}
-
-.sys-info-item span.lbl { color: var(--color-text-dim); }
-.sys-info-item span.val { color: #fff; font-weight: bold; text-shadow: 0 0 5px #fff; }
-
-.controls-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-m);
-    margin-bottom: var(--space-xxl);
-}
-
-.control-row {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: var(--space-l);
-    align-items: center;
 }
 
 .ctrl-key {
-    background-color: #200040;
-    border: 1px solid #ff00ff;
-    color: #00ffff;
-    padding: var(--space-s) var(--space-m);
-    text-align: center;
-    font-weight: bold;
+    background: #333;
+    padding: 5px 15px;
     border-radius: 4px;
-    box-shadow: 0 4px 0 #880088, 0 0 15px rgba(0,255,255,0.5);
-    letter-spacing: 2px;
-    text-shadow: 0 0 5px #00ffff;
+    border-bottom: 3px solid #111;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    font-family: monospace;
 }
 
 .ctrl-desc {
-    color: #e0e0e0;
-    line-height: 1.5;
-    font-size: 16px;
-    text-shadow: 0 0 3px rgba(255,255,255,0.5);
-}
-.ctrl-desc span {
-    display: block;
-    color: var(--color-text-dim);
-    font-size: 13px;
-    margin-top: var(--space-xxs);
+    display: flex;
+    align-items: center;
+    color: #ddd;
 }
 
-.action-container {
-    text-align: center;
-    min-height: 80px;
-}
-
-#btn-init {
-    display: none;
-    background-color: rgba(255,0,255,0.1);
-    border: 2px solid #00ffff;
+#start-btn {
+    background: var(--ui-accent);
     color: #fff;
-    font-family: var(--font-primary);
-    font-size: 26px;
+    border: none;
+    padding: 15px 50px;
+    font-size: 24px;
     font-weight: bold;
-    letter-spacing: 8px;
-    padding: var(--space-m) var(--space-xl);
+    border-radius: 30px;
     cursor: pointer;
-    transition: all 0.2s ease;
     text-transform: uppercase;
-    box-shadow: 0 0 20px rgba(0,255,255,0.4), inset 0 0 10px rgba(0,255,255,0.2);
-    text-shadow: 0 0 8px #00ffff;
-    border-radius: 4px;
+    letter-spacing: 2px;
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+    transition: all 0.2s ease;
 }
 
-#btn-init:hover {
-    background-color: #00ffff;
-    color: #000;
-    border-color: #fff;
-    box-shadow: 0 0 40px #00ffff, 0 0 20px #ff00ff;
-    text-shadow: none;
+#start-btn:hover {
+    background: var(--ui-accent-glow);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
 }
 
-#loading-seq {
+#start-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 5px rgba(76, 175, 80, 0.4);
+}
+
+#loading-text {
     font-size: 20px;
-    color: var(--color-alert-med);
+    color: var(--ui-accent);
     letter-spacing: 4px;
-    animation: btnBlink 0.5s infinite;
-    text-shadow: 0 0 10px var(--color-alert-med);
+    animation: pulse 1s infinite alternate;
 }
 
-/* ==========================================================================
-   MODULE: IN-GAME HEADS UP DISPLAY (HUD)
-   ========================================================================== */
-#hud-layer {
-    position: fixed;
+/* --- IN-GAME HUD --- */
+#hud {
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: var(--z-hud-base);
+    width: 100vw;
+    height: 100vh;
+    z-index: 50;
     pointer-events: none;
     display: none;
 }
 
-.hud-group {
+.hud-panel {
     position: absolute;
-    background-color: rgba(10,0,20,0.6);
-    border: var(--border-thin);
-    padding: var(--space-m);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 20px rgba(0,255,255,0.1);
+    background: var(--ui-bg);
+    border: 1px solid var(--ui-border);
+    border-radius: 8px;
+    padding: 20px;
+    backdrop-filter: blur(4px);
 }
 
-/* Top Left: Time & Phase */
-#hud-tl {
-    top: var(--space-l);
-    left: var(--space-l);
-    border-left: 4px solid var(--color-info);
-    border-radius: 0 10px 10px 0;
-    min-width: 300px;
-}
-
-.hud-data-row {
-    margin-bottom: var(--space-m);
-}
-.hud-data-row:last-child { margin-bottom: 0; }
-
-.data-lbl {
-    font-size: 12px;
-    color: var(--color-text-dim);
-    letter-spacing: 3px;
-    margin-bottom: var(--space-xxs);
-    text-transform: uppercase;
-}
-
-.data-val {
-    font-size: 32px;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px var(--color-info), 0 0 20px var(--color-info);
-}
-
-#val-time { color: var(--color-safe); font-size: 24px; text-shadow: 0 0 10px var(--color-safe); }
-#val-state { font-size: 24px; transition: color 0.5s ease, text-shadow 0.5s ease; }
-
-.state-LOCKDOWN { color: #ff00ff !important; text-shadow: 0 0 15px #ff00ff !important; }
-.state-MEAL { color: #ffff00 !important; text-shadow: 0 0 15px #ffff00 !important; }
-.state-YARD { color: #00ff00 !important; text-shadow: 0 0 15px #00ff00 !important; }
-.state-SLEEP { color: #0000ff !important; text-shadow: 0 0 15px #0000ff !important; }
-
-/* Top Right: Biological Metrics */
-#hud-tr {
-    top: var(--space-l);
-    right: var(--space-l);
+#trust-panel {
+    top: 30px;
+    left: 30px;
     width: 350px;
-    border-right: 4px solid var(--color-text-dim);
-    border-radius: 10px 0 0 10px;
 }
 
-.metric-block {
-    margin-bottom: var(--space-m);
-    background-color: rgba(0,0,0,0.8);
-    padding: var(--space-s);
-    border: 1px solid rgba(255,0,255,0.3);
-    border-radius: 4px;
-}
-.metric-block:last-child { margin-bottom: 0; }
-
-.metric-hdr {
+.hud-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #aaa;
+    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
-    margin-bottom: var(--space-xs);
-    font-size: 12px;
-    letter-spacing: 2px;
 }
-.metric-hdr span.title { color: var(--color-text-main); text-shadow: 0 0 5px var(--color-text-main); }
-.metric-hdr span.pct { color: #fff; font-family: var(--font-secondary); text-shadow: 0 0 5px #fff; }
 
-.metric-track {
+.progress-bg {
     width: 100%;
-    height: 14px;
-    background-color: #110022;
-    border: 1px solid #440088;
-    position: relative;
+    height: 12px;
+    background: #222;
+    border-radius: 6px;
     overflow: hidden;
-    border-radius: 2px;
+    border: 1px solid #444;
 }
 
-.metric-fill {
+#trust-bar {
+    width: 0%;
     height: 100%;
-    background-color: #ffffff;
-    transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.5s ease;
-    box-shadow: 0 0 10px #ffffff;
+    background: linear-gradient(90deg, #ff9800, #4caf50);
+    transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
 }
 
-#fill-sanity { background-color: #00ffff; box-shadow: 0 0 15px #00ffff; }
-#fill-nutrition { background-color: #ff00ff; box-shadow: 0 0 15px #ff00ff; }
-#fill-stamina { background-color: #ffff00; box-shadow: 0 0 15px #ffff00; }
+#inventory-panel {
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-.status-warning { background-color: var(--color-alert-med) !important; animation: warnPulse 0.5s infinite alternate; box-shadow: 0 0 20px var(--color-alert-med) !important; }
-.status-critical { background-color: var(--color-alert-high) !important; animation: critFlicker 0.05s infinite; box-shadow: 0 0 30px var(--color-alert-high) !important; }
-
-/* Center: Crosshair */
-#crosshair-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.inv-icon {
     width: 50px;
     height: 50px;
-    pointer-events: none;
-    z-index: var(--z-hud-top);
+    background: #333;
+    border-radius: 8px;
+    border: 2px solid var(--ui-accent);
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.crosshair-dot {
-    width: 6px;
-    height: 6px;
-    background-color: rgba(0, 255, 255, 0.8);
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    box-shadow: 0 0 10px #00ffff;
-}
-
-.crosshair-ring {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255, 0, 255, 0);
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-#crosshair-container.active .crosshair-dot {
-    background-color: #ff00ff;
-    box-shadow: 0 0 15px #ff00ff;
-    transform: scale(0.5);
-}
-#crosshair-container.active .crosshair-ring {
-    border-color: rgba(0, 255, 255, 1);
-    width: 32px;
-    height: 32px;
-    box-shadow: 0 0 15px #00ffff, inset 0 0 15px #00ffff;
-    animation: rotateRing 2s linear infinite;
-}
-
-/* Bottom Center: Interaction Prompt */
-#interaction-prompt {
-    position: fixed;
-    bottom: var(--space-max);
-    left: 50%;
-    transform: translateX(-50%) translateY(30px);
-    background-color: rgba(20,0,40,0.9);
-    border: 2px solid #00ffff;
-    padding: var(--space-m) var(--space-xl);
-    opacity: 0;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: flex;
-    align-items: center;
-    gap: var(--space-l);
-    box-shadow: 0 0 30px rgba(0,255,255,0.4);
-    border-radius: 8px;
-}
-
-#interaction-prompt.visible {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-}
-
-.prompt-key {
-    background-color: #00ffff;
-    color: #000;
-    padding: var(--space-s) var(--space-m);
-    border-radius: 4px;
-    font-weight: 900;
     font-size: 24px;
-    box-shadow: 0 0 15px #00ffff;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
 }
 
-.prompt-text-group {
+.inv-details {
     display: flex;
     flex-direction: column;
 }
 
-.prompt-action {
-    color: #fff;
-    font-size: 20px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+.inv-name {
     font-weight: bold;
-    text-shadow: 0 0 10px #ff00ff;
+    font-size: 18px;
+    color: #fff;
 }
 
-.prompt-desc {
-    color: #00ffff;
+.inv-count {
+    color: #aaa;
     font-size: 14px;
-    margin-top: 4px;
-    text-shadow: 0 0 5px #00ffff;
 }
 
-/* Subtitles / Internal Monologue */
-#subtitle-box {
-    position: fixed;
-    bottom: var(--space-xl);
+#notification-area {
+    position: absolute;
+    top: 100px;
     left: 50%;
     transform: translateX(-50%);
-    width: 80%;
-    max-width: 900px;
-    text-align: center;
-    z-index: var(--z-subtitles);
-    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
-.subtitle-text {
-    display: inline-block;
-    background-color: rgba(0, 0, 0, 0.85);
-    color: #ffffff;
-    font-size: 24px;
-    padding: var(--space-m) var(--space-l);
-    border-left: 4px solid #fff;
-    border-right: 4px solid #fff;
+.notification {
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid var(--ui-accent);
+    font-size: 16px;
+    letter-spacing: 1px;
     opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    text-shadow: 0 0 10px #fff;
-    letter-spacing: 2px;
-    transform: translateY(20px);
-    border-radius: 4px;
-    box-shadow: 0 0 30px rgba(255,0,255,0.5);
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
 }
-.subtitle-text.show { 
-    opacity: 1; 
+
+.notification.show {
+    opacity: 1;
     transform: translateY(0);
 }
 
-.subtitle-thought {
-    border-color: #00ffff;
-    color: #ccffff;
-    font-style: italic;
-    text-shadow: 0 0 15px #00ffff;
-    box-shadow: 0 0 30px rgba(0,255,255,0.4);
+#crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
 }
 
-.subtitle-system {
-    border-color: #ff003c;
-    color: #ffcccc;
-    font-family: var(--font-secondary);
-    text-shadow: 0 0 15px #ff003c;
-    box-shadow: 0 0 30px rgba(255,0,60,0.5);
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
 }
 
-/* ==========================================================================
-   MODULE: EXTREME BODY GLITCH & INSANITY MODIFIERS
-   ========================================================================== */
-body.insanity-tier-1 { animation: minorGlitch 3s infinite; filter: saturate(1.5) contrast(1.2) hue-rotate(15deg); }
-body.insanity-tier-2 { animation: majorGlitch 1s infinite; filter: saturate(2.0) contrast(1.5) hue-rotate(-30deg); }
-body.insanity-tier-3 { animation: severeGlitch 0.1s infinite; filter: saturate(3.0) contrast(2.0) invert(0.1) hue-rotate(90deg); }
-
-/* ==========================================================================
-   MODULE: KEYFRAME ANIMATIONS
-   ========================================================================== */
-@keyframes crtFlicker { 0% { opacity: 0.02; } 50% { opacity: 0.05; } 100% { opacity: 0.02; } }
-@keyframes scanlineMenu { 0% { top: -10%; } 100% { top: 110%; } }
-@keyframes titlePulse { 0% { opacity: 0.9; transform: scale(1); } 100% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 80px #ff00ff, 0 0 120px #ff00ff; } }
-@keyframes btnBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-@keyframes warnPulse { 0% { background-color: #886600; box-shadow: 0 0 10px #ffaa00; } 100% { background-color: #ffea00; box-shadow: 0 0 30px #ffea00; } }
-@keyframes critFlicker { 0%, 100% { opacity: 1; transform: translateX(-2px); } 50% { opacity: 0.2; transform: translateX(2px); } }
-@keyframes rotateRing { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
-
-/* Glitch Kernels */
-@keyframes minorGlitch {
-    0%, 96% { transform: translate(0,0); }
-    97% { transform: translate(3px, -2px); filter: hue-rotate(45deg); }
-    98% { transform: translate(-3px, 2px); filter: hue-rotate(-45deg); }
-    100% { transform: translate(0, 0); filter: none; }
-}
-@keyframes majorGlitch {
-    0%, 90% { transform: translate(0,0); }
-    91% { transform: translate(8px, 4px) skewX(5deg); filter: invert(0.2); }
-    93% { transform: translate(-8px, -4px) skewX(-5deg); filter: hue-rotate(-90deg); }
-    95% { transform: translate(0,0); filter: none; }
-}
-@keyframes severeGlitch {
-    0% { transform: translate(10px, 5px) skewX(10deg); filter: hue-rotate(180deg) invert(0.3); }
-    20% { transform: translate(-10px, -5px) skewX(-10deg); filter: hue-rotate(-180deg); }
-    40% { transform: translate(5px, 10px) skewX(5deg); filter: hue-rotate(90deg); }
-    60% { transform: translate(-5px, -10px) skewX(-5deg); filter: invert(0.6); }
-    80% { transform: translate(10px, -10px) skewX(8deg); filter: none; }
-    100% { transform: translate(0, 0) skewX(0); filter: none; }
-}
-
-/* ==========================================================================
-   MODULE: DEBUG / PERFORMANCE
-   ========================================================================== */
-#debug-panel {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    font-size: 12px;
-    color: #00ff00;
-    z-index: var(--z-debug);
-    font-family: var(--font-secondary);
+#fade-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 200;
     pointer-events: none;
-    background: rgba(0,0,0,0.8);
-    padding: 5px 10px;
-    border: 1px solid #00ff00;
-    box-shadow: 0 0 10px #00ff00;
-    text-shadow: 0 0 5px #00ff00;
+    opacity: 0;
+    transition: opacity 2s ease;
 }
 </style>
 </head>
@@ -620,1547 +315,1272 @@ body.insanity-tier-3 { animation: severeGlitch 0.1s infinite; filter: saturate(3
 
 <canvas id="game-canvas"></canvas>
 
-<div class="fx-layer" id="fx-crt"></div>
-<div class="fx-layer" id="fx-vignette"></div>
-<div class="fx-layer" id="fx-noise"></div>
-<div class="fx-layer" id="fx-flicker"></div>
-<div class="fx-layer" id="fx-fade"></div>
+<div id="fade-overlay"></div>
 
-<div id="hud-layer">
-    <div class="hud-group" id="hud-tl">
-        <div class="hud-data-row">
-            <div class="data-lbl">CONFINEMENT DURATION</div>
-            <div class="data-val" id="val-day">DAY 0001</div>
+<div id="hud">
+    <div id="crosshair"></div>
+    
+    <div class="hud-panel" id="trust-panel">
+        <div class="hud-title">
+            <span>Squirrel Trust Level</span>
+            <span id="trust-pct">0%</span>
         </div>
-        <div class="hud-data-row">
-            <div class="data-lbl">LOCAL CYCLE</div>
-            <div class="data-val" id="val-time">06:00 AM</div>
+        <div class="progress-bg">
+            <div id="trust-bar"></div>
         </div>
-        <div class="hud-data-row">
-            <div class="data-lbl">CURRENT PROTOCOL</div>
-            <div class="data-val state-LOCKDOWN" id="val-state">LOCKDOWN</div>
+        <div style="font-size: 12px; color: #888; margin-top: 8px;" id="squirrel-state-txt">STATE: WANDERING</div>
+    </div>
+
+    <div class="hud-panel" id="inventory-panel">
+        <div class="inv-icon">🥜</div>
+        <div class="inv-details">
+            <span class="inv-name">Premium Peanuts</span>
+            <span class="inv-count">Infinite Supply</span>
         </div>
     </div>
 
-    <div class="hud-group" id="hud-tr">
-        <div class="metric-block">
-            <div class="metric-hdr"><span class="title">NEURAL STABILITY</span><span class="pct" id="pct-sanity">100%</span></div>
-            <div class="metric-track"><div class="metric-fill" id="fill-sanity" style="width: 100%;"></div></div>
-        </div>
-        <div class="metric-block">
-            <div class="metric-hdr"><span class="title">CALORIC RESERVES</span><span class="pct" id="pct-nutrition">100%</span></div>
-            <div class="metric-track"><div class="metric-fill" id="fill-nutrition" style="width: 100%;"></div></div>
-        </div>
-        <div class="metric-block" style="opacity: 0.7;">
-            <div class="metric-hdr"><span class="title">PHYSICAL STAMINA</span><span class="pct" id="pct-stamina">100%</span></div>
-            <div class="metric-track"><div class="metric-fill" id="fill-stamina" style="width: 100%;"></div></div>
-        </div>
-    </div>
-
-    <div id="crosshair-container">
-        <div class="crosshair-ring"></div>
-        <div class="crosshair-dot"></div>
-    </div>
-
-    <div id="interaction-prompt">
-        <div class="prompt-key">[E]</div>
-        <div class="prompt-text-group">
-            <div class="prompt-action" id="prompt-action">EXAMINE</div>
-            <div class="prompt-desc" id="prompt-desc">Investigate anomalies.</div>
-        </div>
-    </div>
-
-    <div id="subtitle-box">
-        <div class="subtitle-text" id="subtitle-element">...</div>
-    </div>
+    <div id="notification-area"></div>
 </div>
 
-<div id="menu-layer">
-    <div class="terminal-box">
-        <div class="game-title">N E O N &nbsp; J A I L</div>
-        <div class="game-subtitle">VIBRANT EXISTENCE // BUILD 10.0.0</div>
-        
-        <div class="sys-info-grid">
-            <div class="sys-info-item"><span class="lbl">HOST OS:</span><span class="val">SYNTH_SYS_VX</span></div>
-            <div class="sys-info-item"><span class="lbl">BLOCK:</span><span class="val">CHROMA_UNIT_9</span></div>
-            <div class="sys-info-item"><span class="lbl">SUBJECT ID:</span><span class="val">#777-NEON</span></div>
-            <div class="sys-info-item"><span class="lbl">TERM:</span><span class="val">ETERNAL_LOOP</span></div>
-            <div class="sys-info-item"><span class="lbl">SENSORY OVERLOAD:</span><span class="val">ACTIVE</span></div>
-            <div class="sys-info-item"><span class="lbl">GRAVITY:</span><span class="val">9.81 m/s²</span></div>
-        </div>
+<div id="main-menu">
+    <div class="title-container">
+        <div class="game-title">SQUIRREL</div>
+        <div class="game-subtitle">Realistic Park Simulator</div>
+    </div>
 
-        <div class="controls-wrapper">
-            <div class="control-row">
-                <div class="ctrl-key">W A S D</div>
-                <div class="ctrl-desc">AMBULATE<span>Navigate the hyper-grid. Movement drains neon stamina.</span></div>
-            </div>
-            <div class="control-row">
-                <div class="ctrl-key">MOUSE</div>
-                <div class="ctrl-desc">OBSERVE<span>Head tracking active. Gaze into the void.</span></div>
-            </div>
-            <div class="control-row">
-                <div class="ctrl-key">E</div>
-                <div class="ctrl-desc">INTERACT / CONSUME<span>Engage with anomalies. Ingest synthetic sustenance.</span></div>
-            </div>
-        </div>
-
-        <div class="action-container">
-            <div id="loading-seq">COMPILING SYNTHETIC PATHWAYS... PLEASE WAIT</div>
-            <button id="btn-init">INITIALIZE SEQUENCE</button>
+    <div class="instructions">
+        <h3>HOW TO PLAY</h3>
+        <p style="margin-bottom: 20px; color: #ccc; line-height: 1.5;">
+            Explore the park, locate the local squirrel, and earn its trust. Approach slowly. Sudden movements will frighten it. Feed it peanuts to build a bond.
+        </p>
+        <div class="controls-grid">
+            <div class="ctrl-key">W A S D</div>
+            <div class="ctrl-desc">Move Character</div>
+            
+            <div class="ctrl-key">MOUSE</div>
+            <div class="ctrl-desc">Look Around (3rd Person Camera)</div>
+            
+            <div class="ctrl-key">LEFT CLICK</div>
+            <div class="ctrl-desc">Toss Peanut</div>
+            
+            <div class="ctrl-key">SHIFT</div>
+            <div class="ctrl-desc">Walk Slowly (Sneak)</div>
         </div>
     </div>
-</div>
 
-<div id="debug-panel">FPS: 00 | POS: 0.00, 0.00, 0.00 | DIR: 0.00, 0.00</div>
+    <div id="loading-text">GENERATING PROCEDURAL PARK...</div>
+    <button id="start-btn" style="display: none;">ENTER PARK</button>
+</div>
 
 <script type="importmap">
 {
     "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-        "@tweenjs/tween.js": "https://unpkg.com/@tweenjs/tween.js@23.1.1/dist/tween.esm.js"
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
     }
 }
 </script>
 
 <script type="module">
 import * as THREE from 'three';
-import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
-import * as TWEEN from '@tweenjs/tween.js';
 
 /* ==========================================================================
-   MODULE 1: CORE CONFIGURATION & CONSTANTS
+   MODULE 1: MATH & NOISE UTILITIES
+   Implementation of Simplex Noise for procedural texture generation
    ========================================================================== */
-const CONFIG = {
-    ENGINE: {
-        TICK_RATE: 1/60,
-        RENDER_SCALE: 1.0,
-        DEBUG_MODE: true
-    },
-    TIME: {
-        REAL_SEC_PER_GAME_HOUR: 10.0, // 10 seconds real time = 1 hour game time. Faster pace for vibrant version.
-        WAKE_HOUR: 6.0,
-        MEAL_HOUR_1: 12.0,
-        MEAL_HOUR_2: 18.0,
-        SLEEP_HOUR: 22.0,
-        REC_INTERVAL_DAYS: 3,
-        REC_DURATION_HOURS: 2.0
-    },
-    PHYSICS: {
-        GRAVITY: 9.81,
-        MASS: 80.0,
-        PLAYER_HEIGHT: 1.75,
-        PLAYER_RADIUS: 0.35,
-        WALK_SPEED: 2.2, // Slightly faster for responsive feel
-        RUN_SPEED: 4.0,
-        DECELERATION: 15.0,
-        HEAD_BOB_FREQ: 5.0,
-        HEAD_BOB_AMP: 0.04,
-        BREATH_FREQ: 2.0,
-        BREATH_AMP: 0.01
-    },
-    STATS: {
-        MAX_SANITY: 100.0,
-        MAX_NUTRI: 100.0,
-        MAX_STAMINA: 100.0,
-        SANITY_DECAY_BASE: 1.2, 
-        NUTRI_DECAY_BASE: 2.0,
-        STAMINA_REGEN: 25.0,    
-        STAMINA_DRAIN: 20.0,
-        STARVATION_MULTIPLIER: 4.0,
-        SLEEP_RESTORE: 15.0
-    },
-    WORLD: {
-        CELL_WIDTH: 3.6,
-        CELL_LENGTH: 5.0,
-        CELL_HEIGHT: 3.0,
-        WALL_THICKNESS: 0.5,
-        HALL_WIDTH: 3.2,
-        HALL_LENGTH: 40.0,
-        HALL_HEIGHT: 3.5,
-        BAR_SPACING: 0.3,
-        BAR_RADIUS: 0.04
-    }
-};
-
-/* ==========================================================================
-   MODULE 2: EXTENSIVE DATA ARRAYS (CONTENT INJECTION)
-   ========================================================================== */
-const FOOD_DATABASE = [
-    { d:1, t:'CUBE', c:0x00ffff, h:20, s:10, m:"A glowing cyan cube. Tastes like ozone.", n:"Synthetic Ration A" },
-    { d:2, t:'SPHERE', c:0xff00ff, h:25, s:15, m:"Pulsing magenta sphere. Warm and sweet.", n:"Energy Orb" },
-    { d:3, t:'PYRAMID', c:0xffff00, h:30, s:-5, m:"Sharp yellow pyramid. Burns going down.", n:"Acidic Construct" },
-    { d:4, t:'CYLINDER', c:0x00ff00, h:15, s:20, m:"Lime green cylinder. Extremely refreshing.", n:"Bio-Tube" },
-    { d:5, t:'SLUDGE', c:0xaa00ff, h:20, s:0, m:"Violet glowing paste. Viscous.", n:"Nebula Paste" },
-    { d:6, t:'CUBE', c:0xffffff, h:10, s:25, m:"Pure white cube. Tastes like nothing, feels like everything.", n:"Null Block" },
-    { d:7, t:'SPHERE', c:0xff0000, h:25, s:-10, m:"Deep red orb. Smells of copper and iron.", n:"Iron Core" },
-    { d:8, t:'TORUS', c:0x0088ff, h:35, s:5, m:"Blue glowing ring. Chewy texture.", n:"Hydro-Ring" },
-    { d:9, t:'PILLS', c:0x00ffff, h:5, s:50, m:"Two cyan capsules. The grid lines stop moving.", n:"Stabilizers" },
-    { d:10, t:'PYRAMID', c:0xff8800, h:25, s:-15, m:"Orange spike. Tastes like battery acid.", n:"Corrupted Data" }
-];
-// Procedural fill up to 100 days
-const shapes = ['CUBE', 'SPHERE', 'PYRAMID', 'CYLINDER', 'TORUS', 'SLUDGE'];
-const colors = [0x00ffff, 0xff00ff, 0xffff00, 0x00ff00, 0xff0000, 0x0000ff, 0xff8800, 0x00ff88];
-for(let i=11; i<=100; i++) {
-    const shape = shapes[Math.floor(Math.random()*shapes.length)];
-    const color = colors[Math.floor(Math.random()*colors.length)];
-    FOOD_DATABASE.push({
-        d: i,
-        t: shape,
-        c: color,
-        h: Math.floor(Math.random()*25) + 5,
-        s: Math.floor(Math.random()*40) - 20,
-        m: `A mysterious ${shape.toLowerCase()} emitting strange frequencies.`,
-        n: `Construct #${i}`
-    });
-}
-
-const THOUGHT_DATABASE = [
-    "The neon lights are whispering to me.",
-    "Are the walls made of light or concrete?",
-    "I saw a glitch in the door frame.",
-    "My hands leave glowing trails in the air.",
-    "Is this reality, or a simulation of a simulation?",
-    "The colors are too loud today.",
-    "I must count the grid lines. 1, 2, 3...",
-    "If I stare at the magenta long enough, it turns green.",
-    "The synthetic guard has no face, only a visor.",
-    "I crave the geometry of the outside world.",
-    "There is a pattern in the static.",
-    "My heartbeat syncs with the bass hum of the station.",
-    "I am just a node in this infinite matrix."
-];
-
-/* ==========================================================================
-   MODULE 3: COMPLEX MATH & NOISE GENERATION
-   ========================================================================== */
-class PRNG {
-    constructor(seed) { this.m = 0x80000000; this.a = 1103515245; this.c = 12345; this.state = seed ? seed : Math.floor(Math.random() * (this.m - 1)); }
-    nextInt() { this.state = (this.a * this.state + this.c) % this.m; return this.state; }
-    nextFloat() { return this.nextInt() / (this.m - 1); }
-}
-
 class SimplexNoise {
-    constructor(seed=1) {
+    constructor() {
         this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
-        this.p = []; for (let i=0; i<256; i++) this.p[i] = Math.floor(Math.random()*256);
-        this.perm = []; for(let i=0; i<512; i++) this.perm[i] = this.p[i & 255];
+        this.p = [];
+        for (let i=0; i<256; i++) this.p[i] = Math.floor(Math.random()*256);
+        this.perm = [];
+        for(let i=0; i<512; i++) this.perm[i] = this.p[i & 255];
     }
     dot(g, x, y) { return g[0]*x + g[1]*y; }
     noise2D(xin, yin) {
-        let n0, n1, n2; const F2 = 0.5*(Math.sqrt(3.0)-1.0), G2 = (3.0-Math.sqrt(3.0))/6.0;
-        let s = (xin+yin)*F2, i = Math.floor(xin+s), j = Math.floor(yin+s);
-        let t = (i+j)*G2, X0 = i-t, Y0 = j-t, x0 = xin-X0, y0 = yin-Y0;
-        let i1, j1; if(x0>y0) {i1=1; j1=0;} else {i1=0; j1=1;}
-        let x1 = x0 - i1 + G2, y1 = y0 - j1 + G2, x2 = x0 - 1.0 + 2.0 * G2, y2 = y0 - 1.0 + 2.0 * G2;
-        let ii = i & 255, jj = j & 255;
-        let gi0 = this.perm[ii+this.perm[jj]] % 12, gi1 = this.perm[ii+i1+this.perm[jj+j1]] % 12, gi2 = this.perm[ii+1+this.perm[jj+1]] % 12;
-        let t0 = 0.5 - x0*x0-y0*y0; if(t0<0) n0 = 0.0; else { t0 *= t0; n0 = t0 * t0 * this.dot(this.grad3[gi0], x0, y0); }
-        let t1 = 0.5 - x1*x1-y1*y1; if(t1<0) n1 = 0.0; else { t1 *= t1; n1 = t1 * t1 * this.dot(this.grad3[gi1], x1, y1); }
-        let t2 = 0.5 - x2*x2-y2*y2; if(t2<0) n2 = 0.0; else { t2 *= t2; n2 = t2 * t2 * this.dot(this.grad3[gi2], x2, y2); }
+        let n0, n1, n2; 
+        const F2 = 0.5*(Math.sqrt(3.0)-1.0);
+        const G2 = (3.0-Math.sqrt(3.0))/6.0;
+        let s = (xin+yin)*F2;
+        let i = Math.floor(xin+s);
+        let j = Math.floor(yin+s);
+        let t = (i+j)*G2;
+        let X0 = i-t;
+        let Y0 = j-t;
+        let x0 = xin-X0;
+        let y0 = yin-Y0;
+        let i1, j1;
+        if(x0>y0) {i1=1; j1=0;} else {i1=0; j1=1;}
+        let x1 = x0 - i1 + G2;
+        let y1 = y0 - j1 + G2;
+        let x2 = x0 - 1.0 + 2.0 * G2;
+        let y2 = y0 - 1.0 + 2.0 * G2;
+        let ii = i & 255;
+        let jj = j & 255;
+        let gi0 = this.perm[ii+this.perm[jj]] % 12;
+        let gi1 = this.perm[ii+i1+this.perm[jj+j1]] % 12;
+        let gi2 = this.perm[ii+1+this.perm[jj+1]] % 12;
+        let t0 = 0.5 - x0*x0-y0*y0;
+        if(t0<0) n0 = 0.0; else { t0 *= t0; n0 = t0 * t0 * this.dot(this.grad3[gi0], x0, y0); }
+        let t1 = 0.5 - x1*x1-y1*y1;
+        if(t1<0) n1 = 0.0; else { t1 *= t1; n1 = t1 * t1 * this.dot(this.grad3[gi1], x1, y1); }
+        let t2 = 0.5 - x2*x2-y2*y2;
+        if(t2<0) n2 = 0.0; else { t2 *= t2; n2 = t2 * t2 * this.dot(this.grad3[gi2], x2, y2); }
         return 70.0 * (n0 + n1 + n2);
     }
 }
-
 const SN = new SimplexNoise();
 
 /* ==========================================================================
-   MODULE 4: PROCEDURAL TEXTURE SYNTHESIS (VIBRANT CYBERPUNK)
+   MODULE 2: PROCEDURAL TEXTURE GENERATION
+   Creates highly realistic textures using canvas and noise
    ========================================================================== */
-class TextureEngine {
+class TextureLab {
     static getCtx(w, h) {
-        const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = h;
+        const cvs = document.createElement('canvas');
+        cvs.width = w; cvs.height = h;
         return { cvs, ctx: cvs.getContext('2d', { willReadFrequently: true }) };
     }
 
-    static generateNeonGrid(w=1024, h=1024, bg=[10,0,20], line1=[0,255,255], line2=[255,0,255]) {
+    static generateGrassLayer(w=1024, h=1024) {
         const { cvs, ctx } = this.getCtx(w, h);
+        const imgData = ctx.createImageData(w, h);
+        const d = imgData.data;
         
-        // Base dark background
-        ctx.fillStyle = `rgb(${bg[0]},${bg[1]},${bg[2]})`;
-        ctx.fillRect(0,0,w,h);
-        
-        // Add some noise to bg
-        const imgData = ctx.getImageData(0,0,w,h);
-        for(let i=0; i<imgData.data.length; i+=4) {
-            const n = SN.noise2D((i/4%w)*0.01, Math.floor(i/4/w)*0.01) * 15;
-            imgData.data[i] = Math.max(0, imgData.data[i] + n);
-            imgData.data[i+1] = Math.max(0, imgData.data[i+1] + n);
-            imgData.data[i+2] = Math.max(0, imgData.data[i+2] + n);
+        for(let y=0; y<h; y++) {
+            for(let x=0; x<w; x++) {
+                let n = 0, amp = 1, f = 0.01;
+                for(let i=0; i<4; i++) {
+                    n += SN.noise2D(x*f, y*f) * amp;
+                    amp *= 0.5; f *= 2.0;
+                }
+                
+                // Base dirt/grass mix
+                const r = 50 + n * 20;
+                const g = 100 + n * 40;
+                const b = 40 + n * 10;
+                
+                const idx = (y*w+x)*4;
+                d[idx] = Math.max(0, Math.min(255, r));
+                d[idx+1] = Math.max(0, Math.min(255, g));
+                d[idx+2] = Math.max(0, Math.min(255, b));
+                d[idx+3] = 255;
+            }
         }
         ctx.putImageData(imgData, 0, 0);
 
-        // Draw primary grid (Cyan)
-        ctx.strokeStyle = `rgba(${line1[0]},${line1[1]},${line1[2]}, 0.8)`;
-        ctx.lineWidth = 4;
-        ctx.shadowColor = `rgb(${line1[0]},${line1[1]},${line1[2]})`;
-        ctx.shadowBlur = 15;
-        
-        const step = 128;
-        for(let x=0; x<=w; x+=step) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-        }
-        for(let y=0; y<=h; y+=step) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-        }
-
-        // Draw secondary fine grid (Magenta)
-        ctx.strokeStyle = `rgba(${line2[0]},${line2[1]},${line2[2]}, 0.4)`;
-        ctx.lineWidth = 1;
-        ctx.shadowColor = `rgb(${line2[0]},${line2[1]},${line2[2]})`;
-        ctx.shadowBlur = 5;
-        
-        const subStep = 32;
-        for(let x=0; x<=w; x+=subStep) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-        }
-        for(let y=0; y<=h; y+=subStep) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        // Draw individual grass blades for macro texture detail
+        for(let i=0; i<50000; i++) {
+            const gx = Math.random() * w;
+            const gy = Math.random() * h;
+            const len = Math.random() * 15 + 5;
+            const ang = (Math.random() - 0.5) * 0.5;
+            
+            ctx.beginPath();
+            ctx.moveTo(gx, gy);
+            ctx.lineTo(gx + Math.sin(ang)*len, gy - Math.cos(ang)*len);
+            
+            const gCol = Math.floor(Math.random() * 60 + 80);
+            ctx.strokeStyle = `rgba(30, ${gCol}, 20, ${Math.random()*0.5 + 0.3})`;
+            ctx.lineWidth = Math.random() * 2 + 0.5;
+            ctx.stroke();
         }
 
-        const tex = new THREE.CanvasTexture(cvs); 
-        tex.wrapS = tex.wrapT = THREE.RepeatWrapping; 
-        tex.anisotropy = 4;
+        const tex = new THREE.CanvasTexture(cvs);
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        tex.anisotropy = 8;
         return tex;
     }
 
-    static generatePlasma(w=512, h=512) {
+    static generateBark(w=512, h=1024) {
         const { cvs, ctx } = this.getCtx(w, h);
-        const imgData = ctx.createImageData(w, h); const d = imgData.data;
+        const imgData = ctx.createImageData(w, h);
+        const d = imgData.data;
+        
         for(let y=0; y<h; y++) {
             for(let x=0; x<w; x++) {
-                const n1 = SN.noise2D(x*0.02, y*0.02);
-                const n2 = SN.noise2D(x*0.05 + 100, y*0.05 + 100);
+                // Stretch noise vertically for bark
+                const nx = x * 0.05;
+                const ny = y * 0.005;
+                let n = SN.noise2D(nx, ny) * 0.5 + SN.noise2D(nx*2, ny*2) * 0.25;
                 
-                const r = Math.floor((Math.sin(n1 * Math.PI) + 1) * 127);
-                const g = Math.floor((Math.cos(n2 * Math.PI) + 1) * 50);
-                const b = Math.floor((Math.sin((n1+n2) * Math.PI) + 1) * 127 + 100);
+                // Deep ridges
+                n = Math.abs(n);
+                
+                const r = 70 - n * 50;
+                const g = 50 - n * 40;
+                const b = 40 - n * 30;
                 
                 const idx = (y*w+x)*4;
-                d[idx]=r; d[idx+1]=g; d[idx+2]=b; d[idx+3]=255;
+                d[idx] = Math.max(0, r);
+                d[idx+1] = Math.max(0, g);
+                d[idx+2] = Math.max(0, b);
+                d[idx+3] = 255;
             }
         }
         ctx.putImageData(imgData, 0, 0);
-        const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; return tex;
+        const tex = new THREE.CanvasTexture(cvs);
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        return tex;
     }
 
-    static generateTechLines(w=256, h=256) {
+    static generateConcrete(w=512, h=512) {
         const { cvs, ctx } = this.getCtx(w, h);
-        ctx.fillStyle = '#050510'; ctx.fillRect(0,0,w,h);
+        const imgData = ctx.createImageData(w, h);
+        const d = imgData.data;
         
-        ctx.strokeStyle = '#00ffff';
-        ctx.lineWidth = 2;
-        ctx.shadowColor = '#00ffff';
-        ctx.shadowBlur = 10;
+        for(let y=0; y<h; y++) {
+            for(let x=0; x<w; x++) {
+                let n = 0, amp = 1, f = 0.05;
+                for(let i=0; i<3; i++) {
+                    n += SN.noise2D(x*f, y*f) * amp;
+                    amp *= 0.5; f *= 2.0;
+                }
+                const v = 150 + n * 30;
+                const idx = (y*w+x)*4;
+                d[idx] = d[idx+1] = d[idx+2] = Math.max(0, Math.min(255, v));
+                d[idx+3] = 255;
+            }
+        }
+        ctx.putImageData(imgData, 0, 0);
         
-        for(let i=0; i<20; i++) {
+        // Add cracks
+        ctx.lineWidth = 1;
+        ctx.lineJoin = 'round';
+        for(let c=0; c<5; c++) {
             ctx.beginPath();
-            ctx.moveTo(Math.random()*w, Math.random()*h);
-            ctx.lineTo(Math.random()*w, Math.random()*h);
+            let cx = Math.random()*w, cy = Math.random()*h;
+            ctx.moveTo(cx, cy);
+            for(let s=0; s<20; s++) {
+                cx += (Math.random()-0.5)*30;
+                cy += (Math.random()-0.5)*30;
+                ctx.lineTo(cx, cy);
+            }
+            ctx.strokeStyle = `rgba(50,50,50,${Math.random()*0.6})`;
             ctx.stroke();
         }
-        const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; return tex;
+        const tex = new THREE.CanvasTexture(cvs);
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        return tex;
+    }
+
+    static generateLeafPattern(w=256, h=256) {
+        const { cvs, ctx } = this.getCtx(w, h);
+        ctx.fillStyle = 'rgba(0,0,0,0)';
+        ctx.fillRect(0,0,w,h);
+        
+        for(let i=0; i<150; i++) {
+            const lx = Math.random()*w;
+            const ly = Math.random()*h;
+            const rad = Math.random()*15 + 5;
+            const rot = Math.random() * Math.PI * 2;
+            
+            ctx.save();
+            ctx.translate(lx, ly);
+            ctx.rotate(rot);
+            
+            const g = Math.floor(Math.random() * 50 + 100);
+            ctx.fillStyle = `rgb(40, ${g}, 30)`;
+            
+            // Draw leaf shape
+            ctx.beginPath();
+            ctx.ellipse(0, 0, rad, rad*0.4, 0, 0, Math.PI*2);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+        
+        const tex = new THREE.CanvasTexture(cvs);
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        // Important for foliage alpha
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+        return tex;
     }
 }
 
 /* ==========================================================================
-   MODULE 5: ADVANCED AUDIO SYNTHESIS (SYNTHWAVE / CYBERPUNK VIBES)
+   MODULE 3: PHYSICS & UTILS
+   Basic custom physics engine for food throwing and collisions
    ========================================================================== */
-class AudioEngine {
-    constructor() {
-        this.ctx = null; this.ready = false; this.nodes = {};
-        this.listener = null;
-    }
-
-    init(camera) {
-        if(this.ready) return;
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        this.ctx = new AudioContext();
-        
-        this.master = this.ctx.createGain();
-        this.master.gain.value = 0.7; // Prevent clipping with aggressive synths
-        this.master.connect(this.ctx.destination);
-        
-        this.listener = this.ctx.listener;
-        this.camera = camera;
-        
-        this.buildAmbientDrone();
-        this.buildHeartbeat();
-        this.ready = true;
-    }
-
-    updateSpatial(camPos, camDir) {
-        if(!this.ready) return;
-        if(this.listener.positionX) {
-            this.listener.positionX.value = camPos.x; this.listener.positionY.value = camPos.y; this.listener.positionZ.value = camPos.z;
-            this.listener.forwardX.value = camDir.x; this.listener.forwardY.value = camDir.y; this.listener.forwardZ.value = camDir.z;
-        } else {
-            this.listener.setPosition(camPos.x, camPos.y, camPos.z);
-            this.listener.setOrientation(camDir.x, camDir.y, camDir.z, 0, 1, 0);
-        }
-    }
-
-    buildAmbientDrone() {
-        // Sci-fi Bass Hum
-        const osc1 = this.ctx.createOscillator(); osc1.type = 'sawtooth'; osc1.frequency.value = 55; // Low A
-        const osc2 = this.ctx.createOscillator(); osc2.type = 'square'; osc2.frequency.value = 55.5; // Slight detune
-        const osc3 = this.ctx.createOscillator(); osc3.type = 'sine'; osc3.frequency.value = 27.5; // Sub
-        
-        const lfo = this.ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.1; 
-        const lfoGain = this.ctx.createGain(); lfoGain.gain.value = 10;
-        lfo.connect(lfoGain); lfoGain.connect(osc2.frequency);
-
-        const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 200;
-        filter.Q.value = 5; // Resonant peak
-        
-        const masterDroneGain = this.ctx.createGain(); masterDroneGain.gain.value = 0.05;
-
-        osc1.connect(filter); osc2.connect(filter); osc3.connect(filter);
-        filter.connect(masterDroneGain); masterDroneGain.connect(this.master);
-        
-        osc1.start(); osc2.start(); osc3.start(); lfo.start();
-        this.nodes.droneGain = masterDroneGain;
-        this.nodes.droneFilter = filter;
-    }
-
-    buildHeartbeat() {
-        this.nodes.hbOsc = this.ctx.createOscillator(); this.nodes.hbOsc.type = 'sine'; this.nodes.hbOsc.frequency.value = 50;
-        this.nodes.hbGain = this.ctx.createGain(); this.nodes.hbGain.gain.value = 0;
-        
-        // Add distortion to heartbeat
-        const waveShaper = this.ctx.createWaveShaper();
-        waveShaper.curve = this.makeDistortionCurve(50);
-        waveShaper.oversample = '4x';
-        
-        this.nodes.hbOsc.connect(this.nodes.hbGain); 
-        this.nodes.hbGain.connect(waveShaper);
-        waveShaper.connect(this.master);
-        
-        this.nodes.hbOsc.start();
-    }
-
-    makeDistortionCurve(amount) {
-        const k = typeof amount === 'number' ? amount : 50, n_samples = 44100, curve = new Float32Array(n_samples), deg = Math.PI / 180;
-        for (let i = 0; i < n_samples; ++i ) {
-            const x = i * 2 / n_samples - 1;
-            curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
-        }
-        return curve;
-    }
-
-    triggerHeartbeat() {
-        if(!this.ready) return;
-        const t = this.ctx.currentTime;
-        this.nodes.hbGain.gain.cancelScheduledValues(t);
-        this.nodes.hbGain.gain.setValueAtTime(0, t);
-        this.nodes.hbGain.gain.linearRampToValueAtTime(0.6, t + 0.05);
-        this.nodes.hbGain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
-        
-        this.nodes.hbGain.gain.setValueAtTime(0, t + 0.25);
-        this.nodes.hbGain.gain.linearRampToValueAtTime(0.5, t + 0.3);
-        this.nodes.hbGain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
-    }
-
-    updateSanityModulation(sanityRatio) {
-        if(!this.ready) return;
-        const targetVol = 0.05 + (1.0 - sanityRatio) * 0.2;
-        const targetFreq = 200 + (1.0 - sanityRatio) * 800; // Filter opens up as sanity drops
-        this.nodes.droneGain.gain.setTargetAtTime(targetVol, this.ctx.currentTime, 1.0);
-        this.nodes.droneFilter.frequency.setTargetAtTime(targetFreq, this.ctx.currentTime, 1.0);
-    }
-
-    createNoiseBuffer(durationStr) {
-        const bSize = this.ctx.sampleRate * durationStr;
-        const b = this.ctx.createBuffer(1, bSize, this.ctx.sampleRate);
-        const d = b.getChannelData(0);
-        for(let i=0; i<bSize; i++) d[i] = Math.random()*2 - 1;
-        return b;
-    }
-
-    playFootstep(type, vol=0.2, pannerNode=null) {
-        if(!this.ready) return;
-        const t = this.ctx.currentTime;
-        
-        // Synth footstep
-        const osc = this.ctx.createOscillator();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(150, t);
-        osc.frequency.exponentialRampToValueAtTime(40, t + 0.1);
-        
-        const noiseSrc = this.ctx.createBufferSource();
-        noiseSrc.buffer = this.createNoiseBuffer(0.1);
-        const noiseFilter = this.ctx.createBiquadFilter();
-        noiseFilter.type = 'highpass'; noiseFilter.frequency.value = 1000;
-
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(vol, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
-
-        osc.connect(gain);
-        noiseSrc.connect(noiseFilter); noiseFilter.connect(gain);
-        
-        if(pannerNode) {
-            gain.connect(pannerNode); pannerNode.connect(this.master);
-        } else {
-            gain.connect(this.master);
-        }
-        
-        osc.start(t); osc.stop(t+0.1);
-        noiseSrc.start(t);
-    }
-
-    playMetalDoorSlam() {
-        if(!this.ready) return;
-        const t = this.ctx.currentTime;
-        
-        // Heavy sci-fi boom
-        const osc1 = this.ctx.createOscillator(); osc1.type = 'sawtooth';
-        osc1.frequency.setValueAtTime(100, t); osc1.frequency.exponentialRampToValueAtTime(10, t+0.8);
-        
-        const src = this.ctx.createBufferSource(); src.buffer = this.createNoiseBuffer(0.8);
-        const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800; filter.Q.value = 10.0;
-
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(1.0, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.8);
-
-        osc1.connect(gain); src.connect(filter); filter.connect(gain); gain.connect(this.master);
-        osc1.start(t); osc1.stop(t+0.8); src.start(t);
-    }
-
-    playDoorGrind(duration) {
-        if(!this.ready) return;
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator(); osc.type = 'square';
-        osc.frequency.setValueAtTime(300, t); osc.frequency.linearRampToValueAtTime(100, t+duration);
-        
-        // Add a pulsing LFO to the grind
-        const lfo = this.ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 15;
-        const lfoGain = this.ctx.createGain(); lfoGain.gain.value = 50;
-        lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
-
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.3, t+0.1);
-        gain.gain.setValueAtTime(0.3, t+duration-0.1);
-        gain.gain.linearRampToValueAtTime(0, t+duration);
-
-        osc.connect(gain); gain.connect(this.master);
-        osc.start(t); osc.stop(t+duration); lfo.start(t); lfo.stop(t+duration);
-    }
-
-    playEatSlop() {
-        if(!this.ready) return;
-        // Sci-fi power up sound instead of eating slop
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator(); osc.type = 'sine';
-        osc.frequency.setValueAtTime(200, t); 
-        osc.frequency.exponentialRampToValueAtTime(800, t+0.4);
-        
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0, t); 
-        gain.gain.linearRampToValueAtTime(0.5, t+0.1);
-        gain.gain.exponentialRampToValueAtTime(0.01, t+0.4);
-        
-        osc.connect(gain); gain.connect(this.master);
-        osc.start(t); osc.stop(t+0.4);
-    }
-}
-
-/* ==========================================================================
-   MODULE 6: PROCEDURAL ENTITIES & PARTICLES
-   ========================================================================== */
-class ParticleSystem {
-    constructor(scene, count=500) {
-        this.scene = scene;
-        const geo = new THREE.BufferGeometry();
-        const pos = new Float32Array(count * 3);
-        const vels = [];
-        
-        for(let i=0; i<count; i++) {
-            pos[i*3] = (Math.random() - 0.5) * 15;
-            pos[i*3+1] = Math.random() * 4;
-            pos[i*3+2] = (Math.random() - 0.5) * 15;
-            vels.push({
-                x: (Math.random()-0.5)*0.02,
-                y: (Math.random()-0.5)*0.02,
-                z: (Math.random()-0.5)*0.02
-            });
-        }
-        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        
-        const mat = new THREE.PointsMaterial({
-            color: 0x00ffff,
-            size: 0.05,
-            transparent: true,
-            opacity: 0.6,
-            blending: THREE.AdditiveBlending
-        });
-        
-        this.points = new THREE.Points(geo, mat);
-        this.vels = vels;
-        this.scene.add(this.points);
-    }
-    
-    update() {
-        const pos = this.points.geometry.attributes.position.array;
-        for(let i=0; i<this.vels.length; i++) {
-            pos[i*3] += this.vels[i].x;
-            pos[i*3+1] += this.vels[i].y;
-            pos[i*3+2] += this.vels[i].z;
-            
-            // Wrap bounds
-            if(pos[i*3+1] > 4) pos[i*3+1] = 0;
-            if(pos[i*3+1] < 0) pos[i*3+1] = 4;
-            if(pos[i*3] > 7.5) pos[i*3] = -7.5;
-            if(pos[i*3] < -7.5) pos[i*3] = 7.5;
-            if(pos[i*3+2] > 7.5) pos[i*3+2] = -7.5;
-            if(pos[i*3+2] < -7.5) pos[i*3+2] = 7.5;
-        }
-        this.points.geometry.attributes.position.needsUpdate = true;
-    }
-}
-
-class GuardAI extends THREE.Group {
-    constructor(materials) {
-        super();
-        this.mats = materials;
-        this.state = 'IDLE';
-        this.animCycle = 0;
-        this.buildRig();
-    }
-
-    buildRig() {
-        this.root = new THREE.Group(); this.root.position.y = 1.05; this.add(this.root);
-        
-        // Emissive materials for cyberpunk guard
-        const armorMat = new THREE.MeshStandardMaterial({color: 0x111111, metalness: 0.9, roughness: 0.2});
-        const glowMat = new THREE.MeshStandardMaterial({color: 0x000000, emissive: 0xff00ff, emissiveIntensity: 2.0});
-        
-        this.torso = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.7, 0.35), armorMat);
-        this.torso.position.y = 0.35; this.root.add(this.torso);
-        
-        // Neon strips on torso
-        const strip = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.6, 0.36), glowMat);
-        strip.position.set(0, 0, 0); this.torso.add(strip);
-        
-        this.head = new THREE.Group(); this.head.position.y = 0.85; this.root.add(this.head);
-        const headMesh = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.3, 0.25), armorMat);
-        this.head.add(headMesh);
-        
-        // Glowing Visor
-        const visor = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.08, 0.1), new THREE.MeshStandardMaterial({color: 0x000000, emissive: 0x00ffff, emissiveIntensity: 3.0}));
-        visor.position.set(0, 0.05, 0.1); this.head.add(visor);
-
-        this.armL = new THREE.Group(); this.armL.position.set(-0.35, 0.65, 0); this.root.add(this.armL);
-        this.armR = new THREE.Group(); this.armR.position.set(0.35, 0.65, 0); this.root.add(this.armR);
-        const armGeo = new THREE.BoxGeometry(0.15, 0.6, 0.15);
-        const armMeshL = new THREE.Mesh(armGeo, armorMat); armMeshL.position.y = -0.3; this.armL.add(armMeshL);
-        const armMeshR = new THREE.Mesh(armGeo, armorMat); armMeshR.position.y = -0.3; this.armR.add(armMeshR);
-
-        this.legL = new THREE.Group(); this.legL.position.set(-0.15, 0, 0); this.root.add(this.legL);
-        this.legR = new THREE.Group(); this.legR.position.set(0.15, 0, 0); this.root.add(this.legR);
-        const legGeo = new THREE.BoxGeometry(0.22, 0.9, 0.22);
-        const legMeshL = new THREE.Mesh(legGeo, armorMat); legMeshL.position.y = -0.45; this.legL.add(legMeshL);
-        const legMeshR = new THREE.Mesh(legGeo, armorMat); legMeshR.position.y = -0.45; this.legR.add(legMeshR);
-
-        // Guard Light
-        this.spotLight = new THREE.SpotLight(0x00ffff, 10.0, 30.0, Math.PI/5, 0.2, 1);
-        this.spotLight.position.set(0, 0.85, 0.2); // Head mounted
-        this.spotLight.target.position.set(0, 0.85, 1.0);
-        this.root.add(this.spotLight); this.root.add(this.spotLight.target);
-    }
-
-    animateWalk(delta, speedMultiplier) {
-        if(speedMultiplier <= 0) {
-            this.armL.rotation.x = THREE.MathUtils.lerp(this.armL.rotation.x, 0, 0.1);
-            this.armR.rotation.x = THREE.MathUtils.lerp(this.armR.rotation.x, 0, 0.1);
-            this.legL.rotation.x = THREE.MathUtils.lerp(this.legL.rotation.x, 0, 0.1);
-            this.legR.rotation.x = THREE.MathUtils.lerp(this.legR.rotation.x, 0, 0.1);
-            this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 1.05, 0.1);
-            this.head.rotation.y = Math.sin(performance.now()*0.002)*0.3;
-            return false;
-        }
-
-        this.animCycle += delta * speedMultiplier * 5.0;
-        
-        this.armL.rotation.x = Math.sin(this.animCycle) * 0.6;
-        this.armR.rotation.x = Math.sin(this.animCycle + Math.PI) * 0.6;
-        this.legL.rotation.x = Math.sin(this.animCycle + Math.PI) * 0.6;
-        this.legR.rotation.x = Math.sin(this.animCycle) * 0.6;
-        
-        this.root.position.y = 1.05 + Math.abs(Math.sin(this.animCycle * 2)) * 0.08;
-        this.head.rotation.y = 0;
-
-        const cycleMod = this.animCycle % Math.PI;
-        return (cycleMod < 0.15);
-    }
-
-    animateBendDown(callback) {
-        new TWEEN.Tween(this.root.position).to({y: 0.5}, 800).easing(TWEEN.Easing.Quadratic.Out).start();
-        new TWEEN.Tween(this.root.rotation).to({x: 0.6}, 800).easing(TWEEN.Easing.Quadratic.Out).start();
-        new TWEEN.Tween(this.armR.rotation).to({x: -1.2}, 800).start();
-        new TWEEN.Tween(this.head.rotation).to({x: -0.4}, 800).start();
-
-        setTimeout(() => {
-            if(callback) callback();
-            new TWEEN.Tween(this.root.position).to({y: 1.05}, 1000).easing(TWEEN.Easing.Quadratic.In).start();
-            new TWEEN.Tween(this.root.rotation).to({x: 0}, 1000).easing(TWEEN.Easing.Quadratic.In).start();
-            new TWEEN.Tween(this.armR.rotation).to({x: 0}, 1000).start();
-            new TWEEN.Tween(this.head.rotation).to({x: 0}, 1000).start();
-        }, 1200);
-    }
-}
-
-class FoodTray extends THREE.Group {
-    constructor(foodData) {
-        super();
-        this.data = foodData;
-        this.build();
-    }
-
-    build() {
-        const trayMat = new THREE.MeshStandardMaterial({color:0x222222, metalness:0.9, roughness:0.2, emissive:0x111111});
-        const tray = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.02, 0.35), trayMat);
-        this.add(tray);
-
-        const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.03, 0.1, 16), new THREE.MeshStandardMaterial({color:0x000, emissive:0x00ffff, emissiveIntensity:0.5, transparent:true, opacity:0.8}));
-        cup.position.set(0.15, 0.06, -0.1); this.add(cup);
-
-        const fMat = new THREE.MeshStandardMaterial({
-            color: this.data.c, 
-            emissive: this.data.c,
-            emissiveIntensity: 0.8,
-            roughness: 0.1,
-            metalness: 0.5
-        });
-        
-        let fGeo;
-        switch(this.data.t) {
-            case 'CUBE': fGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12); break;
-            case 'SPHERE': fGeo = new THREE.SphereGeometry(0.08, 32, 32); break;
-            case 'PYRAMID': fGeo = new THREE.ConeGeometry(0.08, 0.15, 4); break;
-            case 'CYLINDER': fGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.15, 16); break;
-            case 'TORUS': fGeo = new THREE.TorusGeometry(0.06, 0.02, 16, 32); break;
-            case 'SLUDGE': fGeo = new THREE.SphereGeometry(0.1, 16, 16); fGeo.scale(1, 0.3, 1); break;
-            case 'PILLS': 
-                fGeo = new THREE.CapsuleGeometry(0.015, 0.02, 4, 8); 
-                const p2 = new THREE.Mesh(fGeo, fMat); p2.position.set(0.03, 0.01, 0.02); p2.rotation.z=Math.PI/4; this.add(p2);
-                break;
-            default: fGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-        }
-
-        const fMesh = new THREE.Mesh(fGeo, fMat);
-        fMesh.position.set(-0.05, 0.08, 0.05);
-        
-        // Add point light to glowing food
-        const fLight = new THREE.PointLight(this.data.c, 1.0, 1.0);
-        fMesh.add(fLight);
-        
-        this.add(fMesh);
-        this.foodMesh = fMesh;
-
-        this.userData = {
-            id: 'food_tray',
-            action: `CONSUME: ${this.data.n}`,
-            desc: this.data.m,
-            nutri: this.data.h,
-            sanity: this.data.s
-        };
-    }
-
-    update(time) {
-        if(this.foodMesh) {
-            this.foodMesh.rotation.y = time;
-            this.foodMesh.rotation.x = time * 0.5;
-            this.foodMesh.position.y = 0.08 + Math.sin(time * 3) * 0.02; // Hover effect
-        }
-    }
-}
-
-/* ==========================================================================
-   MODULE 7: WORLD GENERATION & SCENE GRAPH
-   ========================================================================== */
-class PrisonEnvironment {
-    constructor(scene) {
-        this.scene = scene;
-        this.interactables = [];
-        this.colliders = [];
-        this.dynamicLights = [];
-        this.activeTray = null;
-
-        this.generateMaterials();
-        this.buildArchitecture();
-        this.buildCellFurniture();
-        this.buildLighting();
-
-        this.guard = new GuardAI(this.mats);
-        this.guard.position.set(0, 0, CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH - 2);
-        this.guard.rotation.y = Math.PI;
-        this.scene.add(this.guard);
-        
-        this.particles = new ParticleSystem(this.scene, 800);
-    }
-
-    generateMaterials() {
-        // High quality vibrant procedural textures
-        const texGrid1 = TextureEngine.generateNeonGrid(1024, 1024, [5,0,10], [0,255,255], [255,0,255]);
-        texGrid1.repeat.set(4, 4);
-        
-        const texGrid2 = TextureEngine.generateNeonGrid(512, 512, [0,5,10], [0,255,0], [0,0,255]);
-        texGrid2.repeat.set(10, 2);
-
-        const texPlasma = TextureEngine.generatePlasma(512, 512);
-
-        this.mats = {
-            concreteCell: new THREE.MeshStandardMaterial({ map: texGrid1, roughness: 0.1, metalness: 0.8 }),
-            concreteHall: new THREE.MeshStandardMaterial({ map: texGrid2, roughness: 0.2, metalness: 0.7 }),
-            ironBars: new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x00ffff, emissiveIntensity: 0.8, metalness: 1.0, roughness: 0.0 }),
-            ironDoor: new THREE.MeshStandardMaterial({ map: texPlasma, metalness: 0.5, roughness: 0.2 }),
-            porcelain: new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xff00ff, emissiveIntensity: 0.2, roughness: 0.1, metalness: 0.9 }),
-            mattress: new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9, wireframe: true }),
-        };
-    }
-
-    addCollider(mesh) {
-        mesh.updateMatrixWorld();
-        this.colliders.push(new THREE.Box3().setFromObject(mesh));
-    }
-
-    buildArchitecture() {
-        const { CELL_WIDTH: cw, CELL_LENGTH: cl, CELL_HEIGHT: ch, WALL_THICKNESS: t, HALL_WIDTH: hw, HALL_LENGTH: hl, HALL_HEIGHT: hh } = CONFIG.WORLD;
-
-        const cellGrp = new THREE.Group(); this.scene.add(cellGrp);
-
-        const flr = new THREE.Mesh(new THREE.BoxGeometry(cw, t, cl), this.mats.concreteCell); flr.position.y = -t/2; cellGrp.add(flr);
-        const ceil = new THREE.Mesh(new THREE.BoxGeometry(cw, t, cl), this.mats.concreteCell); ceil.position.y = ch + t/2; cellGrp.add(ceil);
-
-        const wLR = new THREE.BoxGeometry(t, ch, cl);
-        const wallL = new THREE.Mesh(wLR, this.mats.concreteCell); wallL.position.set(-cw/2-t/2, ch/2, 0); cellGrp.add(wallL); this.addCollider(wallL);
-        const wallR = new THREE.Mesh(wLR, this.mats.concreteCell); wallR.position.set(cw/2+t/2, ch/2, 0); cellGrp.add(wallR); this.addCollider(wallR);
-        
-        const wB = new THREE.Mesh(new THREE.BoxGeometry(cw, ch, t), this.mats.concreteCell); wB.position.set(0, ch/2, -cl/2-t/2); cellGrp.add(wB); this.addCollider(wB);
-
-        // Neon Window Slit
-        const winW = 1.2, winH = 0.4;
-        const voidMat = new THREE.MeshBasicMaterial({color:0xff00ff}); // Glowing void outside
-        const win = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, t+0.1), voidMat);
-        win.position.set(0, ch - 0.8, -cl/2-t/2); cellGrp.add(win);
-        
-        // Window Bars
-        for(let i=-0.4; i<=0.4; i+=0.2) {
-            const wb = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, winH, 8), this.mats.ironBars);
-            wb.position.set(i, ch-0.8, -cl/2-t/2 + 0.1); cellGrp.add(wb);
-        }
-
-        // Front Wall (Bars & Door)
-        const frontZ = cl/2;
-        const barsGrp = new THREE.Group(); cellGrp.add(barsGrp);
-        const bGeo = new THREE.CylinderGeometry(CONFIG.WORLD.BAR_RADIUS, CONFIG.WORLD.BAR_RADIUS, ch, 16);
-        
-        for(let x = -cw/2 + 0.15; x < cw/2 - 0.1; x += CONFIG.WORLD.BAR_SPACING) {
-            if(x > -0.45 && x < 0.45) continue;
-            const bar = new THREE.Mesh(bGeo, this.mats.ironBars); bar.position.set(x, ch/2, frontZ);
-            barsGrp.add(bar); this.addCollider(bar);
-        }
-
-        this.doorGrp = new THREE.Group(); this.doorGrp.position.set(-0.45, 0, frontZ); cellGrp.add(this.doorGrp);
-        this.doorMesh = new THREE.Mesh(new THREE.BoxGeometry(0.9, ch-0.1, 0.06), this.mats.ironDoor);
-        this.doorMesh.position.set(0.45, ch/2, 0); this.doorGrp.add(this.doorMesh);
-        
-        const slot = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.15, 0.08), new THREE.MeshBasicMaterial({color:0x000}));
-        slot.position.set(0.45, 0.3, 0); this.doorMesh.add(slot);
-        
-        this.doorCollider = new THREE.Box3().setFromObject(this.doorMesh); this.colliders.push(this.doorCollider);
-
-        // Hallway
-        const hallGrp = new THREE.Group(); hallGrp.position.set(0, 0, cl/2 + hl/2); this.scene.add(hallGrp);
-        const hFlr = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.concreteHall); hFlr.position.y = -t/2; hallGrp.add(hFlr);
-        const hCeil = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.concreteHall); hCeil.position.y = hh + t/2; hallGrp.add(hCeil);
-        const hwL = new THREE.Mesh(new THREE.BoxGeometry(t, hh, hl), this.mats.concreteHall); hwL.position.set(-hw/2-t/2, hh/2, 0); hallGrp.add(hwL);
-        const hwR = new THREE.Mesh(new THREE.BoxGeometry(t, hh, hl), this.mats.concreteHall); hwR.position.set(hw/2+t/2, hh/2, 0); hallGrp.add(hwR);
-    }
-
-    buildCellFurniture() {
-        const cw = CONFIG.WORLD.CELL_WIDTH, cl = CONFIG.WORLD.CELL_LENGTH;
-
-        // Cot (Bed)
-        const cotW = 1.0, cotL = 2.1, cotH = 0.5;
-        const cotGrp = new THREE.Group(); cotGrp.position.set(-cw/2 + cotW/2 + 0.1, 0, -cl/2 + cotL/2 + 0.1); this.scene.add(cotGrp);
-        
-        const frame = new THREE.Mesh(new THREE.BoxGeometry(cotW, 0.05, cotL), this.mats.ironBars); frame.position.y = cotH - 0.1; cotGrp.add(frame);
-        const legs = [[-cotW/2+0.05, -cotL/2+0.05], [cotW/2-0.05, -cotL/2+0.05], [-cotW/2+0.05, cotL/2-0.05], [cotW/2-0.05, cotL/2-0.05]];
-        legs.forEach(pos => {
-            const l = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, cotH, 8), this.mats.ironBars);
-            l.position.set(pos[0], cotH/2, pos[1]); cotGrp.add(l);
-        });
-        const mattress = new THREE.Mesh(new THREE.BoxGeometry(cotW-0.05, 0.15, cotL-0.05), this.mats.mattress);
-        mattress.position.y = cotH; cotGrp.add(mattress);
-        
-        const cotHitbox = new THREE.Mesh(new THREE.BoxGeometry(cotW, cotH+0.2, cotL), new THREE.MeshBasicMaterial({visible:false}));
-        cotHitbox.position.y = cotH/2; cotGrp.add(cotHitbox);
-        cotHitbox.userData = { id: 'cot', action: 'ENTER SLEEP MODE', desc: 'Accelerate system cycle.' };
-        this.interactables.push(cotHitbox); this.addCollider(cotHitbox);
-
-        // Toilet / Sink
-        const tGrp = new THREE.Group(); tGrp.position.set(cw/2 - 0.4, 0, -cl/2 + 0.4); this.scene.add(tGrp);
-        
-        const tBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.15, 0.4, 16), this.mats.porcelain); tBowl.position.y = 0.2; tGrp.add(tBowl);
-        const tTank = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.3), this.mats.porcelain); tTank.position.set(0, 0.4, -0.25); tGrp.add(tTank);
-        const sinkBasin = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.15, 0.1, 16), this.mats.porcelain); sinkBasin.position.set(0, 0.85, -0.15); tGrp.add(sinkBasin);
-        const faucet = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.1, 8), this.mats.ironBars); faucet.position.set(0, 0.95, -0.25); faucet.rotation.x = Math.PI/4; tGrp.add(faucet);
-
-        const tHitbox = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.0, 0.6), new THREE.MeshBasicMaterial({visible:false}));
-        tHitbox.position.y = 0.5; tGrp.add(tHitbox);
-        tHitbox.userData = { id: 'toilet', action: 'FLUSH SYSTEM', desc: 'Purge fluid lines.' };
-        this.interactables.push(tHitbox); this.addCollider(tHitbox);
-    }
-
-    buildLighting() {
-        this.ambientLight = new THREE.AmbientLight(0x110022, 1.0); this.scene.add(this.ambientLight);
-
-        // Window intense light
-        this.sunLight = new THREE.DirectionalLight(0xff00ff, 2.0);
-        this.sunLight.position.set(0, 5, -15);
-        this.sunLight.castShadow = true;
-        this.sunLight.shadow.mapSize.width = 2048; this.sunLight.shadow.mapSize.height = 2048;
-        this.scene.add(this.sunLight);
-
-        // Intense cell overhead
-        this.cellLight = new THREE.PointLight(0x00ffff, 2.0, 10.0);
-        this.cellLight.position.set(0, CONFIG.WORLD.CELL_HEIGHT - 0.2, 0);
-        this.scene.add(this.cellLight);
-        this.dynamicLights.push(this.cellLight);
-
-        // Hallway Neon Lights
-        const colors = [0xff00ff, 0x00ffff, 0xffff00, 0x00ff00];
-        let cIdx = 0;
-        for(let z = CONFIG.WORLD.CELL_LENGTH/2 + 3; z < CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH; z+= 6) {
-            const hl = new THREE.PointLight(colors[cIdx%colors.length], 2.0, 15.0);
-            hl.position.set(0, CONFIG.WORLD.HALL_HEIGHT - 0.2, z);
-            this.scene.add(hl);
-            this.dynamicLights.push(hl);
-            cIdx++;
-        }
-
-        this.scene.fog = new THREE.FogExp2(0x0a001a, 0.05);
-    }
-
-    updateLightingCycle(timeInHours) {
-        // Neon lights pulse rapidly
-        const pulse = 1.0 + Math.sin(performance.now() * 0.005) * 0.2;
-        
-        const isDay = timeInHours >= 6 && timeInHours <= 18;
-        
-        if(isDay) {
-            const dayProgress = (timeInHours - 6) / 12;
-            const sunAngle = dayProgress * Math.PI;
-            
-            this.sunLight.intensity = Math.sin(sunAngle) * 4.0;
-            this.sunLight.position.x = Math.cos(sunAngle) * 10;
-            this.sunLight.position.y = Math.sin(sunAngle) * 5;
-            
-            // Shift color from Magenta -> Cyan -> Magenta
-            this.sunLight.color.setHSL(0.8 + Math.sin(sunAngle)*0.3, 1.0, 0.5);
-            
-            this.ambientLight.color.setHex(0x220044);
-            this.scene.fog.color.setHex(0x1a0033);
-            this.scene.fog.density = 0.03;
-
-            this.dynamicLights.forEach(l => l.intensity = 0.5 * pulse);
-        } else {
-            this.sunLight.intensity = 0.5;
-            this.sunLight.color.setHex(0x00ff00); // Toxic green moon
-            
-            this.ambientLight.color.setHex(0x050011);
-            this.scene.fog.color.setHex(0x02000a);
-            this.scene.fog.density = 0.06;
-
-            // Intense erratic flickering at night
-            this.dynamicLights.forEach(l => {
-                if(Math.random() > 0.9) l.intensity = Math.random() * 3.0;
-                else l.intensity = 1.5 * pulse;
-            });
-        }
-        
-        if(this.particles) this.particles.update();
-    }
-
-    animateDoor(isOpen, callback) {
-        const targetRot = isOpen ? -Math.PI/2 : 0;
-        new TWEEN.Tween(this.doorGrp.rotation)
-            .to({y: targetRot}, 1500) // Faster door
-            .easing(TWEEN.Easing.Bounce.Out)
-            .onUpdate(() => {
-                if(!isOpen) this.doorCollider.setFromObject(this.doorMesh);
-            })
-            .onComplete(() => {
-                if(isOpen) this.doorCollider.translate(new THREE.Vector3(0,-100,0));
-                else this.doorCollider.setFromObject(this.doorMesh);
-                if(callback) callback();
-            })
-            .start();
-    }
-
-    deliverTray(dayNumber) {
-        if(this.activeTray) this.removeTray();
-        
-        const fData = FOOD_DATABASE.find(f => f.d === dayNumber) || FOOD_DATABASE[FOOD_DATABASE.length-1];
-        this.activeTray = new FoodTray(fData);
-        
-        this.activeTray.position.set(0, 0.05, CONFIG.WORLD.CELL_LENGTH/2 + 0.2);
-        this.scene.add(this.activeTray);
-        this.interactables.push(this.activeTray);
-
-        new TWEEN.Tween(this.activeTray.position)
-            .to({z: CONFIG.WORLD.CELL_LENGTH/2 - 0.7}, 1000)
-            .easing(TWEEN.Easing.Elastic.Out)
-            .start();
-    }
-
-    removeTray() {
-        if(!this.activeTray) return null;
-        const data = this.activeTray.data;
-        this.scene.remove(this.activeTray);
-        this.interactables = this.interactables.filter(i => i !== this.activeTray);
-        this.activeTray = null;
-        return data;
-    }
-}
-
-/* ==========================================================================
-   MODULE 8: USER INTERFACE & STATE DOM CONTROLLER
-   ========================================================================== */
-class UIController {
-    constructor() {
-        this.bindDOM();
-        this.subTimer = null;
-    }
-
-    bindDOM() {
-        this.els = {
-            menu: document.getElementById('menu-layer'),
-            btn: document.getElementById('btn-init'),
-            load: document.getElementById('loading-seq'),
-            hud: document.getElementById('hud-layer'),
-            day: document.getElementById('val-day'),
-            time: document.getElementById('val-time'),
-            state: document.getElementById('val-state'),
-            sFill: document.getElementById('fill-sanity'),
-            sPct: document.getElementById('pct-sanity'),
-            nFill: document.getElementById('fill-nutrition'),
-            nPct: document.getElementById('pct-nutrition'),
-            stFill: document.getElementById('fill-stamina'),
-            stPct: document.getElementById('pct-stamina'),
-            cross: document.getElementById('crosshair-container'),
-            prompt: document.getElementById('interaction-prompt'),
-            pAct: document.getElementById('prompt-action'),
-            pDesc: document.getElementById('prompt-desc'),
-            subBox: document.getElementById('subtitle-element'),
-            fade: document.getElementById('fx-fade'),
-            dbg: document.getElementById('debug-panel')
-        };
-    }
-
-    setReady() {
-        this.els.load.style.display = 'none';
-        this.els.btn.style.display = 'inline-block';
-    }
-
-    transitionToGame() {
-        this.els.menu.style.opacity = 0;
-        this.els.fade.style.opacity = 0;
-        setTimeout(() => {
-            this.els.menu.style.display = 'none';
-            this.els.hud.style.display = 'block';
-        }, 1000);
-    }
-
-    transitionToMenu() {
-        this.els.menu.style.display = 'flex';
-        this.els.hud.style.display = 'none';
-        setTimeout(() => { this.els.menu.style.opacity = 1; }, 50);
-    }
-
-    updateHUD(data) {
-        this.els.day.innerText = `DAY ${data.day.toString().padStart(4, '0')}`;
-        const h = Math.floor(data.time);
-        const m = Math.floor((data.time - h) * 60);
-        const ampm = h >= 12 ? 'PM' : 'AM';
-        const h12 = h % 12 || 12;
-        this.els.time.innerText = `${h12.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')} ${ampm}`;
-
-        this.els.state.innerText = data.state;
-        this.els.state.className = `data-val state-${data.state.split('_')[0]}`;
-
-        const sInt = Math.floor(data.san); const nInt = Math.floor(data.nut); const stInt = Math.floor(data.sta);
-        this.els.sFill.style.width = `${data.san}%`; this.els.sPct.innerText = `${sInt}%`;
-        this.els.nFill.style.width = `${data.nut}%`; this.els.nPct.innerText = `${nInt}%`;
-        this.els.stFill.style.width = `${data.sta}%`; this.els.stPct.innerText = `${stInt}%`;
-
-        document.body.className = '';
-        this.els.sFill.classList.remove('status-warning', 'status-critical');
-        if(data.san < 40) { this.els.sFill.classList.add('status-warning'); document.body.classList.add('insanity-tier-1'); }
-        if(data.san < 20) { document.body.classList.add('insanity-tier-2'); }
-        if(data.san < 10) { this.els.sFill.classList.add('status-critical'); document.body.classList.add('insanity-tier-3'); }
-    }
-
-    setPrompt(obj) {
-        if(!obj) {
-            this.els.prompt.classList.remove('visible');
-            this.els.cross.classList.remove('active');
-            return;
-        }
-        this.els.pAct.innerText = obj.userData.action;
-        this.els.pDesc.innerText = obj.userData.desc;
-        this.els.prompt.classList.add('visible');
-        this.els.cross.classList.add('active');
-    }
-
-    showSubtitle(text, type='system', durationMs=4000) {
-        this.els.subBox.innerText = text;
-        this.els.subBox.className = `subtitle-text subtitle-${type} show`;
-        
-        clearTimeout(this.subTimer);
-        this.subTimer = setTimeout(() => {
-            this.els.subBox.classList.remove('show');
-        }, durationMs);
-    }
-
-    doFade(fadeIn, callback, duration=2000) {
-        this.els.fade.style.transition = `opacity ${duration/1000}s cubic-bezier(0.1, 0.7, 0.1, 1)`;
-        this.els.fade.style.opacity = fadeIn ? 1 : 0;
-        if(callback) setTimeout(callback, duration);
-    }
-    
-    updateDebug(fps, pos, dir) {
-        if(!CONFIG.ENGINE.DEBUG_MODE) { this.els.dbg.style.display='none'; return; }
-        this.els.dbg.style.display='block';
-        this.els.dbg.innerText = `FPS: ${Math.round(fps)} | P: ${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}, ${pos.z.toFixed(2)} | D: ${dir.x.toFixed(2)}, ${dir.z.toFixed(2)}`;
-    }
-}
-
-/* ==========================================================================
-   MODULE 9: PLAYER CONTROLLER (WITH ROBUST COLLISION FIX)
-   ========================================================================== */
-class PlayerController {
-    constructor(camera, domElement, world, ui, audio) {
-        this.camera = camera; this.world = world; this.ui = ui; this.audio = audio;
-        this.controls = new PointerLockControls(camera, domElement);
-        
-        this.vel = new THREE.Vector3(); this.dir = new THREE.Vector3();
-        this.inputs = { w:0, a:0, s:0, d:0, shift:0 };
-        this.raycaster = new THREE.Raycaster();
-        this.targetObj = null;
-        
-        this.collider = new THREE.Sphere(new THREE.Vector3(), CONFIG.PHYSICS.PLAYER_RADIUS);
-        this.distWalked = 0;
-        this.stamina = CONFIG.STATS.MAX_STAMINA;
-        this.isExhausted = false;
-
-        this.bindInput();
-    }
-
-    bindInput() {
-        const k = (e, v) => {
-            switch(e.code) {
-                case 'KeyW': this.inputs.w = v; break;
-                case 'KeyS': this.inputs.s = v; break;
-                case 'KeyA': this.inputs.a = v; break;
-                case 'KeyD': this.inputs.d = v; break;
-                case 'ShiftLeft': this.inputs.shift = v; break;
-            }
-        };
-        document.addEventListener('keydown', e => k(e, 1));
-        document.addEventListener('keyup', e => k(e, 0));
-    }
-
-    update(delta) {
-        if(!this.controls.isLocked) return;
-
-        const isTryingToRun = this.inputs.shift && (this.inputs.w || this.inputs.s || this.inputs.a || this.inputs.d);
-        if(isTryingToRun && !this.isExhausted) {
-            this.stamina -= CONFIG.STATS.STAMINA_DRAIN * delta;
-            if(this.stamina <= 0) { this.stamina = 0; this.isExhausted = true; this.audio.triggerHeartbeat(); }
-        } else {
-            this.stamina += CONFIG.STATS.STAMINA_REGEN * delta;
-            if(this.stamina >= CONFIG.STATS.MAX_STAMINA) { this.stamina = CONFIG.STATS.MAX_STAMINA; this.isExhausted = false; }
-        }
-
-        const currentSpeed = (isTryingToRun && !this.isExhausted) ? CONFIG.PHYSICS.RUN_SPEED : CONFIG.PHYSICS.WALK_SPEED;
-
-        this.dir.z = this.inputs.w - this.inputs.s;
-        this.dir.x = this.inputs.d - this.inputs.a;
-        this.dir.normalize();
-
-        this.vel.x -= this.vel.x * CONFIG.PHYSICS.DECELERATION * delta;
-        this.vel.z -= this.vel.z * CONFIG.PHYSICS.DECELERATION * delta;
-
-        if(this.inputs.w || this.inputs.s) this.vel.z -= this.dir.z * currentSpeed * delta;
-        if(this.inputs.a || this.inputs.d) this.vel.x -= this.dir.x * currentSpeed * delta;
-
-        const startP = this.controls.object.position.clone();
-        
-        // Apply movement
-        this.controls.moveRight(-this.vel.x * delta);
-        this.controls.moveForward(-this.vel.z * delta);
-
-        // Robust Collision Resolution
-        this.collider.center.copy(this.controls.object.position);
-        this.collider.center.y -= CONFIG.PHYSICS.PLAYER_HEIGHT * 0.4; 
-
-        for(let box of this.world.colliders) {
-            if(box.intersectsSphere(this.collider)) {
-                const closePt = new THREE.Vector3();
-                box.clampPoint(this.collider.center, closePt);
-                const pushDir = new THREE.Vector3().subVectors(this.collider.center, closePt);
-                const dist = pushDir.length();
+const PHYSICS = {
+    gravity: -9.81 * 1.5,
+    foodObjects: [],
+    update: function(delta) {
+        for(let i = this.foodObjects.length - 1; i >= 0; i--) {
+            const obj = this.foodObjects[i];
+            if(!obj.isLanded) {
+                obj.velocity.y += this.gravity * delta;
+                obj.mesh.position.addScaledVector(obj.velocity, delta);
                 
-                if(dist < CONFIG.PHYSICS.PLAYER_RADIUS) {
-                    if (dist > 0.001) {
-                        pushDir.normalize().multiplyScalar(CONFIG.PHYSICS.PLAYER_RADIUS - dist);
-                        pushDir.y = 0;
-                        this.controls.object.position.add(pushDir);
-                    } else {
-                        // Trapped dead center fallback
-                        this.controls.object.position.x = startP.x;
-                        this.controls.object.position.z = startP.z;
+                // Spin
+                obj.mesh.rotation.x += obj.velocity.z * delta * 2;
+                obj.mesh.rotation.z -= obj.velocity.x * delta * 2;
+
+                // Ground collision
+                if(obj.mesh.position.y <= 0.05) {
+                    obj.mesh.position.y = 0.05;
+                    obj.velocity.y *= -0.4; // Bounce
+                    obj.velocity.x *= 0.6;  // Friction
+                    obj.velocity.z *= 0.6;
+                    
+                    if(Math.abs(obj.velocity.y) < 0.5 && Math.abs(obj.velocity.x) < 0.5) {
+                        obj.isLanded = true;
+                        obj.velocity.set(0,0,0);
                     }
                 }
             }
         }
+    }
+};
 
-        const endP = this.controls.object.position.clone();
-        const moveDelta = startP.distanceTo(endP);
+/* ==========================================================================
+   MODULE 4: CHARACTER RIGGING (PLAYER & NPC)
+   ========================================================================== */
+class HumanoidRig extends THREE.Group {
+    constructor(isPlayer = false) {
+        super();
+        this.animState = 'idle';
+        this.animTime = 0;
+        this.walkSpeed = 0;
+        this.buildRig(isPlayer);
+    }
+
+    buildRig(isPlayer) {
+        // Colors
+        const skinMat = new THREE.MeshLambertMaterial({color: 0xffdbac});
+        const shirtColor = isPlayer ? 0x2e7d32 : Math.random() * 0xffffff;
+        const shirtMat = new THREE.MeshLambertMaterial({color: shirtColor});
+        const pantsColor = isPlayer ? 0x1565c0 : Math.random() * 0xffffff;
+        const pantsMat = new THREE.MeshLambertMaterial({color: pantsColor});
+        const shoeMat = new THREE.MeshLambertMaterial({color: 0x222222});
+
+        this.root = new THREE.Group();
+        this.root.position.y = 1.0; // Hip height
+        this.add(this.root);
+
+        // Torso
+        this.torso = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.25), shirtMat);
+        this.torso.position.y = 0.3;
+        this.torso.castShadow = true;
+        this.root.add(this.torso);
+
+        // Head
+        this.head = new THREE.Group();
+        this.head.position.y = 0.7;
+        this.root.add(this.head);
         
-        if(moveDelta > 0.001) {
-            this.distWalked += moveDelta;
-            const bob = Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) * CONFIG.PHYSICS.HEAD_BOB_AMP * (currentSpeed/CONFIG.PHYSICS.WALK_SPEED);
-            this.controls.object.position.y = CONFIG.PHYSICS.PLAYER_HEIGHT + bob;
+        const skull = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.3, 0.25), skinMat);
+        skull.castShadow = true;
+        this.head.add(skull);
+        
+        // Hair
+        const hairMat = new THREE.MeshLambertMaterial({color: isPlayer ? 0x3e2723 : Math.random()*0xffffff});
+        const hair = new THREE.Mesh(new THREE.BoxGeometry(0.27, 0.1, 0.27), hairMat);
+        hair.position.y = 0.15;
+        this.head.add(hair);
+
+        // Limbs
+        const limbGeo = new THREE.BoxGeometry(0.12, 0.5, 0.12);
+        
+        // Arms
+        this.armL = new THREE.Group(); this.armL.position.set(-0.26, 0.5, 0); this.root.add(this.armL);
+        this.armR = new THREE.Group(); this.armR.position.set(0.26, 0.5, 0); this.root.add(this.armR);
+        
+        const aL = new THREE.Mesh(limbGeo, shirtMat); aL.position.y = -0.25; aL.castShadow = true; this.armL.add(aL);
+        const aR = new THREE.Mesh(limbGeo, shirtMat); aR.position.y = -0.25; aR.castShadow = true; this.armR.add(aR);
+        
+        // Hands
+        const handGeo = new THREE.BoxGeometry(0.1, 0.12, 0.1);
+        const hL = new THREE.Mesh(handGeo, skinMat); hL.position.y = -0.55; this.armL.add(hL);
+        const hR = new THREE.Mesh(handGeo, skinMat); hR.position.y = -0.55; this.armR.add(hR);
+
+        // Legs
+        this.legL = new THREE.Group(); this.legL.position.set(-0.12, 0, 0); this.root.add(this.legL);
+        this.legR = new THREE.Group(); this.legR.position.set(0.12, 0, 0); this.root.add(this.legR);
+        
+        const lL = new THREE.Mesh(limbGeo, pantsMat); lL.position.y = -0.25; lL.castShadow = true; this.legL.add(lL);
+        const lR = new THREE.Mesh(limbGeo, pantsMat); lR.position.y = -0.25; lR.castShadow = true; this.legR.add(lR);
+
+        // Feet
+        const footGeo = new THREE.BoxGeometry(0.14, 0.1, 0.2);
+        const fL = new THREE.Mesh(footGeo, shoeMat); fL.position.set(0, -0.55, 0.04); fL.castShadow=true; this.legL.add(fL);
+        const fR = new THREE.Mesh(footGeo, shoeMat); fR.position.set(0, -0.55, 0.04); fR.castShadow=true; this.legR.add(fR);
+    }
+
+    updateAnimation(delta, speed) {
+        this.walkSpeed = speed;
+        if(this.walkSpeed > 0.1) {
+            this.animState = 'walk';
+            this.animTime += delta * this.walkSpeed * 3.0;
             
-            if(Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) < -0.9 && this.canStep) {
-                this.audio.playFootstep('sock', 0.2);
-                this.canStep = false;
-            } else if(Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) > 0) {
-                this.canStep = true;
-            }
+            const stride = Math.sin(this.animTime);
+            
+            this.legL.rotation.x = stride * 0.6;
+            this.legR.rotation.x = -stride * 0.6;
+            
+            this.armL.rotation.x = -stride * 0.5;
+            this.armR.rotation.x = stride * 0.5;
+            
+            this.root.position.y = 1.0 + Math.abs(Math.sin(this.animTime * 2)) * 0.05;
+            this.torso.rotation.y = stride * 0.1;
         } else {
-            const breath = Math.sin(performance.now() * 0.001 * CONFIG.PHYSICS.BREATH_FREQ) * CONFIG.PHYSICS.BREATH_AMP;
-            this.controls.object.position.y = THREE.MathUtils.lerp(this.controls.object.position.y, CONFIG.PHYSICS.PLAYER_HEIGHT + breath, 0.1);
+            this.animState = 'idle';
+            this.animTime += delta;
+            
+            // Return to neutral
+            this.legL.rotation.x = THREE.MathUtils.lerp(this.legL.rotation.x, 0, 0.1);
+            this.legR.rotation.x = THREE.MathUtils.lerp(this.legR.rotation.x, 0, 0.1);
+            
+            // Idle breathing
+            this.armL.rotation.x = THREE.MathUtils.lerp(this.armL.rotation.x, Math.sin(this.animTime)*0.05, 0.1);
+            this.armR.rotation.x = THREE.MathUtils.lerp(this.armR.rotation.x, -Math.sin(this.animTime)*0.05, 0.1);
+            
+            this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 1.0 + Math.sin(this.animTime * 2)*0.02, 0.1);
+            this.torso.rotation.y = THREE.MathUtils.lerp(this.torso.rotation.y, 0, 0.1);
         }
+    }
 
-        // Raycasting interaction
-        this.raycaster.setFromCamera(new THREE.Vector2(0,0), this.camera);
-        const intersects = this.raycaster.intersectObjects(this.world.interactables, false);
-        
-        if(intersects.length > 0 && intersects[0].distance < 3.0) {
-            if(this.targetObj !== intersects[0].object) {
-                this.targetObj = intersects[0].object;
-                this.ui.setPrompt(this.targetObj);
-            }
-        } else {
-            if(this.targetObj !== null) {
-                this.targetObj = null;
-                this.ui.setPrompt(null);
-            }
-        }
-
-        const camDir = new THREE.Vector3(); this.camera.getWorldDirection(camDir);
-        this.audio.updateSpatial(this.camera.position, camDir);
+    playThrowAnimation() {
+        this.armR.rotation.x = -Math.PI; // Arm up
+        setTimeout(() => {
+            // Throw down
+            const throwInterval = setInterval(() => {
+                this.armR.rotation.x += 0.2;
+                if(this.armR.rotation.x >= 0.5) clearInterval(throwInterval);
+            }, 16);
+        }, 100);
     }
 }
 
 /* ==========================================================================
-   MODULE 10: GAME DIRECTOR
+   MODULE 5: SQUIRREL AI & PROCEDURAL RIGGING
+   Highly detailed procedural mesh and state machine for realism.
    ========================================================================== */
-class GameDirector {
-    constructor(world, ui, audio, player) {
-        this.world = world; this.ui = ui; this.audio = audio; this.player = player;
+class SquirrelAI extends THREE.Group {
+    constructor() {
+        super();
+        this.buildRig();
         
-        this.data = {
-            day: 1,
-            time: CONFIG.TIME.WAKE_HOUR,
-            san: CONFIG.STATS.MAX_SANITY,
-            nut: CONFIG.STATS.MAX_NUTRI,
-            sta: CONFIG.STATS.MAX_STAMINA,
-            state: 'LOCKDOWN' 
-        };
+        // AI State
+        this.state = 'IDLE'; // IDLE, WANDER, ALERT, APPROACH, EAT, FLEE
+        this.trust = 0; // 0 to 100
+        this.targetFood = null;
+        this.wanderTarget = new THREE.Vector3();
+        this.fleeTarget = new THREE.Vector3();
+        this.timer = 0;
+        this.animTime = 0;
+        
+        // Tunables
+        this.walkSpeed = 2.0;
+        this.runSpeed = 6.0;
+        this.frightenDist = 8.0; // Distance player causes flee
+        this.smellDist = 15.0; // Distance to detect food
+    }
 
-        this.thoughtTimer = 0;
+    buildRig() {
+        // Colors: Realistic Grey/Brown squirrel
+        const furMat = new THREE.MeshLambertMaterial({color: 0x8d7a64});
+        const bellyMat = new THREE.MeshLambertMaterial({color: 0xdcd0c0});
+        const eyeMat = new THREE.MeshLambertMaterial({color: 0x111111});
+        const noseMat = new THREE.MeshLambertMaterial({color: 0x221111});
+
+        this.root = new THREE.Group();
+        this.root.position.y = 0.1;
+        this.add(this.root);
+
+        // Body
+        this.bodyGrp = new THREE.Group();
+        this.root.add(this.bodyGrp);
+        
+        const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.08, 0.15, 8, 16), furMat);
+        torso.rotation.x = Math.PI / 2;
+        torso.position.y = 0.08;
+        torso.castShadow = true;
+        this.bodyGrp.add(torso);
+        
+        const belly = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.13, 8, 16), bellyMat);
+        belly.rotation.x = Math.PI / 2;
+        belly.position.set(0, 0.06, 0.01);
+        this.bodyGrp.add(belly);
+
+        // Head
+        this.headGrp = new THREE.Group();
+        this.headGrp.position.set(0, 0.12, 0.15);
+        this.bodyGrp.add(this.headGrp);
+        
+        const skull = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), furMat);
+        skull.scale.set(1, 0.9, 1.2);
+        skull.castShadow = true;
+        this.headGrp.add(skull);
+        
+        // Snout
+        const snout = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.08, 16), furMat);
+        snout.rotation.x = Math.PI / 2;
+        snout.position.set(0, -0.01, 0.07);
+        this.headGrp.add(snout);
+        
+        const nose = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), noseMat);
+        nose.position.set(0, -0.01, 0.11);
+        this.headGrp.add(nose);
+        
+        // Eyes
+        const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), eyeMat);
+        eyeR.position.set(0.05, 0.02, 0.03);
+        this.headGrp.add(eyeR);
+        const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), eyeMat);
+        eyeL.position.set(-0.05, 0.02, 0.03);
+        this.headGrp.add(eyeL);
+        
+        // Ears
+        const earGeo = new THREE.ConeGeometry(0.02, 0.05, 8);
+        const earR = new THREE.Mesh(earGeo, furMat);
+        earR.position.set(0.04, 0.06, -0.02);
+        earR.rotation.set(-0.2, 0, -0.2);
+        this.headGrp.add(earR);
+        const earL = new THREE.Mesh(earGeo, furMat);
+        earL.position.set(-0.04, 0.06, -0.02);
+        earL.rotation.set(-0.2, 0, 0.2);
+        this.headGrp.add(earL);
+
+        // Fluffy Tail (Built with multiple overlapping spheres)
+        this.tailGrp = new THREE.Group();
+        this.tailGrp.position.set(0, 0.1, -0.15);
+        this.bodyGrp.add(this.tailGrp);
+        
+        const tailCurve = new THREE.Group();
+        this.tailGrp.add(tailCurve);
+        
+        for(let i=0; i<12; i++) {
+            const tSeg = new THREE.Mesh(new THREE.SphereGeometry(0.04 + Math.sin(i/12 * Math.PI)*0.03, 8, 8), furMat);
+            // S-curve mathematics for bushy tail
+            const tx = 0;
+            const ty = i * 0.025;
+            const tz = -Math.sin(i/12 * Math.PI) * 0.1;
+            tSeg.position.set(tx, ty, tz);
+            tSeg.castShadow = true;
+            tailCurve.add(tSeg);
+        }
+
+        // Limbs
+        const legGeo = new THREE.CapsuleGeometry(0.02, 0.06, 8, 8);
+        
+        this.legFL = new THREE.Mesh(legGeo, furMat); this.legFL.position.set(-0.06, 0.04, 0.1); this.root.add(this.legFL);
+        this.legFR = new THREE.Mesh(legGeo, furMat); this.legFR.position.set(0.06, 0.04, 0.1); this.root.add(this.legFR);
+        
+        // Thicker hind legs
+        const hindGeo = new THREE.CapsuleGeometry(0.03, 0.08, 8, 8);
+        this.legBL = new THREE.Mesh(hindGeo, furMat); this.legBL.position.set(-0.07, 0.05, -0.1); this.root.add(this.legBL);
+        this.legBR = new THREE.Mesh(hindGeo, furMat); this.legBR.position.set(0.07, 0.05, -0.1); this.root.add(this.legBR);
+    }
+
+    update(delta, player, ui) {
+        this.animTime += delta;
+        const distToPlayer = this.position.distanceTo(player.position);
+        
+        // Dynamic fright distance based on trust and player speed
+        const currentFrightDist = this.frightenDist - (this.trust / 100) * 5.0 + (player.isSneaking ? -2.0 : player.currentSpeed);
+
+        // State Machine Logic
+        switch(this.state) {
+            case 'IDLE':
+                this.animateIdle();
+                this.timer -= delta;
+                if(this.timer <= 0) {
+                    this.state = 'WANDER';
+                    this.pickWanderTarget();
+                }
+                this.checkThreatsAndFood(distToPlayer, currentFrightDist);
+                break;
+
+            case 'WANDER':
+                this.moveToTarget(this.wanderTarget, this.walkSpeed, delta);
+                if(this.position.distanceTo(this.wanderTarget) < 0.5) {
+                    this.state = 'IDLE';
+                    this.timer = Math.random() * 3 + 1;
+                }
+                this.checkThreatsAndFood(distToPlayer, currentFrightDist);
+                break;
+
+            case 'ALERT':
+                this.animateAlert();
+                this.headGrp.lookAt(player.position.x, this.headGrp.position.y + this.position.y, player.position.z);
+                if(distToPlayer < currentFrightDist) {
+                    this.state = 'FLEE';
+                    this.pickFleeTarget(player.position);
+                } else if (distToPlayer > currentFrightDist + 3.0) {
+                    this.state = 'IDLE';
+                    this.timer = 1.0;
+                }
+                break;
+
+            case 'APPROACH':
+                if(!this.targetFood || this.targetFood.eaten) {
+                    this.state = 'IDLE';
+                    break;
+                }
+                // Approach cautiously based on trust
+                const approachSpeed = this.walkSpeed * (0.5 + (this.trust/100)*0.5);
+                this.moveToTarget(this.targetFood.mesh.position, approachSpeed, delta);
+                
+                // Stop and hesitate
+                if(Math.random() < 0.02) {
+                    this.state = 'IDLE';
+                    this.timer = 0.5;
+                }
+
+                if(this.position.distanceTo(this.targetFood.mesh.position) < 0.4) {
+                    this.state = 'EAT';
+                    this.timer = 3.0; // Eating duration
+                }
+                
+                // Still check for sudden player movement
+                if(distToPlayer < currentFrightDist) {
+                    this.state = 'FLEE';
+                    this.pickFleeTarget(player.position);
+                }
+                break;
+
+            case 'EAT':
+                this.animateEat();
+                this.timer -= delta;
+                if(this.timer <= 0) {
+                    // Finished eating
+                    if(this.targetFood) {
+                        this.targetFood.eaten = true;
+                        this.targetFood.mesh.visible = false;
+                        
+                        // Increase Trust!
+                        this.trust = Math.min(100, this.trust + 15);
+                        ui.updateTrust(this.trust);
+                        ui.showNotification("Squirrel ate the peanut! Trust increased.");
+                        
+                        this.state = 'IDLE';
+                        this.timer = 2.0;
+                    }
+                }
+                // High tolerance while eating, but still can flee
+                if(distToPlayer < currentFrightDist * 0.5) {
+                    this.state = 'FLEE';
+                    this.pickFleeTarget(player.position);
+                }
+                break;
+
+            case 'FLEE':
+                this.moveToTarget(this.fleeTarget, this.runSpeed, delta);
+                if(this.position.distanceTo(this.fleeTarget) < 1.0) {
+                    this.state = 'IDLE';
+                    this.timer = 2.0;
+                }
+                break;
+        }
+
+        ui.updateSquirrelState(this.state);
+        
+        // Physics / Gravity clamp
+        this.position.y = 0; 
+    }
+
+    checkThreatsAndFood(distToPlayer, frightDist) {
+        if(distToPlayer < frightDist) {
+            this.state = 'ALERT';
+            return;
+        }
+
+        // Look for food
+        if(!this.targetFood || this.targetFood.eaten) {
+            let closestFood = null;
+            let minDist = this.smellDist;
+            
+            for(const food of PHYSICS.foodObjects) {
+                if(!food.eaten && food.isLanded) {
+                    const d = this.position.distanceTo(food.mesh.position);
+                    if(d < minDist) {
+                        minDist = d;
+                        closestFood = food;
+                    }
+                }
+            }
+            
+            if(closestFood) {
+                this.targetFood = closestFood;
+                this.state = 'APPROACH';
+            }
+        }
+    }
+
+    pickWanderTarget() {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * 5 + 2;
+        this.wanderTarget.set(
+            this.position.x + Math.cos(angle) * dist,
+            0,
+            this.position.z + Math.sin(angle) * dist
+        );
+    }
+
+    pickFleeTarget(threatPos) {
+        // Run away from threat
+        const dir = new THREE.Vector3().subVectors(this.position, threatPos).normalize();
+        this.fleeTarget.copy(this.position).addScaledVector(dir, 15.0);
+        // Add some noise to escape vector
+        this.fleeTarget.x += (Math.random() - 0.5) * 5;
+        this.fleeTarget.z += (Math.random() - 0.5) * 5;
+    }
+
+    moveToTarget(target, speed, delta) {
+        this.animateRun(speed);
+        
+        const dir = new THREE.Vector3().subVectors(target, this.position);
+        dir.y = 0;
+        
+        if(dir.lengthSq() > 0.01) {
+            // Smooth rotation
+            const targetRotation = Math.atan2(dir.x, dir.z);
+            let currentRot = this.rotation.y;
+            // Angle interpolation logic
+            let diff = targetRotation - currentRot;
+            while(diff < -Math.PI) diff += Math.PI*2;
+            while(diff > Math.PI) diff -= Math.PI*2;
+            this.rotation.y += diff * 10.0 * delta;
+            
+            dir.normalize();
+            this.position.addScaledVector(dir, speed * delta);
+        }
+    }
+
+    // --- PROCEDURAL ANIMATIONS ---
+    animateIdle() {
+        this.bodyGrp.rotation.x = THREE.MathUtils.lerp(this.bodyGrp.rotation.x, 0, 0.1);
+        this.headGrp.rotation.x = THREE.MathUtils.lerp(this.headGrp.rotation.x, Math.sin(this.animTime)*0.1, 0.1);
+        this.headGrp.rotation.y = THREE.MathUtils.lerp(this.headGrp.rotation.y, 0, 0.1);
+        
+        this.tailGrp.rotation.x = Math.sin(this.animTime * 2) * 0.1; // Gentle twitch
+        
+        this.legFL.position.y = 0.04; this.legFR.position.y = 0.04;
+        this.legBL.position.y = 0.05; this.legBR.position.y = 0.05;
+        this.legFL.rotation.x = 0; this.legFR.rotation.x = 0;
+        this.legBL.rotation.x = 0; this.legBR.rotation.x = 0;
+    }
+
+    animateRun(speed) {
+        const cycle = this.animTime * speed * 3.0;
+        const bounce = Math.abs(Math.sin(cycle));
+        
+        this.root.position.y = 0.1 + bounce * 0.08;
+        this.bodyGrp.rotation.x = Math.sin(cycle) * 0.2;
+        
+        // Gallop logic
+        this.legFL.rotation.x = Math.cos(cycle) * 0.8;
+        this.legFR.rotation.x = Math.cos(cycle - 0.2) * 0.8;
+        this.legBL.rotation.x = -Math.cos(cycle) * 0.8;
+        this.legBR.rotation.x = -Math.cos(cycle - 0.2) * 0.8;
+        
+        this.tailGrp.rotation.x = -0.5 + bounce * 0.3; // Tail straightens out
+    }
+
+    animateAlert() {
+        // Stand up on hind legs
+        this.bodyGrp.rotation.x = THREE.MathUtils.lerp(this.bodyGrp.rotation.x, -Math.PI/2.5, 0.1);
+        this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 0.15, 0.1);
+        
+        // Paws tucked
+        this.legFL.rotation.x = -Math.PI/2;
+        this.legFR.rotation.x = -Math.PI/2;
+        this.legFL.position.y = 0.15;
+        this.legFR.position.y = 0.15;
+        
+        this.tailGrp.rotation.x = Math.PI/4; // Tail wrapped up
+    }
+
+    animateEat() {
+        // Hunch over
+        this.bodyGrp.rotation.x = THREE.MathUtils.lerp(this.bodyGrp.rotation.x, Math.PI/4, 0.1);
+        this.headGrp.rotation.x = Math.sin(this.animTime * 15) * 0.1; // Fast nibbling
+        
+        // Front paws holding food
+        this.legFL.rotation.x = -Math.PI/3;
+        this.legFR.rotation.x = -Math.PI/3;
+        this.legFL.position.set(-0.03, 0.12, 0.15);
+        this.legFR.position.set(0.03, 0.12, 0.15);
+        
+        this.tailGrp.rotation.x = Math.sin(this.animTime * 5) * 0.05; 
+    }
+}
+
+/* ==========================================================================
+   MODULE 6: ENVIRONMENT GENERATION (PARK)
+   ========================================================================== */
+class ParkGenerator {
+    constructor(scene, materials) {
+        this.scene = scene;
+        this.mats = materials;
+        this.bounds = 100;
+        
+        this.buildGround();
+        this.buildPaths();
+        this.buildTrees();
+        this.buildBenches();
+    }
+
+    buildGround() {
+        const geo = new THREE.PlaneGeometry(this.bounds*2, this.bounds*2, 64, 64);
+        
+        // Displace vertices slightly for uneven terrain using noise
+        const pos = geo.attributes.position;
+        for(let i=0; i<pos.count; i++) {
+            const x = pos.getX(i);
+            const y = pos.getY(i);
+            const z = SN.noise2D(x*0.05, y*0.05) * 1.5;
+            pos.setZ(i, z);
+        }
+        geo.computeVertexNormals();
+
+        const ground = new THREE.Mesh(geo, this.mats.grass);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        this.scene.add(ground);
+    }
+
+    buildPaths() {
+        // Main intersecting paths
+        const pathMat = this.mats.concrete;
+        
+        const pathGeo1 = new THREE.PlaneGeometry(this.bounds*2, 6);
+        const p1 = new THREE.Mesh(pathGeo1, pathMat);
+        p1.rotation.x = -Math.PI/2;
+        p1.position.y = 0.02; // Decal offset
+        p1.receiveShadow = true;
+        this.scene.add(p1);
+
+        const pathGeo2 = new THREE.PlaneGeometry(6, this.bounds*2);
+        const p2 = new THREE.Mesh(pathGeo2, pathMat);
+        p2.rotation.x = -Math.PI/2;
+        p2.position.y = 0.03;
+        p2.receiveShadow = true;
+        this.scene.add(p2);
+    }
+
+    buildTrees() {
+        const treeCount = 150;
+        const leafGeo = new THREE.SphereGeometry(1, 7, 7); // Low poly leaves for performance
+
+        for(let i=0; i<treeCount; i++) {
+            const x = (Math.random() - 0.5) * this.bounds * 1.8;
+            const z = (Math.random() - 0.5) * this.bounds * 1.8;
+            
+            // Keep off paths
+            if(Math.abs(x) < 4 || Math.abs(z) < 4) continue;
+
+            const tHeight = Math.random() * 8 + 5;
+            const tThick = Math.random() * 0.4 + 0.3;
+
+            const treeGrp = new THREE.Group();
+            treeGrp.position.set(x, 0, z);
+            
+            // Trunk
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(tThick*0.8, tThick, tHeight, 8), this.mats.bark);
+            trunk.position.y = tHeight/2;
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            treeGrp.add(trunk);
+
+            // Canopy
+            const canopyClusters = Math.floor(Math.random() * 3) + 3;
+            for(let c=0; c<canopyClusters; c++) {
+                const leaves = new THREE.Mesh(leafGeo, this.mats.leaves);
+                const scale = Math.random() * 2 + 2;
+                leaves.scale.set(scale, scale*0.8, scale);
+                
+                leaves.position.set(
+                    (Math.random()-0.5)*2,
+                    tHeight - 1 + Math.random()*2,
+                    (Math.random()-0.5)*2
+                );
+                
+                leaves.castShadow = true;
+                treeGrp.add(leaves);
+            }
+
+            this.scene.add(treeGrp);
+        }
+    }
+
+    buildBenches() {
+        const woodMat = new THREE.MeshLambertMaterial({color: 0x5d4037});
+        const metalMat = new THREE.MeshStandardMaterial({color: 0x222222, metalness: 0.8, roughness: 0.3});
+
+        // Place benches along paths
+        const benchPositions = [
+            {x: 5, z: 10, rot: -Math.PI/2},
+            {x: 5, z: -15, rot: -Math.PI/2},
+            {x: -5, z: 20, rot: Math.PI/2},
+            {x: 15, z: 5, rot: 0},
+            {x: -20, z: -5, rot: Math.PI}
+        ];
+
+        benchPositions.forEach(p => {
+            const grp = new THREE.Group();
+            grp.position.set(p.x, 0, p.z);
+            grp.rotation.y = p.rot;
+
+            // Seat
+            const seat = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 0.6), woodMat);
+            seat.position.y = 0.5;
+            seat.castShadow = true;
+            grp.add(seat);
+
+            // Back
+            const back = new THREE.Mesh(new THREE.BoxGeometry(2, 0.4, 0.05), woodMat);
+            back.position.set(0, 0.9, -0.28);
+            back.castShadow = true;
+            grp.add(back);
+
+            // Legs
+            const legGeo = new THREE.BoxGeometry(0.1, 0.5, 0.6);
+            const legL = new THREE.Mesh(legGeo, metalMat);
+            legL.position.set(-0.8, 0.25, 0);
+            legL.castShadow = true;
+            grp.add(legL);
+            const legR = new THREE.Mesh(legGeo, metalMat);
+            legR.position.set(0.8, 0.25, 0);
+            legR.castShadow = true;
+            grp.add(legR);
+
+            this.scene.add(grp);
+        });
+    }
+}
+
+/* ==========================================================================
+   MODULE 7: UI & DOM CONTROLLER
+   ========================================================================== */
+class UIController {
+    constructor() {
+        this.dom = {
+            menu: document.getElementById('main-menu'),
+            startBtn: document.getElementById('start-btn'),
+            loadText: document.getElementById('loading-text'),
+            hud: document.getElementById('hud'),
+            trustBar: document.getElementById('trust-bar'),
+            trustPct: document.getElementById('trust-pct'),
+            sqState: document.getElementById('squirrel-state-txt'),
+            notifs: document.getElementById('notification-area'),
+            fade: document.getElementById('fade-overlay')
+        };
+    }
+
+    setReady() {
+        this.dom.loadText.style.display = 'none';
+        this.dom.startBtn.style.display = 'block';
+    }
+
+    hideMenu() {
+        this.dom.fade.style.opacity = 1;
+        setTimeout(() => {
+            this.dom.menu.style.display = 'none';
+            this.dom.hud.style.display = 'block';
+            setTimeout(() => {
+                this.dom.fade.style.opacity = 0;
+            }, 500);
+        }, 1000);
+    }
+
+    updateTrust(val) {
+        this.dom.trustBar.style.width = `${val}%`;
+        this.dom.trustPct.innerText = `${Math.floor(val)}%`;
+    }
+
+    updateSquirrelState(state) {
+        this.dom.sqState.innerText = `STATE: ${state}`;
+    }
+
+    showNotification(msg) {
+        const el = document.createElement('div');
+        el.className = 'notification';
+        el.innerText = msg;
+        this.dom.notifs.appendChild(el);
+        
+        // Trigger reflow
+        void el.offsetWidth;
+        el.classList.add('show');
+        
+        setTimeout(() => {
+            el.classList.remove('show');
+            setTimeout(() => el.remove(), 300);
+        }, 3000);
+    }
+}
+
+/* ==========================================================================
+   MODULE 8: PLAYER CONTROLLER (3RD PERSON)
+   ========================================================================== */
+class PlayerController {
+    constructor(camera, scene) {
+        this.camera = camera;
+        this.scene = scene;
+        
+        this.rig = new HumanoidRig(true);
+        this.scene.add(this.rig);
+        
+        // Physics / Movement state
+        this.velocity = new THREE.Vector3();
+        this.direction = new THREE.Vector3();
+        this.isSneaking = false;
+        this.currentSpeed = 0;
+        
+        // Camera mechanics
+        this.camRadius = 4.0;
+        this.camHeight = 1.5;
+        this.camTheta = Math.PI; // Rotation around Y
+        this.camPhi = Math.PI / 2.2; // Vertical angle
+        
+        this.inputs = { w:false, a:false, s:false, d:false, shift:false, mX:0, mY:0 };
+        
+        this.setupInput();
+    }
+
+    setupInput() {
+        document.addEventListener('keydown', e => this.handleKey(e, true));
+        document.addEventListener('keyup', e => this.handleKey(e, false));
+        
+        document.addEventListener('mousemove', e => {
+            if(document.pointerLockElement === document.body) {
+                this.inputs.mX = e.movementX;
+                this.inputs.mY = e.movementY;
+            }
+        });
+    }
+
+    handleKey(e, isDown) {
+        switch(e.code) {
+            case 'KeyW': this.inputs.w = isDown; break;
+            case 'KeyS': this.inputs.s = isDown; break;
+            case 'KeyA': this.inputs.a = isDown; break;
+            case 'KeyD': this.inputs.d = isDown; break;
+            case 'ShiftLeft': this.inputs.shift = isDown; break;
+        }
     }
 
     update(delta) {
-        if(this.data.state === 'SLEEP') return;
+        // Camera Orbital Math
+        if(document.pointerLockElement === document.body) {
+            this.camTheta -= this.inputs.mX * 0.002;
+            this.camPhi -= this.inputs.mY * 0.002;
+            this.camPhi = Math.max(0.1, Math.min(Math.PI - 0.1, this.camPhi)); // clamp vertical
+            
+            // Reset mouse delta
+            this.inputs.mX = 0;
+            this.inputs.mY = 0;
+        }
 
-        const hourDelta = delta / CONFIG.TIME.REAL_SEC_PER_GAME_HOUR;
-        this.data.time += hourDelta;
+        // Movement Logic relative to camera
+        let inputZ = (this.inputs.w ? 1 : 0) - (this.inputs.s ? 1 : 0);
+        let inputX = (this.inputs.a ? 1 : 0) - (this.inputs.d ? 1 : 0);
         
-        if(this.data.time >= 24.0) {
-            this.data.time -= 24.0;
-            this.data.day++;
-        }
-
-        const starveMult = this.data.nut <= 0 ? CONFIG.STATS.STARVATION_MULTIPLIER : 1.0;
-        this.data.nut -= CONFIG.STATS.NUTRI_DECAY_BASE * hourDelta;
-        this.data.san -= (CONFIG.STATS.SANITY_DECAY_BASE * starveMult) * hourDelta;
-
-        this.data.nut = Math.max(0, Math.min(CONFIG.STATS.MAX_NUTRI, this.data.nut));
-        this.data.san = Math.max(0, Math.min(CONFIG.STATS.MAX_SANITY, this.data.san));
-        this.data.sta = this.player.stamina;
-
-        this.processEventTimeline(delta);
-        this.processThoughts(delta);
-
-        this.ui.updateHUD(this.data);
-        this.world.updateLightingCycle(this.data.time);
-        this.audio.updateSanityModulation(this.data.san / 100);
+        let moveDir = new THREE.Vector3(inputX, 0, inputZ).normalize();
         
-        if(this.world.activeTray) this.world.activeTray.update(performance.now() * 0.002);
-    }
-
-    processEventTimeline(delta) {
-        const t = this.data.time;
+        // Rotate move direction to match camera yaw
+        moveDir.applyAxisAngle(new THREE.Vector3(0,1,0), this.camTheta);
         
-        if(t >= CONFIG.TIME.MEAL_HOUR_1 && t < CONFIG.TIME.MEAL_HOUR_1 + 0.5 && this.data.state === 'LOCKDOWN') {
-            this.initiateGuardSequence('MEAL');
+        this.isSneaking = this.inputs.shift;
+        const targetSpeed = moveDir.length() > 0 ? (this.isSneaking ? 1.5 : 4.5) : 0;
+        
+        this.currentSpeed = THREE.MathUtils.lerp(this.currentSpeed, targetSpeed, 10 * delta);
+        
+        this.rig.position.addScaledVector(moveDir, this.currentSpeed * delta);
+        
+        // Rotate Rig to face movement direction
+        if(moveDir.lengthSq() > 0.1) {
+            const targetRot = Math.atan2(moveDir.x, moveDir.z);
+            // Slerp rotation approximation
+            let diff = targetRot - this.rig.rotation.y;
+            while(diff < -Math.PI) diff += Math.PI*2;
+            while(diff > Math.PI) diff -= Math.PI*2;
+            this.rig.rotation.y += diff * 10 * delta;
         }
         
-        if(t >= CONFIG.TIME.MEAL_HOUR_2 && t < CONFIG.TIME.MEAL_HOUR_2 + 0.5 && this.data.state === 'LOCKDOWN') {
-            this.initiateGuardSequence('MEAL');
-        }
+        this.rig.updateAnimation(delta, this.currentSpeed);
 
-        if(t >= CONFIG.TIME.SLEEP_HOUR && t < CONFIG.TIME.SLEEP_HOUR + 0.1 && Math.random()<0.05) {
-            this.ui.showSubtitle("SYSTEM: MANDATORY POWER DOWN. RETURN TO CHARGING PAD.", 'system');
-        }
-
-        if(this.data.state.startsWith('GUARD')) {
-            this.updateGuardAI(delta);
-        }
-    }
-
-    initiateGuardSequence(type) {
-        this.data.state = 'GUARD_APPROACH';
-        this.guardTargetZ = CONFIG.WORLD.CELL_LENGTH/2 + 0.8;
+        // Update Camera Position
+        const camOffset = new THREE.Vector3(
+            this.camRadius * Math.sin(this.camPhi) * Math.sin(this.camTheta),
+            this.camRadius * Math.cos(this.camPhi),
+            this.camRadius * Math.sin(this.camPhi) * Math.cos(this.camTheta)
+        );
         
-        this.world.guard.position.z = CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH - 2;
-        this.world.guard.rotation.y = Math.PI;
-    }
-
-    updateGuardAI(delta) {
-        const g = this.world.guard;
-        
-        if(this.data.state === 'GUARD_APPROACH') {
-            g.position.z -= 2.5 * delta;
-            if(g.animateWalk(delta, 2.0)) {
-                const distSq = Math.abs(g.position.z - this.guardTargetZ);
-                const vol = Math.max(0, 0.5 * (1.0 - (distSq / CONFIG.WORLD.HALL_LENGTH)));
-                this.audio.playFootstep('boot', vol);
-            }
-
-            if(g.position.z <= this.guardTargetZ) {
-                g.position.z = this.guardTargetZ;
-                g.animateWalk(delta, 0); 
-                
-                this.data.state = 'MEAL_DELIVERY';
-                this.ui.showSubtitle("SYNTH-GUARD: Step back from the barrier. Energy delivery.", 'system');
-                
-                g.animateBendDown(() => {
-                    this.world.deliverTray(this.data.day);
-                    this.audio.playDoorGrind(1.0);
-                });
-
-                setTimeout(() => {
-                    g.rotation.y = 0; 
-                    this.data.state = 'GUARD_LEAVE';
-                }, 2500);
-            }
-        } 
-        else if (this.data.state === 'GUARD_LEAVE') {
-            g.position.z += 2.5 * delta;
-            if(g.animateWalk(delta, 2.0)) {
-                const distSq = Math.abs(g.position.z - this.guardTargetZ);
-                const vol = Math.max(0, 0.5 * (1.0 - (distSq / CONFIG.WORLD.HALL_LENGTH)));
-                this.audio.playFootstep('boot', vol);
-            }
-
-            if(g.position.z > this.guardTargetZ + CONFIG.WORLD.HALL_LENGTH) {
-                g.animateWalk(delta, 0);
-                this.data.state = 'LOCKDOWN';
-            }
-        }
-    }
-
-    processThoughts(delta) {
-        this.thoughtTimer += delta;
-        const thoughtThreshold = 10.0 + (this.data.san / 100) * 30.0;
-        
-        if(this.thoughtTimer > thoughtThreshold) {
-            this.thoughtTimer = 0;
-            if(Math.random() > 0.5) {
-                const thought = THOUGHT_DATABASE[Math.floor(Math.random() * THOUGHT_DATABASE.length)];
-                this.ui.showSubtitle(thought, 'thought', 5000);
-            }
-        }
-    }
-
-    handleInteraction(target) {
-        if(!target) return;
-        const id = target.userData.id;
-
-        if(id === 'food_tray') {
-            const fData = this.world.removeTray();
-            if(fData) {
-                this.data.nut += fData.nutri;
-                this.data.san += fData.sanity;
-                this.audio.playEatSlop();
-                this.ui.showSubtitle(`ASSIMILATED: ${fData.desc}`, 'system', 4000);
-                this.ui.setPrompt(null);
-                this.player.targetObj = null;
-            }
-        }
-        else if(id === 'toilet') {
-            this.audio.playMetalDoorSlam(); 
-            this.ui.showSubtitle("FLUID NETWORK OFFLINE. ACCESS DENIED.", 'system');
-        }
-        else if(id === 'cot') {
-            if(this.data.time >= CONFIG.TIME.SLEEP_HOUR || this.data.time < CONFIG.TIME.WAKE_HOUR) {
-                this.data.state = 'SLEEP';
-                this.ui.doFade(true, () => {
-                    this.data.time = CONFIG.TIME.WAKE_HOUR;
-                    this.data.day++;
-                    this.data.san = Math.min(CONFIG.STATS.MAX_SANITY, this.data.san + CONFIG.STATS.SLEEP_RESTORE);
-                    this.ui.showSubtitle("SYSTEM REBOOT COMPLETE. CYCLE INCREMENTED.", 'system', 3000);
-                    
-                    setTimeout(() => {
-                        this.ui.doFade(false);
-                        this.data.state = 'LOCKDOWN';
-                    }, 1000);
-                }, 1500);
-            } else {
-                this.ui.showSubtitle("INVALID REQUEST. MAINTAIN ACTIVE PROTOCOL.", 'system');
-                this.data.san -= 5; 
-            }
-        }
+        const targetPos = this.rig.position.clone().add(new THREE.Vector3(0, this.camHeight, 0));
+        this.camera.position.copy(targetPos).add(camOffset);
+        this.camera.lookAt(targetPos);
     }
 }
 
 /* ==========================================================================
-   MODULE 11: MAIN ENGINE APPLICATION (RESPONSIVE FIXES)
+   MODULE 9: MAIN GAME ENGINE
+   Ties graphics, physics, AI, and game loop together.
    ========================================================================== */
-class Engine {
+class GameEngine {
     constructor() {
-        this.initDOM();
+        this.ui = new UIController();
         
+        // THREE Setup
         this.scene = new THREE.Scene();
-        const failSafeLight = new THREE.AmbientLight(0xffffff, 0.2);
-        this.scene.add(failSafeLight);
+        this.scene.background = new THREE.Color(0x87CEEB); // Sky blue
+        this.scene.fog = new THREE.Fog(0x87CEEB, 20, 80);
+
+        this.camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 200);
         
-        this.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.position.set(0, CONFIG.PHYSICS.PLAYER_HEIGHT, 0);
-        
-        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: true, powerPreference: "high-performance" });
+        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-        this.audio = new AudioEngine();
-        this.ui = new UIController();
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         
-        setTimeout(() => this.buildWorld(), 200);
+        // Build World (Async to allow UI to show)
+        setTimeout(() => this.initWorld(), 100);
     }
 
-    initDOM() {
-        this.btnInit = document.getElementById('btn-init');
-        this.btnInit.addEventListener('click', () => this.startGame());
+    initWorld() {
+        // Lighting
+        const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+        this.scene.add(ambient);
         
-        // Robust resize listener
-        window.addEventListener('resize', this.onWindowResize.bind(this), false);
-    }
+        const sun = new THREE.DirectionalLight(0xfffae6, 1.5);
+        sun.position.set(50, 100, 50);
+        sun.castShadow = true;
+        sun.shadow.camera.top = 50;
+        sun.shadow.camera.bottom = -50;
+        sun.shadow.camera.left = -50;
+        sun.shadow.camera.right = 50;
+        sun.shadow.camera.near = 0.1;
+        sun.shadow.camera.far = 200;
+        sun.shadow.mapSize.width = 2048;
+        sun.shadow.mapSize.height = 2048;
+        sun.shadow.bias = -0.0005;
+        this.scene.add(sun);
 
-    onWindowResize() {
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-    }
+        // Materials cache
+        const mats = {
+            grass: new THREE.MeshStandardMaterial({ 
+                map: TextureLab.generateGrassLayer(1024, 1024), 
+                roughness: 0.9 
+            }),
+            bark: new THREE.MeshStandardMaterial({ 
+                map: TextureLab.generateBark(256, 512), 
+                roughness: 1.0 
+            }),
+            concrete: new THREE.MeshStandardMaterial({ 
+                map: TextureLab.generateConcrete(512, 512), 
+                roughness: 0.8 
+            }),
+            leaves: new THREE.MeshStandardMaterial({
+                map: TextureLab.generateLeafPattern(512, 512),
+                transparent: true,
+                alphaTest: 0.3,
+                side: THREE.DoubleSide,
+                roughness: 0.6
+            })
+        };
 
-    buildWorld() {
-        this.world = new PrisonEnvironment(this.scene);
-        this.player = new PlayerController(this.camera, document.body, this.world, this.ui, this.audio);
-        this.director = new GameDirector(this.world, this.ui, this.audio, this.player);
+        this.park = new ParkGenerator(this.scene, mats);
+        this.player = new PlayerController(this.camera, this.scene);
+        
+        // Spawn Squirrel
+        this.squirrel = new SquirrelAI();
+        this.squirrel.position.set(10, 0, 10);
+        this.scene.add(this.squirrel);
 
-        this.player.controls.addEventListener('lock', () => {
-            this.ui.transitionToGame();
-            this.isRunning = true;
-            this.clock.start();
+        // Bind Events
+        this.ui.dom.startBtn.addEventListener('click', () => {
+            document.body.requestPointerLock();
         });
 
-        this.player.controls.addEventListener('unlock', () => {
-            this.ui.transitionToMenu();
-            this.isRunning = false;
-        });
-
-        document.addEventListener('keydown', e => {
-            if(e.code === 'KeyE' && this.isRunning && this.player.targetObj) {
-                this.director.handleInteraction(this.player.targetObj);
+        document.addEventListener('pointerlockchange', () => {
+            if(document.pointerLockElement === document.body) {
+                this.ui.hideMenu();
+                this.isRunning = true;
+                this.clock.start();
+                this.ui.showNotification("Explore the park. Find the squirrel.");
+            } else {
+                this.isRunning = false;
+                this.ui.dom.menu.style.display = 'flex';
+                this.ui.dom.menu.style.opacity = 1;
+                this.ui.dom.hud.style.display = 'none';
             }
         });
 
-        this.director.update(0); 
-        this.renderer.render(this.scene, this.camera);
+        document.addEventListener('mousedown', e => {
+            if(e.button === 0 && this.isRunning) this.throwFood();
+        });
 
+        window.addEventListener('resize', () => {
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Pre-render
+        this.renderer.render(this.scene, this.camera);
         this.ui.setReady();
-        
+
         this.clock = new THREE.Clock();
         this.isRunning = false;
-        this.frameCount = 0;
-        this.lastTime = performance.now();
-
-        requestAnimationFrame(() => this.loop());
+        
+        this.loop();
     }
 
-    startGame() {
-        this.audio.init(this.camera);
-        this.player.controls.lock();
+    throwFood() {
+        this.player.rig.playThrowAnimation();
+        
+        const peanutGeo = new THREE.CapsuleGeometry(0.02, 0.04, 4, 8);
+        const peanutMat = new THREE.MeshLambertMaterial({color: 0xcd853f});
+        const peanut = new THREE.Mesh(peanutGeo, peanutMat);
+        
+        // Spawn at hand
+        const spawnPos = this.player.rig.position.clone();
+        spawnPos.y += 1.2;
+        
+        // Direction based on camera look
+        const camDir = new THREE.Vector3(0,0,-1).applyQuaternion(this.camera.quaternion);
+        camDir.y += 0.2; // throw slightly upwards
+        camDir.normalize();
+
+        peanut.position.copy(spawnPos).addScaledVector(camDir, 0.5);
+        peanut.castShadow = true;
+        
+        this.scene.add(peanut);
+        
+        PHYSICS.foodObjects.push({
+            mesh: peanut,
+            velocity: camDir.multiplyScalar(8.0),
+            isLanded: false,
+            eaten: false
+        });
+        
+        // Alert squirrel
+        if(this.squirrel.position.distanceTo(spawnPos) < 20) {
+            this.squirrel.checkThreatsAndFood(this.squirrel.position.distanceTo(this.player.rig.position), this.squirrel.frightenDist);
+        }
     }
 
     loop() {
         requestAnimationFrame(() => this.loop());
         
-        const delta = Math.min(this.clock.getDelta(), 0.1); 
-        TWEEN.update();
+        if(!this.isRunning) return;
 
-        if(this.isRunning) {
-            this.player.update(delta);
-            this.director.update(delta);
-            
-            // Dynamic FOV Warp for Insanity
-            const sanityPct = this.director.data.san / 100.0;
-            const targetFOV = 80 + (1.0 - sanityPct) * 40; 
-            this.camera.fov = THREE.MathUtils.lerp(this.camera.fov, targetFOV, 0.05);
-            this.camera.updateProjectionMatrix();
-
-            if(CONFIG.ENGINE.DEBUG_MODE) {
-                this.frameCount++;
-                const now = performance.now();
-                if(now - this.lastTime >= 1000) {
-                    this.fps = this.frameCount;
-                    this.frameCount = 0;
-                    this.lastTime = now;
-                }
-                const p = this.camera.position;
-                const d = new THREE.Vector3(); this.camera.getWorldDirection(d);
-                this.ui.updateDebug(this.fps || 0, p, d);
-            }
-        }
+        const delta = Math.min(this.clock.getDelta(), 0.1);
+        
+        this.player.update(delta);
+        this.squirrel.update(delta, this.player.rig, this.ui);
+        PHYSICS.update(delta);
 
         this.renderer.render(this.scene, this.camera);
     }
 }
 
+// Bootstrap
 window.onload = () => {
-    window.GameApp = new Engine();
+    window.Game = new GameEngine();
 };
-
 </script>
 </body>
 </html>
