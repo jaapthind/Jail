@@ -2,439 +2,327 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jail - Existential Realism</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>JAIL: EXISTENTIAL REALISM - EXTENDED CUT</title>
 <style>
 /* ==========================================================================
-   JAIL - EXISTENTIAL REALISM: CORE STYLESHEET
-   TARGET CSS LENGTH: 300+ LINES
+   JAIL: EXISTENTIAL REALISM - EXTREME CSS ARCHITECTURE
    ========================================================================== */
 
-/* --- CSS Variables & Design Tokens --- */
 :root {
-    --color-bg-dark: #050505;
-    --color-text-main: #d0d0d0;
-    --color-text-dim: #555555;
-    --color-accent-alert: #a02020;
-    --color-accent-safe: #20a050;
-    --color-ui-bg: rgba(10, 10, 10, 0.85);
-    --color-ui-border: #333333;
+    --bg-void: #020202;
+    --text-primary: #e0e0e0;
+    --text-dim: #4a4a4a;
+    --text-alert: #d01010;
+    --text-safe: #106030;
+    --ui-panel-bg: rgba(5, 5, 5, 0.85);
+    --ui-border-color: #222222;
+    --ui-border-glow: #444444;
     
-    --font-primary: 'Courier New', Courier, monospace;
-    --font-size-base: 16px;
-    --font-size-large: 24px;
-    --font-size-title: 48px;
-    --font-size-small: 12px;
+    --font-sys: 'Courier New', Courier, monospace;
+    --font-size-micro: 10px;
+    --font-size-sm: 12px;
+    --font-size-md: 16px;
+    --font-size-lg: 24px;
+    --font-size-xl: 36px;
+    --font-size-xxl: 64px;
     
-    --spacing-xs: 4px;
-    --spacing-sm: 8px;
-    --spacing-md: 16px;
-    --spacing-lg: 32px;
-    --spacing-xl: 64px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+    --space-7: 64px;
     
-    --z-index-canvas: 1;
-    --z-index-crt: 2;
-    --z-index-vignette: 3;
-    --z-index-ui-base: 10;
-    --z-index-ui-top: 20;
-    --z-index-blocker: 100;
+    --layer-canvas: 1;
+    --layer-crt: 10;
+    --layer-vignette: 20;
+    --layer-dirt: 30;
+    --layer-hud: 40;
+    --layer-menus: 100;
+    --layer-fade: 200;
     
-    --transition-fast: 0.15s ease-in-out;
-    --transition-med: 0.3s ease-in-out;
-    --transition-slow: 1s ease-in-out;
-    
-    --glitch-offset-x: 2px;
-    --glitch-offset-y: 2px;
+    --glitch-x: 0px;
+    --glitch-y: 0px;
 }
 
-/* --- Resets & Base Styles --- */
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
+/* Base Resets */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
-    width: 100%;
-    height: 100%;
+    width: 100vw; height: 100vh;
     overflow: hidden;
-    background-color: var(--color-bg-dark);
-    font-family: var(--font-primary);
-    color: var(--color-text-main);
+    background-color: var(--bg-void);
+    font-family: var(--font-sys);
+    color: var(--text-primary);
     user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    cursor: crosshair;
+    -webkit-font-smoothing: antialiased;
 }
 
-canvas {
-    display: block;
-    width: 100vw;
-    height: 100vh;
+/* Canvas Layer */
+#game-canvas {
     position: absolute;
-    top: 0;
-    left: 0;
-    z-index: var(--z-index-canvas);
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: var(--layer-canvas);
     outline: none;
+    display: block;
 }
 
-/* --- Post-Processing CSS Layers --- */
-.crt-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: var(--z-index-crt);
+/* Post-Processing Overlays (CSS Based for Performance) */
+.crt-scanlines {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: var(--layer-crt);
     pointer-events: none;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 2px, 3px 100%;
-    opacity: 0.4;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+    background-size: 100% 3px, 4px 100%;
+    opacity: 0.6;
 }
 
-.vignette-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: var(--z-index-vignette);
+.crt-flicker {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: var(--layer-crt);
     pointer-events: none;
-    background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(0,0,0,0.85) 110%);
-    box-shadow: inset 0 0 150px rgba(0,0,0,0.9);
+    background-color: rgba(255,255,255,0.01);
+    animation: crt-flicker-anim 0.15s infinite;
 }
 
-.noise-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: var(--z-index-crt);
+.vignette-heavy {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: var(--layer-vignette);
     pointer-events: none;
-    opacity: 0.15;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.95) 120%);
+    box-shadow: inset 0 0 200px rgba(0,0,0,0.9);
 }
 
-/* --- Blockers & Menus --- */
-#blocker-screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.95);
-    z-index: var(--z-index-blocker);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(5px);
-    transition: opacity var(--transition-slow);
+.lens-dirt {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: var(--layer-dirt);
+    pointer-events: none;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
 }
 
-.title-container {
-    text-align: center;
-    margin-bottom: var(--spacing-xl);
-    animation: slow-flicker 4s infinite alternate;
+/* Global Screen Fade */
+#master-fade {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: #000;
+    z-index: var(--layer-fade);
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 3s cubic-bezier(0.1, 0.7, 0.1, 1);
 }
+
+/* ==========================================================================
+   MAIN MENU & INITIALIZATION SCREEN
+   ========================================================================== */
+#init-screen {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.98);
+    z-index: var(--layer-menus);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    backdrop-filter: blur(8px);
+    transition: opacity 1.5s ease;
+}
+
+.terminal-container {
+    width: 800px;
+    max-width: 90vw;
+    border: 1px solid var(--ui-border-color);
+    background-color: var(--ui-panel-bg);
+    padding: var(--space-6);
+    box-shadow: 0 0 30px rgba(0,0,0,1), inset 0 0 20px rgba(0,0,0,0.8);
+    position: relative;
+}
+
+.terminal-container::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, #555, transparent);
+}
+
+.title-block { text-align: center; margin-bottom: var(--space-6); }
 
 .game-title {
-    font-size: var(--font-size-title);
-    letter-spacing: 12px;
-    font-weight: bold;
-    color: #ffffff;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.2);
-    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-xxl);
+    font-weight: 900;
+    letter-spacing: 24px;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.2), 0 0 40px rgba(255,255,255,0.1);
+    animation: title-pulse 4s infinite alternate;
 }
 
 .game-subtitle {
-    font-size: var(--font-size-base);
-    letter-spacing: 4px;
-    color: var(--color-text-dim);
+    font-size: var(--font-size-md);
+    letter-spacing: 8px;
+    color: var(--text-dim);
+    margin-top: var(--space-2);
 }
 
-.instructions-panel {
-    background-color: var(--color-ui-bg);
-    border: 1px solid var(--color-ui-border);
-    padding: var(--spacing-lg);
-    border-radius: 2px;
-    max-width: 600px;
-    text-align: left;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    position: relative;
-    overflow: hidden;
+.sys-info {
+    font-size: var(--font-size-sm);
+    color: var(--text-dim);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+    border-bottom: 1px dashed var(--ui-border-color);
+    padding-bottom: var(--space-3);
 }
 
-.instructions-panel::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background-color: var(--color-text-dim);
+.sys-info span { color: #888; }
+
+.instruction-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-4) var(--space-5);
+    margin-bottom: var(--space-6);
 }
 
-.instruction-item {
-    margin-bottom: var(--spacing-md);
-    display: flex;
-    align-items: flex-start;
+.key-bind {
+    background-color: #111; border: 1px solid #333;
+    padding: var(--space-1) var(--space-3);
+    border-radius: 2px; font-weight: bold; color: #ccc;
+    text-align: center; box-shadow: 0 2px 0 #000;
+    align-self: start;
 }
 
-.instruction-key {
-    background-color: #222;
-    border: 1px solid #444;
-    padding: 2px 8px;
-    border-radius: 2px;
-    font-weight: bold;
-    color: #fff;
-    margin-right: var(--spacing-md);
-    min-width: 40px;
-    text-align: center;
-    box-shadow: 0 2px 0 #111;
+.key-desc { color: #999; line-height: 1.6; }
+.key-desc span { color: var(--text-dim); font-size: var(--font-size-sm); display: block; }
+
+.boot-sequence {
+    text-align: center; margin-top: var(--space-5);
 }
 
-.instruction-desc {
-    line-height: 1.5;
-    color: #aaa;
-}
-
-.start-prompt {
-    margin-top: var(--spacing-xl);
-    font-size: var(--font-size-large);
-    letter-spacing: 2px;
-    animation: blink-soft 2s infinite;
-    cursor: pointer;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border: 1px solid transparent;
-    transition: all var(--transition-fast);
-}
-
-.start-prompt:hover {
-    border: 1px solid var(--color-text-dim);
-    background-color: rgba(255,255,255,0.05);
-}
-
-/* --- In-Game UI / HUD --- */
-#hud-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: var(--z-index-ui-base);
-    pointer-events: none;
-    display: none;
-}
-
-.hud-top-left {
-    position: absolute;
-    top: var(--spacing-lg);
-    left: var(--spacing-lg);
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-}
-
-.hud-element {
-    background-color: rgba(0, 0, 0, 0.6);
-    border-left: 2px solid var(--color-text-dim);
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: var(--font-size-base);
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 0px #000;
-    position: relative;
-    overflow: hidden;
-}
-
-#day-counter {
-    color: #ffffff;
-    font-weight: bold;
-}
-
-#activity-status {
-    color: var(--color-text-dim);
-    transition: color var(--transition-slow);
-}
-
-.status-lockdown { color: #888888 !important; }
-.status-meal { color: #aaaa55 !important; }
-.status-yard { color: #55aa55 !important; }
-
-.hud-top-right {
-    position: absolute;
-    top: var(--spacing-lg);
-    right: var(--spacing-lg);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: var(--spacing-sm);
-}
-
-.meter-container {
-    width: 200px;
-    background-color: rgba(0,0,0,0.8);
-    border: 1px solid var(--color-ui-border);
-    padding: var(--spacing-xs);
-    position: relative;
-}
-
-.meter-label {
-    font-size: var(--font-size-small);
-    margin-bottom: var(--spacing-xs);
-    color: var(--color-text-dim);
-    text-align: left;
-}
-
-.meter-bar-bg {
-    width: 100%;
-    height: 8px;
-    background-color: #111;
-    position: relative;
-    overflow: hidden;
-}
-
-.meter-bar-fill {
-    height: 100%;
-    width: 100%;
-    background-color: var(--color-text-main);
-    transition: width 0.5s ease-out, background-color 0.5s ease-out;
-}
-
-/* Sanity States */
-.sanity-high { background-color: #aaaaaa; }
-.sanity-med { background-color: #aa8844; }
-.sanity-low { background-color: var(--color-accent-alert); animation: pulse-bg 1s infinite alternate; }
-
-.hud-bottom-center {
-    position: absolute;
-    bottom: var(--spacing-xl);
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-}
-
-#interaction-prompt {
-    font-size: var(--font-size-large);
-    color: #ffffff;
-    background-color: rgba(0,0,0,0.7);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: 4px;
-    border: 1px solid #444;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.2s, transform 0.2s;
+#btn-init {
+    background: transparent; border: 1px solid var(--text-dim);
+    color: var(--text-primary); font-family: var(--font-sys);
+    font-size: var(--font-size-lg); letter-spacing: 4px;
+    padding: var(--space-3) var(--space-5); cursor: pointer;
+    transition: all 0.2s;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    animation: blink-soft 2s infinite;
 }
 
-#interaction-prompt.visible {
-    opacity: 1;
-    transform: translateY(0);
+#btn-init:hover { background-color: var(--text-primary); color: #000; box-shadow: 0 0 15px rgba(255,255,255,0.3); animation: none; }
+
+/* ==========================================================================
+   HEADS UP DISPLAY (HUD)
+   ========================================================================== */
+#hud-layer {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: var(--layer-hud); pointer-events: none; display: none;
 }
 
-#yard-timer-container {
-    position: absolute;
-    top: var(--spacing-lg);
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: var(--font-size-large);
-    color: var(--color-accent-alert);
-    background-color: rgba(0,0,0,0.8);
-    border: 1px solid var(--color-accent-alert);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    display: none;
-    font-weight: bold;
-    animation: emergency-flash 2s infinite;
+.hud-panel {
+    background-color: rgba(5,5,5,0.7);
+    border: 1px solid var(--ui-border-color);
+    padding: var(--space-3);
+    backdrop-filter: blur(2px);
 }
 
-#crosshair-ui {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 6px;
-    height: 6px;
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    z-index: var(--z-index-ui-top);
-    pointer-events: none;
-    transition: all 0.1s ease;
+/* Top Left: Date/Time/State */
+.hud-tl { position: absolute; top: var(--space-4); left: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+
+.hud-stat-box {
+    border-left: 3px solid var(--text-dim); padding-left: var(--space-3);
+    background: linear-gradient(90deg, rgba(20,20,20,0.8), transparent);
+    padding-top: var(--space-2); padding-bottom: var(--space-2); padding-right: var(--space-5);
 }
 
-#crosshair-ui.active {
-    width: 12px;
-    height: 12px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(0,0,0,0.5);
+.stat-label { font-size: var(--font-size-micro); color: var(--text-dim); letter-spacing: 2px; margin-bottom: 2px; }
+.stat-value { font-size: var(--font-size-lg); font-weight: bold; letter-spacing: 1px; }
+
+#val-day { color: #fff; }
+#val-time { color: #aaa; font-size: var(--font-size-md); }
+#val-state { color: #777; transition: color 1s; }
+
+.state-lockdown { color: #555 !important; }
+.state-meal { color: #aa8844 !important; text-shadow: 0 0 5px rgba(170,136,68,0.5); }
+.state-yard { color: #44aa55 !important; }
+.state-sleep { color: #4455aa !important; }
+
+/* Top Right: Biological Data */
+.hud-tr { position: absolute; top: var(--space-4); right: var(--space-4); width: 250px; display: flex; flex-direction: column; gap: var(--space-3); }
+
+.meter-block { background-color: rgba(0,0,0,0.8); border: 1px solid #222; padding: var(--space-2); }
+.meter-header { display: flex; justify-content: space-between; margin-bottom: var(--space-1); }
+.meter-title { font-size: var(--font-size-micro); color: var(--text-dim); letter-spacing: 1px; }
+.meter-pct { font-size: var(--font-size-micro); color: #888; }
+
+.meter-track { width: 100%; height: 6px; background-color: #111; border: 1px solid #000; position: relative; overflow: hidden; }
+.meter-fill { height: 100%; transition: width 0.3s ease, background-color 0.5s ease; }
+
+#fill-sanity { background-color: #aaa; }
+#fill-nutrition { background-color: #a84; }
+
+.sanity-warn { background-color: #a44 !important; animation: pulse-bg 1s infinite alternate; }
+.sanity-crit { background-color: #f00 !important; animation: flicker-bg 0.1s infinite; box-shadow: 0 0 10px #f00; }
+
+/* Center: Crosshair & Interaction */
+#crosshair {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 4px; height: 4px; background-color: rgba(255,255,255,0.3); border-radius: 50%;
+    transition: all 0.2s ease;
+}
+#crosshair.active-target {
+    width: 16px; height: 16px; background-color: transparent; border: 1px solid rgba(255,255,255,0.8);
+    animation: rotate-slow 4s linear infinite;
 }
 
-#fade-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #000;
-    z-index: var(--z-index-blocker) - 1;
-    opacity: 1;
-    pointer-events: none;
-    transition: opacity 2s ease-in-out;
+.hud-bc { position: absolute; bottom: var(--space-7); left: 50%; transform: translateX(-50%); text-align: center; width: 600px; }
+
+#interaction-box {
+    display: inline-block; background-color: rgba(0,0,0,0.8); border: 1px solid #444;
+    padding: var(--space-2) var(--space-4); opacity: 0; transform: translateY(20px);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#interaction-box.show { opacity: 1; transform: translateY(0); }
+
+.interact-key { color: #fff; font-weight: bold; background: #333; padding: 2px 6px; margin-right: var(--space-2); border-radius: 2px; }
+.interact-action { color: #ccc; letter-spacing: 1px; text-transform: uppercase; }
+.interact-detail { display: block; font-size: var(--font-size-sm); color: var(--text-dim); margin-top: var(--space-1); }
+
+/* Temporary Notifications / Subtitles */
+#subtitle-box {
+    position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+    text-align: center; font-size: var(--font-size-md); color: #fff;
+    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    opacity: 0; transition: opacity 0.5s; letter-spacing: 1px;
+    background: rgba(0,0,0,0.5); padding: var(--space-1) var(--space-3); border-left: 2px solid #fff;
 }
 
-/* --- Extreme Glitch Effects for Low Sanity --- */
-.glitch-active {
-    animation: rgb-shift 0.1s infinite alternate;
+/* Body Glitch Modifier */
+body.sanity-break { animation: master-glitch 0.2s infinite; }
+
+/* ==========================================================================
+   KEYFRAME ANIMATIONS
+   ========================================================================== */
+@keyframes crt-flicker-anim {
+    0% { opacity: 0.01; } 50% { opacity: 0.03; } 100% { opacity: 0.01; }
+}
+@keyframes title-pulse {
+    0% { opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+    100% { opacity: 1; text-shadow: 0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.2); }
+}
+@keyframes blink-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes pulse-bg { 0% { background-color: #622; } 100% { background-color: #a33; } }
+@keyframes flicker-bg { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes rotate-slow { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes master-glitch {
+    0% { transform: translate(2px, 1px) skewX(2deg); filter: hue-rotate(90deg); }
+    20% { transform: translate(-2px, -2px) skewX(-2deg); filter: hue-rotate(-90deg); }
+    40% { transform: translate(1px, 2px) skewX(1deg); filter: hue-rotate(0deg); }
+    60% { transform: translate(-1px, -1px) skewX(-1deg); filter: invert(0.2); }
+    80% { transform: translate(2px, -2px) skewX(3deg); filter: none; }
+    100% { transform: translate(0, 0) skewX(0); filter: none; }
 }
 
-/* --- Keyframe Animations --- */
-@keyframes blink-soft {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-@keyframes slow-flicker {
-    0% { opacity: 1; }
-    95% { opacity: 1; }
-    96% { opacity: 0.8; }
-    97% { opacity: 1; }
-    98% { opacity: 0.5; }
-    99% { opacity: 1; }
-    100% { opacity: 0.9; }
-}
-
-@keyframes pulse-bg {
-    0% { background-color: #801010; }
-    100% { background-color: #e02020; box-shadow: 0 0 10px #e02020; }
-}
-
-@keyframes emergency-flash {
-    0%, 100% { border-color: #a02020; color: #a02020; box-shadow: none; }
-    50% { border-color: #ff4040; color: #ff4040; box-shadow: 0 0 15px rgba(255,64,64,0.5); }
-}
-
-@keyframes rgb-shift {
-    0% { transform: translate(var(--glitch-offset-x), var(--glitch-offset-y)); text-shadow: -2px 0 red, 2px 0 blue; }
-    25% { transform: translate(calc(var(--glitch-offset-x) * -1), calc(var(--glitch-offset-y) * -1)); text-shadow: 2px 0 red, -2px 0 blue; }
-    50% { transform: translate(var(--glitch-offset-x), calc(var(--glitch-offset-y) * -1)); text-shadow: -2px 0 red, -2px 0 blue; }
-    75% { transform: translate(calc(var(--glitch-offset-x) * -1), var(--glitch-offset-y)); text-shadow: 2px 0 red, 2px 0 blue; }
-    100% { transform: translate(0, 0); text-shadow: none; }
-}
-
-/* --- Media Queries for HUD Scaling --- */
-@media screen and (max-width: 1024px) {
-    .hud-element { padding: var(--spacing-xs) var(--spacing-sm); font-size: 14px; }
-    .meter-container { width: 150px; }
-    #interaction-prompt { font-size: var(--font-size-base); }
-}
-
-@media screen and (max-width: 768px) {
-    .hud-element { font-size: 12px; }
-    .meter-container { width: 120px; }
-    .game-title { font-size: 32px; }
-    .instructions-panel { padding: var(--spacing-md); }
+/* Media Queries for HUD */
+@media (max-width: 1200px) {
+    :root { --font-size-xxl: 48px; --font-size-lg: 18px; }
+    .terminal-container { padding: var(--space-4); }
 }
 </style>
 </head>
@@ -442,1270 +330,1074 @@ canvas {
 
 <canvas id="game-canvas"></canvas>
 
-<div class="crt-overlay"></div>
-<div class="vignette-overlay"></div>
-<div class="noise-overlay"></div>
+<div class="crt-scanlines"></div>
+<div class="crt-flicker"></div>
+<div class="vignette-heavy"></div>
+<div class="lens-dirt"></div>
+<div id="master-fade"></div>
 
-<div id="fade-overlay"></div>
-
-<div id="hud-container">
-    <div class="hud-top-left">
-        <div class="hud-element" id="ui-day">
-            <span id="day-counter">DAY 001</span>
+<div id="hud-layer">
+    <div class="hud-tl">
+        <div class="hud-stat-box">
+            <div class="stat-label">TIME INCARCERATED</div>
+            <div class="stat-value" id="val-day">DAY 001</div>
         </div>
-        <div class="hud-element" id="ui-activity">
-            <span id="activity-status" class="status-lockdown">LOCKDOWN</span>
+        <div class="hud-stat-box">
+            <div class="stat-label">CYCLE PHASE</div>
+            <div class="stat-value" id="val-time">06:00 AM</div>
+        </div>
+        <div class="hud-stat-box" style="border-left-color: #555;">
+            <div class="stat-label">CURRENT DIRECTIVE</div>
+            <div class="stat-value state-lockdown" id="val-state">LOCKDOWN</div>
         </div>
     </div>
-    
-    <div id="yard-timer-container">
-        YARD TIME: <span id="yard-timer-val">60.00</span>
-    </div>
 
-    <div class="hud-top-right">
-        <div class="meter-container">
-            <div class="meter-label">SANITY INDEX</div>
-            <div class="meter-bar-bg">
-                <div class="meter-bar-fill sanity-high" id="sanity-bar"></div>
+    <div class="hud-tr">
+        <div class="meter-block">
+            <div class="meter-header">
+                <span class="meter-title">PSYCHOLOGICAL STABILITY</span>
+                <span class="meter-pct" id="pct-sanity">100%</span>
             </div>
+            <div class="meter-track"><div class="meter-fill" id="fill-sanity" style="width: 100%;"></div></div>
         </div>
-        <div class="meter-container" style="margin-top: 8px;">
-            <div class="meter-label">TIME OF DAY</div>
-            <div class="meter-bar-bg">
-                <div class="meter-bar-fill" id="tod-bar" style="background-color: #5577aa;"></div>
+        <div class="meter-block">
+            <div class="meter-header">
+                <span class="meter-title">NUTRITIONAL INDEX</span>
+                <span class="meter-pct" id="pct-nutrition">100%</span>
             </div>
+            <div class="meter-track"><div class="meter-fill" id="fill-nutrition" style="width: 100%;"></div></div>
         </div>
     </div>
 
-    <div class="hud-bottom-center">
-        <div id="interaction-prompt">[E] INTERACT</div>
+    <div id="crosshair"></div>
+
+    <div class="hud-bc">
+        <div id="interaction-box">
+            <span class="interact-key">[E]</span>
+            <span class="interact-action" id="interact-action">EXAMINE</span>
+            <span class="interact-detail" id="interact-detail">Object specifics</span>
+        </div>
     </div>
+
+    <div id="subtitle-box">...</div>
 </div>
 
-<div id="crosshair-ui"></div>
+<div id="init-screen">
+    <div class="terminal-container">
+        <div class="title-block">
+            <div class="game-title">JAIL</div>
+            <div class="game-subtitle">EXISTENTIAL REALISM : EXTENDED</div>
+        </div>
+        
+        <div class="sys-info">
+            <div><span>OS:</span> PENAL_CORP_UNIX_V9.2</div>
+            <div><span>FACILITY:</span> SECTOR_7G_MAX_SEC</div>
+            <div><span>INMATE ID:</span> 8472-A</div>
+            <div><span>SENTENCE:</span> LIFE_WITHOUT_PAROLE</div>
+        </div>
 
-<div id="blocker-screen">
-    <div class="title-container">
-        <div class="game-title">J A I L</div>
-        <div class="game-subtitle">EXISTENTIAL REALISM</div>
-    </div>
-    
-    <div class="instructions-panel">
-        <div class="instruction-item">
-            <div class="instruction-key">W A S D</div>
-            <div class="instruction-desc">Move character.<br>Movement is heavy. Time is slow.</div>
+        <div class="instruction-grid">
+            <div class="key-bind">W A S D</div>
+            <div class="key-desc">AMBULATE<span>Movement is heavily restricted and simulated with physical mass. Time flows strictly.</span></div>
+            
+            <div class="key-bind">MOUSE</div>
+            <div class="key-desc">OBSERVE<span>Interact with your limited environment. Monitor visual degradation.</span></div>
+            
+            <div class="key-bind">E</div>
+            <div class="key-desc">INTERACT / CONSUME<span>Perform daily routines. Await the Officer for sustenance delivery.</span></div>
         </div>
-        <div class="instruction-item">
-            <div class="instruction-key">MOUSE</div>
-            <div class="instruction-desc">Look around.<br>Examine your confinement.</div>
-        </div>
-        <div class="instruction-item">
-            <div class="instruction-key">E</div>
-            <div class="instruction-desc">Interact with highlighted objects.<br>Maintain routine.</div>
+
+        <div class="boot-sequence">
+            <button id="btn-init">INITIATE INTAKE SEQUENCE</button>
         </div>
     </div>
-    
-    <div class="start-prompt" id="start-btn">CLICK TO ENTER INTAKE</div>
 </div>
 
 <script type="importmap">
-    {
-        "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-            "@tweenjs/tween.js": "https://unpkg.com/@tweenjs/tween.js@23.1.1/dist/tween.esm.js"
-        }
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+        "@tweenjs/tween.js": "https://unpkg.com/@tweenjs/tween.js@23.1.1/dist/tween.esm.js"
     }
+}
 </script>
 
 <script type="module">
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
-import * as TWEEN from '@tweenjs/tween.js';
 import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
+import * as TWEEN from '@tweenjs/tween.js';
 
 /* ==========================================================================
-   ENGINE ARCHITECTURE & CONFIGURATION
+   SYSTEM CONFIGURATION & EXTREME DETAILING MATRICES
    ========================================================================== */
-
 const CONFIG = {
     TIME: {
-        REAL_SECONDS_PER_GAME_DAY: 30.0,
-        REC_TIME_INTERVAL_DAYS: 5,
-        REC_TIME_DURATION_SECONDS: 60.0,
-        TICK_RATE: 1/60
+        REAL_SEC_PER_GAME_HOUR: 10,     // 10 sec = 1 hour -> 240 sec (4 min) = 1 Day
+        WAKE_HOUR: 6,
+        MEAL_HOUR: 12,
+        SLEEP_HOUR: 22,
+        OFFICER_DELIVERY_DURATION: 15   // Time it takes officer to walk, deliver, leave
     },
-    PLAYER: {
-        WALK_SPEED: 2.5, // Slow, heavy
-        HEIGHT: 1.7,
-        RADIUS: 0.4,
-        SANITY_DECAY_RATE: 0.5, // per second
-        BOB_FREQ: 5.0,
-        BOB_AMP: 0.04
+    PHYSICS: {
+        GRAVITY: 9.8,
+        PLAYER_MASS: 80,
+        PLAYER_HEIGHT: 1.75,
+        PLAYER_RADIUS: 0.35,
+        WALK_SPEED: 1.8,                // Sluggish
+        HEAD_BOB_FREQ: 4.0,
+        HEAD_BOB_AMP: 0.035
+    },
+    STATS: {
+        SANITY_DECAY_RATE: 0.5,         // Per game hour
+        NUTRITION_DECAY_RATE: 1.5,      // Per game hour
+        STARVATION_SANITY_MULT: 3.0     // Multiplier for sanity loss when hungry
     },
     WORLD: {
-        CELL_WIDTH: 3.5,
-        CELL_LENGTH: 4.5,
-        CELL_HEIGHT: 2.8,
-        WALL_THICKNESS: 0.4,
-        YARD_WIDTH: 15.0,
-        YARD_LENGTH: 20.0,
-        YARD_HEIGHT: 12.0
-    },
-    COLORS: {
-        NIGHT_LIGHT: new THREE.Color(0x1a2b3c),
-        DAY_LIGHT: new THREE.Color(0xd0b090),
-        FLUORESCENT: new THREE.Color(0xddeeff),
-        BLOOD_RUST: new THREE.Color(0x4a1100),
-        CONCRETE_BASE: new THREE.Color(0x444444)
+        CELL_W: 3.0, CELL_L: 4.0, CELL_H: 2.6,
+        HALL_W: 2.5, HALL_L: 20.0, HALL_H: 3.0,
+        WALL_THICKNESS: 0.5
     }
 };
 
-/* ==========================================================================
-   UTILITY MODULES (Math, Procedural Generation)
-   ========================================================================== */
+// Daily Lighting Matrix - Simulates passing of days affecting perception
+const DAY_LIGHTING_MATRIX = [
+    { day: 1, sun: 0xfff5e6, ambient: 0x222222, intensityMult: 1.0, fog: 0x050505, fogDens: 0.05 }, // Normal, stark
+    { day: 2, sun: 0xe6d5b8, ambient: 0x1f1f1f, intensityMult: 0.95, fog: 0x070707, fogDens: 0.06 }, // Slightly dingy
+    { day: 3, sun: 0xc4b7a3, ambient: 0x1c1c1c, intensityMult: 0.90, fog: 0x090909, fogDens: 0.07 }, // Fading
+    { day: 4, sun: 0x999083, ambient: 0x181818, intensityMult: 0.85, fog: 0x0b0b0b, fogDens: 0.08 }, // Oppressive
+    { day: 5, sun: 0x736c62, ambient: 0x141414, intensityMult: 0.80, fog: 0x0d0d0d, fogDens: 0.09 }, // Depressing
+    { day: 6, sun: 0x555555, ambient: 0x111111, intensityMult: 0.70, fog: 0x101010, fogDens: 0.10 }  // Grayscale descent
+];
 
-class Utils {
-    static lerp(a, b, t) { return a + (b - a) * t; }
-    static clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
-    static randRange(min, max) { return Math.random() * (max - min) + min; }
-    
-    /**
-     * Generates an extremely detailed procedural noise texture using HTML5 Canvas
-     * to simulate gritty, degraded surfaces without loading external images.
-     */
-    static generateProceduralTexture(width, height, type, baseColorHex, accentColorHex, intensity) {
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
+// Daily Food Delivery Matrix - Highly detailed procedural food logic
+const FOOD_MATRIX = [
+    { day: 1, type: 'BREAD', name: "Stale Bread & Water", nutri: 20, sanity: 5, desc: "Tough, dry, flavorless.", color: 0xddbba8, shape: 'squash' },
+    { day: 2, type: 'SLOP', name: "Grey Nutrient Slop", nutri: 25, sanity: 2, desc: "Viscous and smells of sulfur.", color: 0x777777, shape: 'bowl' },
+    { day: 3, type: 'MEAT', name: "Suspicious Meat Block", nutri: 30, sanity: -5, desc: "Gelatinous. Unidentifiable origin.", color: 0x884444, shape: 'cube' },
+    { day: 4, type: 'CHEESE', name: "Hard Cheese & Crackers", nutri: 15, sanity: 10, desc: "A rare, small comfort. Very salty.", color: 0xddcc55, shape: 'wedge' },
+    { day: 5, type: 'APPLE', name: "Bruised Apple", nutri: 10, sanity: 15, desc: "Soft brown spots, but sweet.", color: 0xaa3333, shape: 'sphere' },
+    { day: 6, type: 'MOLD', name: "Moldy Rations", nutri: 5, sanity: -15, desc: "Fuzzy green patches. Nauseating.", color: 0x446644, shape: 'squash' }
+];
+
+/* ==========================================================================
+   PROCEDURAL TEXTURE SYNTHESIZER (EXTREME DETAIL)
+   ========================================================================== */
+class TextureSynthesizer {
+    static getContext(w, h) {
+        const cvs = document.createElement('canvas');
+        cvs.width = w; cvs.height = h;
+        return { cvs, ctx: cvs.getContext('2d', { willReadFrequently: true }) };
+    }
+
+    static createConcrete(w=512, h=512, baseCol='#555555', noiseInt=40, cracks=true) {
+        const { cvs, ctx } = this.getContext(w, h);
+        ctx.fillStyle = baseCol; ctx.fillRect(0, 0, w, h);
+        const imgData = ctx.getImageData(0,0,w,h);
+        const d = imgData.data;
         
-        ctx.fillStyle = baseColorHex;
-        ctx.fillRect(0, 0, width, height);
-        
-        const imgData = ctx.getImageData(0, 0, width, height);
-        const data = imgData.data;
-        
-        const accent = new THREE.Color(accentColorHex);
-        const rA = accent.r * 255, gA = accent.g * 255, bA = accent.b * 255;
-        
-        for (let i = 0; i < data.length; i += 4) {
-            let noise = 0;
-            if (type === 'concrete') {
-                noise = Math.random();
-                if (noise > 0.95 - (intensity * 0.1)) {
-                    data[i] = Utils.lerp(data[i], rA, noise);
-                    data[i+1] = Utils.lerp(data[i+1], gA, noise);
-                    data[i+2] = Utils.lerp(data[i+2], bA, noise);
-                } else {
-                    const shade = (Math.random() - 0.5) * 30 * intensity;
-                    data[i] = Utils.clamp(data[i] + shade, 0, 255);
-                    data[i+1] = Utils.clamp(data[i+1] + shade, 0, 255);
-                    data[i+2] = Utils.clamp(data[i+2] + shade, 0, 255);
-                }
-            } else if (type === 'rust') {
-                noise = Math.random();
-                if (noise < intensity) {
-                    const rustVar = Math.random() * 40;
-                    data[i] = Utils.clamp(rA + rustVar, 0, 255);
-                    data[i+1] = Utils.clamp(gA + rustVar*0.5, 0, 255);
-                    data[i+2] = Utils.clamp(bA, 0, 255);
-                }
-            } else if (type === 'dirt') {
-                const x = (i / 4) % width;
-                const y = Math.floor((i / 4) / width);
-                const distToEdge = Math.min(x, width-x, y, height-y);
-                if (distToEdge < width * 0.2 && Math.random() < intensity) {
-                    data[i] *= 0.6; data[i+1] *= 0.6; data[i+2] *= 0.6;
-                }
-            }
+        // Base Noise
+        for(let i=0; i<d.length; i+=4) {
+            const noise = (Math.random() - 0.5) * noiseInt;
+            d[i] = Math.max(0, Math.min(255, d[i] + noise));
+            d[i+1] = Math.max(0, Math.min(255, d[i+1] + noise));
+            d[i+2] = Math.max(0, Math.min(255, d[i+2] + noise));
         }
-        
         ctx.putImageData(imgData, 0, 0);
-        
-        // Add procedural scratches
-        if (type === 'concrete' || type === 'rust') {
-            for(let j=0; j<20 * intensity; j++) {
+
+        // Procedural Cracks
+        if (cracks) {
+            ctx.lineWidth = 1.5;
+            for(let c=0; c<15; c++) {
                 ctx.beginPath();
-                ctx.moveTo(Math.random() * width, Math.random() * height);
-                ctx.lineTo(Math.random() * width, Math.random() * height);
-                ctx.strokeStyle = `rgba(0,0,0,${Math.random() * 0.5})`;
-                ctx.lineWidth = Math.random() * 2;
+                let cx = Math.random()*w, cy = Math.random()*h;
+                ctx.moveTo(cx, cy);
+                for(let seg=0; seg<10; seg++) {
+                    cx += (Math.random()-0.5)*40; cy += (Math.random()-0.5)*40;
+                    ctx.lineTo(cx, cy);
+                }
+                ctx.strokeStyle = `rgba(10,10,10,${Math.random()*0.6+0.2})`;
                 ctx.stroke();
             }
         }
+        // Stains
+        for(let s=0; s<20; s++) {
+            ctx.fillStyle = `rgba(30,25,20,${Math.random()*0.1})`;
+            ctx.beginPath();
+            ctx.arc(Math.random()*w, Math.random()*h, Math.random()*50+10, 0, Math.PI*2);
+            ctx.fill();
+        }
+        const tex = new THREE.CanvasTexture(cvs);
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        return tex;
+    }
 
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        return texture;
+    static createRustMetal(w=256, h=256) {
+        const { cvs, ctx } = this.getContext(w, h);
+        ctx.fillStyle = '#333333'; ctx.fillRect(0,0,w,h);
+        const imgData = ctx.getImageData(0,0,w,h);
+        const d = imgData.data;
+        
+        for(let i=0; i<d.length; i+=4) {
+            if(Math.random() > 0.4) {
+                // Rust patch
+                d[i] = 90 + Math.random()*40;   // R
+                d[i+1] = 40 + Math.random()*20; // G
+                d[i+2] = 20 + Math.random()*10; // B
+            } else {
+                // Base metal noise
+                const n = (Math.random()-0.5)*20;
+                d[i]+=n; d[i+1]+=n; d[i+2]+=n;
+            }
+        }
+        ctx.putImageData(imgData, 0, 0);
+        const tex = new THREE.CanvasTexture(cvs);
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        return tex;
+    }
+
+    static createOfficerFabric(w=256, h=256) {
+        const { cvs, ctx } = this.getContext(w, h);
+        ctx.fillStyle = '#112233'; // Dark navy uniform
+        ctx.fillRect(0,0,w,h);
+        const imgData = ctx.getImageData(0,0,w,h);
+        const d = imgData.data;
+        for(let y=0; y<h; y++) {
+            for(let x=0; x<w; x++) {
+                const i = (y*w+x)*4;
+                const weave = (x%2===0 && y%2===0) ? 15 : -5;
+                d[i] = Math.max(0, d[i]+weave);
+                d[i+1] = Math.max(0, d[i+1]+weave);
+                d[i+2] = Math.max(0, d[i+2]+weave);
+            }
+        }
+        ctx.putImageData(imgData, 0, 0);
+        return new THREE.CanvasTexture(cvs);
+    }
+    
+    static createFoodTexture(type, colorHex) {
+        const { cvs, ctx } = this.getContext(128, 128);
+        ctx.fillStyle = '#' + new THREE.Color(colorHex).getHexString();
+        ctx.fillRect(0,0,128,128);
+        const imgData = ctx.getImageData(0,0,128,128);
+        const d = imgData.data;
+        for(let i=0; i<d.length; i+=4) {
+            const n = (Math.random()-0.5)*30;
+            d[i]+=n; d[i+1]+=n; d[i+2]+=n;
+        }
+        ctx.putImageData(imgData, 0, 0);
+        return new THREE.CanvasTexture(cvs);
     }
 }
 
 /* ==========================================================================
-   ADVANCED SHADER MATERIALS (GLSL)
+   ADVANCED AUDIO SYNTHESIS ENGINE (Web Audio API)
    ========================================================================== */
-
-const Shaders = {
-    // Custom shader for oppressive, dirty atmospheric fog and vertex displacement
-    OppressiveMaterial: {
-        uniforms: THREE.UniformsUtils.merge([
-            THREE.UniformsLib["common"],
-            THREE.UniformsLib["lights"],
-            THREE.UniformsLib["fog"],
-            {
-                time: { value: 0.0 },
-                color: { value: new THREE.Color(0x555555) },
-                dirtTexture: { value: null },
-                sanityDrop: { value: 0.0 } // Affects vertex distortion
-            }
-        ]),
-        vertexShader: `
-            #include <common>
-            #include <logdepthbuf_pars_vertex>
-            varying vec2 vUv;
-            varying vec3 vNormal;
-            varying vec3 vViewPosition;
-            uniform float time;
-            uniform float sanityDrop;
-
-            void main() {
-                vUv = uv;
-                vNormal = normalize(normalMatrix * normal);
-                
-                // Micro-jitter based on low sanity
-                vec3 pos = position;
-                if (sanityDrop > 0.7) {
-                    pos.x += sin(pos.y * 10.0 + time * 5.0) * (sanityDrop - 0.7) * 0.02;
-                    pos.z += cos(pos.x * 10.0 + time * 6.0) * (sanityDrop - 0.7) * 0.02;
-                }
-
-                vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-                vViewPosition = -mvPosition.xyz;
-                gl_Position = projectionMatrix * mvPosition;
-                #include <logdepthbuf_vertex>
-            }
-        `,
-        fragmentShader: `
-            #include <common>
-            #include <lights_pars_begin>
-            #include <fog_pars_fragment>
-            
-            uniform vec3 color;
-            uniform sampler2D dirtTexture;
-            varying vec2 vUv;
-            varying vec3 vNormal;
-            varying vec3 vViewPosition;
-
-            void main() {
-                vec4 texColor = texture2D(dirtTexture, vUv * 4.0);
-                vec3 baseColor = color * texColor.rgb;
-                
-                // Extremely simplified diffuse lighting for raw GLSL integration
-                vec3 normal = normalize(vNormal);
-                vec3 viewDir = normalize(vViewPosition);
-                vec3 totalLight = vec3(0.1); // Ambient
-                
-                #if NUM_POINT_LIGHTS > 0
-                    for(int i = 0; i < NUM_POINT_LIGHTS; i++) {
-                        vec3 lightDir = pointLights[i].position - vViewPosition;
-                        float dist = length(lightDir);
-                        lightDir = normalize(lightDir);
-                        float attenuation = saturate(1.0 - dist / pointLights[i].distance);
-                        float diff = max(dot(normal, lightDir), 0.0);
-                        totalLight += pointLights[i].color * diff * attenuation * 2.0;
-                    }
-                #endif
-
-                vec3 finalColor = baseColor * totalLight;
-                gl_FragColor = vec4(finalColor, 1.0);
-                #include <fog_fragment>
-            }
-        `
+class AudioEngine {
+    constructor() {
+        this.ctx = null; this.masterGain = null;
+        this.camera = null; this.isInit = false;
+        this.nodes = { drone: null, heart: null };
     }
-};
 
-/* ==========================================================================
-   AUDIO ENGINEERING (Web Audio API)
-   Spatial, Synthesized, and Procedural Foley
-   ========================================================================== */
-
-class AudioSystem {
-    constructor(camera) {
-        this.ctx = null;
+    init(camera) {
+        if(this.isInit) return;
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.value = 0.8;
+        this.masterGain.connect(this.ctx.destination);
         this.camera = camera;
-        this.initialized = false;
-        this.nodes = {};
-        this.listener = null;
-    }
-
-    init() {
-        if (this.initialized) return;
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        this.ctx = new AudioContext();
         
-        // Setup Spatial Listener attached to Camera
-        this.listener = this.ctx.listener;
-        
-        this.setupAmbientDrone();
-        this.setupHeartbeat();
-        this.initialized = true;
+        this.setupDrone();
+        this.isInit = true;
     }
 
-    updateSpatial(playerPos, playerDir) {
-        if (!this.initialized) return;
-        // Update listener position
-        if(this.listener.positionX) {
-            this.listener.positionX.value = playerPos.x;
-            this.listener.positionY.value = playerPos.y;
-            this.listener.positionZ.value = playerPos.z;
-            this.listener.forwardX.value = playerDir.x;
-            this.listener.forwardY.value = playerDir.y;
-            this.listener.forwardZ.value = playerDir.z;
-        } else {
-            this.listener.setPosition(playerPos.x, playerPos.y, playerPos.z);
-            this.listener.setOrientation(playerDir.x, playerDir.y, playerDir.z, 0, 1, 0);
-        }
-    }
-
-    setupAmbientDrone() {
-        // Deep, rumbling low frequency oscillator to simulate building hum
+    setupDrone() {
+        // Deep, existential hum
         const osc = this.ctx.createOscillator();
-        const osc2 = this.ctx.createOscillator();
+        osc.type = 'sine'; osc.frequency.value = 55;
+        const lfo = this.ctx.createOscillator();
+        lfo.type = 'sine'; lfo.frequency.value = 0.1;
+        const lfoGain = this.ctx.createGain();
+        lfoGain.gain.value = 5;
+        lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+        
         const gain = this.ctx.createGain();
-        const filter = this.ctx.createBiquadFilter();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(45, this.ctx.currentTime); // Deep hum
+        gain.gain.value = 0.05; // Very quiet
+        osc.connect(gain); gain.connect(this.masterGain);
         
-        osc2.type = 'triangle';
-        osc2.frequency.setValueAtTime(45.5, this.ctx.currentTime); // Slight phasing
-
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(100, this.ctx.currentTime);
-
-        gain.gain.setValueAtTime(0.08, this.ctx.currentTime); // Very quiet
-
-        osc.connect(filter);
-        osc2.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        osc.start();
-        osc2.start();
-        
+        osc.start(); lfo.start();
         this.nodes.droneGain = gain;
     }
 
-    setupHeartbeat() {
-        this.nodes.heartbeatOsc = this.ctx.createOscillator();
-        this.nodes.heartbeatGain = this.ctx.createGain();
-        this.nodes.heartbeatOsc.type = 'sine';
-        this.nodes.heartbeatOsc.frequency.setValueAtTime(50, this.ctx.currentTime);
-        this.nodes.heartbeatGain.gain.setValueAtTime(0, this.ctx.currentTime);
-        
-        this.nodes.heartbeatOsc.connect(this.nodes.heartbeatGain);
-        this.nodes.heartbeatGain.connect(this.ctx.destination);
-        this.nodes.heartbeatOsc.start();
-        this.heartbeatTimer = 0;
-    }
-
-    updateSanityEffects(sanityRatio, delta) {
-        if (!this.initialized) return;
-        
-        // Drone gets louder as sanity drops
-        const targetDroneVol = Utils.lerp(0.15, 0.05, sanityRatio);
-        this.nodes.droneGain.gain.linearRampToValueAtTime(targetDroneVol, this.ctx.currentTime + 0.1);
-
-        // Heartbeat logic
-        if (sanityRatio < 0.4) {
-            const beatFreq = Utils.lerp(1.5, 0.5, sanityRatio); // Faster when lower sanity
-            this.heartbeatTimer += delta;
-            if (this.heartbeatTimer > beatFreq) {
-                this.heartbeatTimer = 0;
-                this.playHeartbeatBump();
-            }
-        }
-    }
-
-    playHeartbeatBump() {
+    playFootstep(material, distanceRatio = 1.0) {
+        if(!this.isInit) return;
         const t = this.ctx.currentTime;
-        this.nodes.heartbeatGain.gain.cancelScheduledValues(t);
-        this.nodes.heartbeatGain.gain.setValueAtTime(0, t);
-        this.nodes.heartbeatGain.gain.linearRampToValueAtTime(0.4, t + 0.05);
-        this.nodes.heartbeatGain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
-        
-        // Double thud
-        setTimeout(() => {
-            const t2 = this.ctx.currentTime;
-            this.nodes.heartbeatGain.gain.cancelScheduledValues(t2);
-            this.nodes.heartbeatGain.gain.setValueAtTime(0, t2);
-            this.nodes.heartbeatGain.gain.linearRampToValueAtTime(0.3, t2 + 0.05);
-            this.nodes.heartbeatGain.gain.exponentialRampToValueAtTime(0.01, t2 + 0.3);
-        }, 150);
-    }
-
-    playFootstep(material = 'concrete') {
-        if (!this.initialized) return;
-        const bufferSize = this.ctx.sampleRate * 0.15;
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1; // White noise
-        }
-        const noiseSource = this.ctx.createBufferSource();
-        noiseSource.buffer = buffer;
-        
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = material === 'concrete' ? 'bandpass' : 'lowpass';
-        filter.frequency.value = material === 'concrete' ? 300 : 150;
-        filter.Q.value = 1;
-
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
-
-        noiseSource.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-        noiseSource.start();
-    }
-
-    playMetalSlam() {
-        if (!this.initialized) return;
-        // Synthesize heavy metal door slam
-        const osc1 = this.ctx.createOscillator();
-        const osc2 = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        
-        osc1.type = 'square';
-        osc1.frequency.setValueAtTime(120, this.ctx.currentTime);
-        osc1.frequency.exponentialRampToValueAtTime(20, this.ctx.currentTime + 0.5);
-        
-        osc2.type = 'sawtooth';
-        osc2.frequency.setValueAtTime(80, this.ctx.currentTime);
-        osc2.frequency.exponentialRampToValueAtTime(10, this.ctx.currentTime + 0.4);
-
-        gain.gain.setValueAtTime(0.8, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.6);
-
-        osc1.connect(gain);
-        osc2.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        osc1.start(); osc2.start();
-        osc1.stop(this.ctx.currentTime + 0.6); osc2.stop(this.ctx.currentTime + 0.6);
-        
-        // Add metallic reverberation (simulated via noise + filter)
-        this.playFootstep('metal_echo'); // reuse noise func with diff params conceptually
-    }
-    
-    playSlopSound() {
-        if (!this.initialized) return;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(200, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.3);
-    }
-    
-    playToiletFlush() {
-        if (!this.initialized) return;
-        // Simulated water rush
-        const bufferSize = this.ctx.sampleRate * 2.0;
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-        const source = this.ctx.createBufferSource();
-        source.buffer = buffer;
         const filter = this.ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800, this.ctx.currentTime);
-        filter.frequency.linearRampToValueAtTime(200, this.ctx.currentTime + 2.0);
+
+        if(material === 'boot') { // Officer boots
+            osc.type = 'square'; osc.frequency.setValueAtTime(100, t);
+            osc.frequency.exponentialRampToValueAtTime(20, t + 0.1);
+            filter.type = 'lowpass'; filter.frequency.value = 300;
+        } else { // Player bare feet/socks
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(80, t);
+            osc.frequency.exponentialRampToValueAtTime(40, t + 0.05);
+            filter.type = 'lowpass'; filter.frequency.value = 150;
+        }
+
+        const vol = 0.1 * (1.0 - distanceRatio);
+        gain.gain.setValueAtTime(vol, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+
+        osc.connect(filter); filter.connect(gain); gain.connect(this.masterGain);
+        osc.start(t); osc.stop(t + 0.15);
+    }
+
+    playDoorGrind() {
+        if(!this.isInit) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, t);
+        osc.frequency.linearRampToValueAtTime(150, t + 1.0);
+        
         const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.4, this.ctx.currentTime + 0.2);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 2.0);
-        source.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-        source.start();
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.2, t + 0.1);
+        gain.gain.linearRampToValueAtTime(0, t + 1.0);
+        
+        osc.connect(gain); gain.connect(this.masterGain);
+        osc.start(t); osc.stop(t + 1.0);
+    }
+
+    playEat() {
+        if(!this.isInit) return;
+        for(let i=0; i<3; i++) {
+            setTimeout(() => {
+                const t = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(400, t);
+                osc.frequency.exponentialRampToValueAtTime(100, t + 0.1);
+                const gain = this.ctx.createGain();
+                gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.1);
+                osc.connect(gain); gain.connect(this.masterGain);
+                osc.start(t); osc.stop(t+0.1);
+            }, i * 150);
+        }
     }
 }
 
 /* ==========================================================================
-   UI CONTROLLER & DOM MANAGEMENT
+   PROCEDURAL 3D ENTITIES: THE OFFICER & THE FOOD
    ========================================================================== */
+class Officer extends THREE.Group {
+    constructor(materials) {
+        super();
+        this.mats = materials;
+        this.isWalking = false;
+        this.walkCycle = 0;
+        this.buildRig();
+    }
 
-class UIController {
-    constructor() {
-        this.dom = {
-            day: document.getElementById('day-counter'),
-            activity: document.getElementById('activity-status'),
-            yardTimerContainer: document.getElementById('yard-timer-container'),
-            yardTimerVal: document.getElementById('yard-timer-val'),
-            sanityBar: document.getElementById('sanity-bar'),
-            todBar: document.getElementById('tod-bar'),
-            prompt: document.getElementById('interaction-prompt'),
-            crosshair: document.getElementById('crosshair-ui'),
-            fade: document.getElementById('fade-overlay'),
-            blocker: document.getElementById('blocker-screen'),
-            hud: document.getElementById('hud-container')
+    buildRig() {
+        // Hierarchy setup for procedural animation
+        this.pelvis = new THREE.Group(); this.pelvis.position.y = 1.0; this.add(this.pelvis);
+        
+        // Torso
+        const torsoGeo = new THREE.BoxGeometry(0.5, 0.6, 0.3);
+        this.torsoMesh = new THREE.Mesh(torsoGeo, this.mats.fabric);
+        this.torsoMesh.position.y = 0.3;
+        this.pelvis.add(this.torsoMesh);
+
+        // Head
+        const headGeo = new THREE.BoxGeometry(0.25, 0.3, 0.25);
+        this.headMesh = new THREE.Mesh(headGeo, new THREE.MeshStandardMaterial({color: 0xffccaa, roughness: 0.6}));
+        this.headMesh.position.y = 0.75;
+        this.pelvis.add(this.headMesh);
+
+        // Hat
+        const hatGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.1, 16);
+        const hatMesh = new THREE.Mesh(hatGeo, new THREE.MeshStandardMaterial({color: 0x111111}));
+        hatMesh.position.y = 0.2;
+        this.headMesh.add(hatMesh);
+        const brimGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.02, 16);
+        const brimMesh = new THREE.Mesh(brimGeo, new THREE.MeshStandardMaterial({color: 0x000000}));
+        brimMesh.position.set(0, -0.05, 0.05);
+        hatMesh.add(brimMesh);
+
+        // Arms (Pivot at shoulders)
+        this.armL = new THREE.Group(); this.armL.position.set(-0.35, 0.5, 0); this.pelvis.add(this.armL);
+        this.armR = new THREE.Group(); this.armR.position.set(0.35, 0.5, 0); this.pelvis.add(this.armR);
+        const armGeo = new THREE.BoxGeometry(0.15, 0.6, 0.15);
+        const armMeshL = new THREE.Mesh(armGeo, this.mats.fabric); armMeshL.position.y = -0.3; this.armL.add(armMeshL);
+        const armMeshR = new THREE.Mesh(armGeo, this.mats.fabric); armMeshR.position.y = -0.3; this.armR.add(armMeshR);
+
+        // Legs (Pivot at pelvis)
+        this.legL = new THREE.Group(); this.legL.position.set(-0.15, 0, 0); this.pelvis.add(this.legL);
+        this.legR = new THREE.Group(); this.legR.position.set(0.15, 0, 0); this.pelvis.add(this.legR);
+        const legGeo = new THREE.BoxGeometry(0.2, 1.0, 0.2);
+        const legMeshL = new THREE.Mesh(legGeo, this.mats.fabric); legMeshL.position.y = -0.5; this.legL.add(legMeshL);
+        const legMeshR = new THREE.Mesh(legGeo, this.mats.fabric); legMeshR.position.y = -0.5; this.legR.add(legMeshR);
+        
+        // Boots
+        const bootGeo = new THREE.BoxGeometry(0.22, 0.15, 0.3);
+        const bootMat = new THREE.MeshStandardMaterial({color: 0x050505, roughness: 0.2});
+        const bootL = new THREE.Mesh(bootGeo, bootMat); bootL.position.set(0, -0.95, 0.05); this.legL.add(bootL);
+        const bootR = new THREE.Mesh(bootGeo, bootMat); bootR.position.set(0, -0.95, 0.05); this.legR.add(bootR);
+
+        // Flashlight Attached to chest
+        const lightGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.15);
+        const lightMesh = new THREE.Mesh(lightGeo, new THREE.MeshBasicMaterial({color: 0x222222}));
+        lightMesh.rotation.x = Math.PI/2;
+        lightMesh.position.set(0, 0.3, 0.16);
+        this.pelvis.add(lightMesh);
+        
+        this.spotlight = new THREE.SpotLight(0xffffff, 2.0, 10, Math.PI/6, 0.5, 1);
+        this.spotlight.position.set(0, 0.3, 0.2);
+        this.spotlight.target.position.set(0, 0.3, 1);
+        this.pelvis.add(this.spotlight);
+        this.pelvis.add(this.spotlight.target);
+    }
+
+    animateWalk(delta, speed) {
+        if(!this.isWalking) {
+            // Reset to idle
+            this.armL.rotation.x = TWEEN.Interpolation.Linear([this.armL.rotation.x, 0], 0.5);
+            this.armR.rotation.x = TWEEN.Interpolation.Linear([this.armR.rotation.x, 0], 0.5);
+            this.legL.rotation.x = TWEEN.Interpolation.Linear([this.legL.rotation.x, 0], 0.5);
+            this.legR.rotation.x = TWEEN.Interpolation.Linear([this.legR.rotation.x, 0], 0.5);
+            this.pelvis.position.y = 1.0;
+            return false; // Not stepping
+        }
+        this.walkCycle += delta * speed * 5.0;
+        
+        this.armL.rotation.x = Math.sin(this.walkCycle) * 0.5;
+        this.armR.rotation.x = Math.sin(this.walkCycle + Math.PI) * 0.5;
+        this.legL.rotation.x = Math.sin(this.walkCycle + Math.PI) * 0.5;
+        this.legR.rotation.x = Math.sin(this.walkCycle) * 0.5;
+        this.pelvis.position.y = 1.0 + Math.abs(Math.sin(this.walkCycle * 2)) * 0.05;
+
+        // Return true if foot hits ground roughly
+        const stepMod = this.walkCycle % Math.PI;
+        return (stepMod < 0.1); 
+    }
+
+    animateDeliver(callback) {
+        // Bend down
+        new TWEEN.Tween(this.pelvis.position).to({y: 0.4}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+        new TWEEN.Tween(this.pelvis.rotation).to({x: 0.5}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+        new TWEEN.Tween(this.armR.rotation).to({x: -1.0}, 1000).start();
+        
+        setTimeout(() => {
+            if(callback) callback();
+            // Stand up
+            new TWEEN.Tween(this.pelvis.position).to({y: 1.0}, 1000).easing(TWEEN.Easing.Quadratic.In).start();
+            new TWEEN.Tween(this.pelvis.rotation).to({x: 0}, 1000).easing(TWEEN.Easing.Quadratic.In).start();
+            new TWEEN.Tween(this.armR.rotation).to({x: 0}, 1000).start();
+        }, 1500);
+    }
+}
+
+class FoodTray extends THREE.Group {
+    constructor(dayConfig) {
+        super();
+        this.config = dayConfig;
+        this.build();
+    }
+
+    build() {
+        // Tray Base
+        const trayGeo = new THREE.BoxGeometry(0.4, 0.02, 0.3);
+        const trayMat = new THREE.MeshStandardMaterial({color: 0x444444, metalness: 0.8, roughness: 0.4});
+        const tray = new THREE.Mesh(trayGeo, trayMat);
+        this.add(tray);
+
+        // Food Item
+        const tex = TextureSynthesizer.createFoodTexture(this.config.type, this.config.color);
+        const mat = new THREE.MeshStandardMaterial({map: tex, roughness: 0.8});
+        let geo;
+        switch(this.config.shape) {
+            case 'squash': geo = new THREE.SphereGeometry(0.08, 16, 16); geo.scale(1, 0.4, 0.8); break;
+            case 'bowl': geo = new THREE.CylinderGeometry(0.1, 0.08, 0.05, 16); break;
+            case 'cube': geo = new THREE.BoxGeometry(0.12, 0.1, 0.12); break;
+            case 'wedge': geo = new THREE.ConeGeometry(0.1, 0.08, 3); geo.rotateX(Math.PI/2); break;
+            case 'sphere': geo = new THREE.SphereGeometry(0.06, 16, 16); break;
+        }
+        this.foodMesh = new THREE.Mesh(geo, mat);
+        this.foodMesh.position.set(0, 0.03, 0);
+        this.add(this.foodMesh);
+
+        // Small cup
+        const cupGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.08, 16);
+        const cupMat = new THREE.MeshStandardMaterial({color: 0xcccccc});
+        const cup = new THREE.Mesh(cupGeo, cupMat);
+        cup.position.set(0.12, 0.04, -0.08);
+        this.add(cup);
+
+        this.userData = {
+            id: 'food_tray',
+            action: `CONSUME: ${this.config.name}`,
+            detail: this.config.desc,
+            nutri: this.config.nutri,
+            sanity: this.config.sanity
         };
     }
-
-    updateTime(dayNum, ratio) {
-        this.dom.day.innerText = `DAY ${dayNum.toString().padStart(3, '0')}`;
-        this.dom.todBar.style.width = `${ratio * 100}%`;
-        
-        // Color transition for time of day
-        if (ratio < 0.2 || ratio > 0.8) this.dom.todBar.style.backgroundColor = '#224477'; // Night
-        else if (ratio < 0.4 || ratio > 0.6) this.dom.todBar.style.backgroundColor = '#aa7744'; // Dusk/Dawn
-        else this.dom.todBar.style.backgroundColor = '#ddccaa'; // Day
-    }
-
-    updateActivity(stateStr) {
-        this.dom.activity.innerText = stateStr;
-        this.dom.activity.className = '';
-        if(stateStr === 'LOCKDOWN') this.dom.activity.classList.add('status-lockdown');
-        if(stateStr === 'MEAL TIME') this.dom.activity.classList.add('status-meal');
-        if(stateStr === 'REC TIME') this.dom.activity.classList.add('status-yard');
-    }
-
-    updateSanity(val) {
-        const pct = Utils.clamp(val, 0, 100);
-        this.dom.sanityBar.style.width = `${pct}%`;
-        this.dom.sanityBar.className = 'meter-bar-fill';
-        if (pct > 60) this.dom.sanityBar.classList.add('sanity-high');
-        else if (pct > 30) this.dom.sanityBar.classList.add('sanity-med');
-        else {
-            this.dom.sanityBar.classList.add('sanity-low');
-            document.body.classList.add('glitch-active');
-        }
-        if (pct >= 30) document.body.classList.remove('glitch-active');
-    }
-
-    showPrompt(text) {
-        this.dom.prompt.innerText = `[E] ${text}`;
-        this.dom.prompt.classList.add('visible');
-        this.dom.crosshair.classList.add('active');
-    }
-
-    hidePrompt() {
-        this.dom.prompt.classList.remove('visible');
-        this.dom.crosshair.classList.remove('active');
-    }
-
-    setYardTimer(visible, timeStr = "0.00") {
-        this.dom.yardTimerContainer.style.display = visible ? 'block' : 'none';
-        if(visible) this.dom.yardTimerVal.innerText = timeStr;
-    }
-
-    fadeScreen(isIn, durationMs, callback) {
-        this.dom.fade.style.transition = `opacity ${durationMs/1000}s ease-in-out`;
-        this.dom.fade.style.opacity = isIn ? '0' : '1';
-        setTimeout(() => { if(callback) callback(); }, durationMs);
-    }
-    
-    hideMenu() {
-        this.dom.blocker.style.opacity = '0';
-        setTimeout(() => {
-            this.dom.blocker.style.display = 'none';
-            this.dom.hud.style.display = 'block';
-        }, 1000);
-    }
-    
-    showMenu() {
-        this.dom.blocker.style.display = 'flex';
-        this.dom.hud.style.display = 'none';
-        setTimeout(() => { this.dom.blocker.style.opacity = '1'; }, 50);
-    }
 }
 
 /* ==========================================================================
-   TIME & LOGIC MANAGER
+   WORLD GENERATION (SCENEGRAPH)
    ========================================================================== */
-
-class GameDirector {
-    constructor(world, ui, audio) {
-        this.world = world;
-        this.ui = ui;
-        this.audio = audio;
-        
-        this.dayNumber = 1;
-        this.timeElapsedInDay = 0;
-        this.sanity = 100.0;
-        this.currentState = 'LOCKDOWN'; // LOCKDOWN, MEAL, YARD
-        this.yardTimer = 0;
-        
-        this.onStartRec = null;
-        this.onEndRec = null;
-        this.onMealSpawn = null;
-    }
-
-    tick(delta) {
-        // Handle Time
-        if (this.currentState !== 'YARD') {
-            this.timeElapsedInDay += delta;
-            if (this.timeElapsedInDay >= CONFIG.TIME.REAL_SECONDS_PER_GAME_DAY) {
-                this.advanceDay();
-            }
-        } else {
-            // Rec Time Countdown
-            this.yardTimer -= delta;
-            this.ui.setYardTimer(true, this.yardTimer.toFixed(2));
-            if (this.yardTimer <= 0) {
-                this.endRecTime();
-            }
-        }
-
-        // Handle Sanity
-        if (this.currentState === 'LOCKDOWN') {
-            this.sanity -= CONFIG.PLAYER.SANITY_DECAY_RATE * delta;
-        } else if (this.currentState === 'YARD') {
-            this.sanity += (CONFIG.PLAYER.SANITY_DECAY_RATE * 2) * delta; // Recover in yard
-        }
-        this.sanity = Utils.clamp(this.sanity, 0, 100);
-
-        // Updates
-        const dayRatio = this.timeElapsedInDay / CONFIG.TIME.REAL_SECONDS_PER_GAME_DAY;
-        this.ui.updateTime(this.dayNumber, dayRatio);
-        this.ui.updateSanity(this.sanity);
-        this.audio.updateSanityEffects(this.sanity / 100.0, delta);
-        this.world.updateLighting(dayRatio);
-    }
-
-    advanceDay() {
-        this.dayNumber++;
-        this.timeElapsedInDay = 0;
-        
-        // Spawn meal at start of day
-        this.currentState = 'MEAL TIME';
-        this.ui.updateActivity(this.currentState);
-        if(this.onMealSpawn) this.onMealSpawn();
-
-        // Check for Rec Time (Every N days)
-        if (this.dayNumber % CONFIG.TIME.REC_TIME_INTERVAL_DAYS === 0) {
-            this.triggerRecTime();
-        }
-    }
-
-    triggerRecTime() {
-        this.currentState = 'YARD';
-        this.yardTimer = CONFIG.TIME.REC_TIME_DURATION_SECONDS;
-        this.ui.updateActivity('REC TIME');
-        if(this.onStartRec) this.onStartRec();
-    }
-
-    endRecTime() {
-        this.currentState = 'LOCKDOWN';
-        this.ui.setYardTimer(false);
-        this.ui.updateActivity(this.currentState);
-        if(this.onEndRec) this.onEndRec();
-    }
-    
-    consumeMeal() {
-        this.sanity += 15.0; // regain sanity
-        this.currentState = 'LOCKDOWN';
-        this.ui.updateActivity(this.currentState);
-        this.audio.playSlopSound();
-    }
-    
-    rest() {
-        // Attempting to rest fast-forwards time slightly, but drains sanity due to bad sleep
-        this.timeElapsedInDay += 5.0; 
-        this.sanity -= 5.0;
-        this.audio.playFootstep('metal'); // creak
-    }
-}
-
-/* ==========================================================================
-   WORLD GENERATION & MANAGEMENT (Three.js Scenegraph)
-   ========================================================================== */
-
 class PrisonWorld {
     constructor(scene) {
         this.scene = scene;
         this.interactables = [];
-        this.collisionBoxes = [];
-        this.doorMesh = null;
-        this.mealMesh = null;
+        this.colliders = [];
         
-        // Initialize Lights early for uniform updates
         RectAreaLightUniformsLib.init();
-        
-        this.textures = {
-            concrete: Utils.generateProceduralTexture(512, 512, 'concrete', '#444', '#222', 0.8),
-            rust: Utils.generateProceduralTexture(256, 256, 'rust', '#222', '#521', 0.9),
-            dirt: Utils.generateProceduralTexture(256, 256, 'dirt', '#fff', '#000', 0.5)
-        };
-        
-        this.materials = {
-            cellWall: new THREE.MeshStandardMaterial({ 
-                map: this.textures.concrete, 
-                roughness: 0.9, 
-                metalness: 0.1,
-                side: THREE.FrontSide
-            }),
-            bars: new THREE.MeshStandardMaterial({ 
-                map: this.textures.rust, 
-                roughness: 0.6, 
-                metalness: 0.8 
-            }),
-            porcelain: new THREE.MeshStandardMaterial({
-                color: 0xddddcc,
-                roughness: 0.2,
-                metalness: 0.1
-            })
+
+        this.mats = {
+            cellWall: new THREE.MeshStandardMaterial({ map: TextureSynthesizer.createConcrete(1024, 1024, '#4a4a4a', 50, true), roughness: 0.9 }),
+            hallWall: new THREE.MeshStandardMaterial({ map: TextureSynthesizer.createConcrete(512, 512, '#3a3a3a', 30, false), roughness: 0.8 }),
+            iron: new THREE.MeshStandardMaterial({ map: TextureSynthesizer.createRustMetal(512,512), metalness: 0.7, roughness: 0.5 }),
+            porcelain: new THREE.MeshStandardMaterial({ color: 0xddddcc, roughness: 0.1, metalness: 0.1 }),
+            fabric: new THREE.MeshStandardMaterial({ map: TextureSynthesizer.createOfficerFabric(256,256), roughness: 0.9 })
         };
 
-        this.buildCell();
-        this.buildYard();
-        this.setupLighting();
+        this.buildArchitecture();
+        this.buildLighting();
+        this.officer = new Officer(this.mats);
+        // Start officer hidden far down hall
+        this.officer.position.set(0, 0, CONFIG.WORLD.CELL_L/2 + CONFIG.WORLD.HALL_L - 1);
+        this.officer.rotation.y = Math.PI; // Facing cell
+        this.scene.add(this.officer);
+        this.activeTray = null;
     }
 
-    addCollisionBox(mesh) {
-        mesh.geometry.computeBoundingBox();
+    addCollider(mesh) {
+        mesh.updateMatrixWorld();
         const box = new THREE.Box3().setFromObject(mesh);
-        this.collisionBoxes.push(box);
+        this.colliders.push(box);
     }
 
-    buildCell() {
-        const W = CONFIG.WORLD.CELL_WIDTH;
-        const L = CONFIG.WORLD.CELL_LENGTH;
-        const H = CONFIG.WORLD.CELL_HEIGHT;
-        const T = CONFIG.WORLD.WALL_THICKNESS;
+    buildArchitecture() {
+        const cw = CONFIG.WORLD.CELL_W, cl = CONFIG.WORLD.CELL_L, ch = CONFIG.WORLD.CELL_H, t = CONFIG.WORLD.WALL_THICKNESS;
+        const hw = CONFIG.WORLD.HALL_W, hl = CONFIG.WORLD.HALL_L, hh = CONFIG.WORLD.HALL_H;
 
-        this.cellGroup = new THREE.Group();
-        this.scene.add(this.cellGroup);
+        // --- CELL ---
+        const cellGroup = new THREE.Group(); this.scene.add(cellGroup);
+        const floorGeo = new THREE.BoxGeometry(cw, t, cl);
+        const floor = new THREE.Mesh(floorGeo, this.mats.cellWall); floor.position.y = -t/2; cellGroup.add(floor);
+        const ceilGeo = new THREE.BoxGeometry(cw, t, cl);
+        const ceil = new THREE.Mesh(ceilGeo, this.mats.cellWall); ceil.position.y = ch + t/2; cellGroup.add(ceil);
 
-        // Floor & Ceiling
-        const floorGeo = new THREE.BoxGeometry(W, T, L);
-        const floor = new THREE.Mesh(floorGeo, this.materials.cellWall);
-        floor.position.set(0, -T/2, 0);
-        this.cellGroup.add(floor);
-        
-        const ceilingGeo = new THREE.BoxGeometry(W, T, L);
-        const ceiling = new THREE.Mesh(ceilingGeo, this.materials.cellWall);
-        ceiling.position.set(0, H + T/2, 0);
-        this.cellGroup.add(ceiling);
+        // Walls (L, R, Back)
+        const wLRGeo = new THREE.BoxGeometry(t, ch, cl);
+        const wL = new THREE.Mesh(wLRGeo, this.mats.cellWall); wL.position.set(-cw/2-t/2, ch/2, 0); cellGroup.add(wL); this.addCollider(wL);
+        const wR = new THREE.Mesh(wLRGeo, this.mats.cellWall); wR.position.set(cw/2+t/2, ch/2, 0); cellGroup.add(wR); this.addCollider(wR);
+        const wBGeo = new THREE.BoxGeometry(cw, ch, t);
+        const wB = new THREE.Mesh(wBGeo, this.mats.cellWall); wB.position.set(0, ch/2, -cl/2-t/2); cellGroup.add(wB); this.addCollider(wB);
 
-        // Walls (Left, Right, Back)
-        const wallLRGeo = new THREE.BoxGeometry(T, H, L);
-        const wallLeft = new THREE.Mesh(wallLRGeo, this.materials.cellWall);
-        wallLeft.position.set(-W/2 - T/2, H/2, 0);
-        this.cellGroup.add(wallLeft);
-        this.addCollisionBox(wallLeft);
+        // Small Window in back wall
+        const winGeo = new THREE.BoxGeometry(0.6, 0.4, t+0.05);
+        const winMat = new THREE.MeshBasicMaterial({color: 0x000000}); // Pure void outside
+        const win = new THREE.Mesh(winGeo, winMat); win.position.set(0, ch - 0.5, -cl/2-t/2); cellGroup.add(win);
+        const winBarGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.4, 8);
+        const wb1 = new THREE.Mesh(winBarGeo, this.mats.iron); wb1.position.set(-0.15, ch-0.5, -cl/2-t/2); cellGroup.add(wb1);
+        const wb2 = new THREE.Mesh(winBarGeo, this.mats.iron); wb2.position.set(0.15, ch-0.5, -cl/2-t/2); cellGroup.add(wb2);
 
-        const wallRight = new THREE.Mesh(wallLRGeo, this.materials.cellWall);
-        wallRight.position.set(W/2 + T/2, H/2, 0);
-        this.cellGroup.add(wallRight);
-        this.addCollisionBox(wallRight);
+        // Front Bars
+        const frontZ = cl/2;
+        const barGeo = new THREE.CylinderGeometry(0.04, 0.04, ch, 8);
+        const barsGroup = new THREE.Group();
+        for(let x = -cw/2 + 0.2; x < cw/2 - 0.1; x += 0.25) {
+            if(x > -0.4 && x < 0.4) continue; // Door gap
+            const b = new THREE.Mesh(barGeo, this.mats.iron); b.position.set(x, ch/2, frontZ); barsGroup.add(b);
+            this.addCollider(b);
+        }
+        cellGroup.add(barsGroup);
 
-        const wallBackGeo = new THREE.BoxGeometry(W, H, T);
-        const wallBack = new THREE.Mesh(wallBackGeo, this.materials.cellWall);
-        wallBack.position.set(0, H/2, -L/2 - T/2);
-        this.cellGroup.add(wallBack);
-        this.addCollisionBox(wallBack);
+        // Door (Solid plate with slot)
+        this.doorGroup = new THREE.Group(); this.doorGroup.position.set(-0.4, 0, frontZ); cellGroup.add(this.doorGroup);
+        const doorGeo = new THREE.BoxGeometry(0.8, ch-0.1, 0.05);
+        this.doorMesh = new THREE.Mesh(doorGeo, this.mats.iron); this.doorMesh.position.set(0.4, ch/2, 0); this.doorGroup.add(this.doorMesh);
+        const slotGeo = new THREE.BoxGeometry(0.5, 0.1, 0.06);
+        const slotMesh = new THREE.Mesh(slotGeo, new THREE.MeshBasicMaterial({color:0x000})); slotMesh.position.set(0.4, 0.2, 0); this.doorGroup.add(slotMesh);
+        this.doorCollider = new THREE.Box3().setFromObject(this.doorMesh); this.colliders.push(this.doorCollider);
 
-        // Front Wall (Bars + Door)
-        this.buildFrontBars(W, H, L, T);
-        
         // Props
-        this.buildCot(W, L);
-        this.buildToilet(W, L);
+        const cotGeo = new THREE.BoxGeometry(0.9, 0.3, 2.0);
+        const cotMat = new THREE.MeshStandardMaterial({color: 0x334433, roughness: 1.0});
+        const cot = new THREE.Mesh(cotGeo, cotMat); cot.position.set(-cw/2 + 0.5, 0.15, -cl/2 + 1.1);
+        cot.userData = { id: 'cot', action: 'SLEEP', detail: 'Pass time rapidly. Costs sanity.' };
+        cellGroup.add(cot); this.interactables.push(cot); this.addCollider(cot);
+
+        const tBase = new THREE.CylinderGeometry(0.2, 0.15, 0.4, 16);
+        const toilet = new THREE.Mesh(tBase, this.mats.porcelain); toilet.position.set(cw/2 - 0.4, 0.2, -cl/2 + 0.4);
+        toilet.userData = { id: 'toilet', action: 'FLUSH', detail: 'Pointless exertion of control.' };
+        cellGroup.add(toilet); this.interactables.push(toilet); this.addCollider(toilet);
+
+        // --- HALLWAY ---
+        const hallGroup = new THREE.Group(); hallGroup.position.set(0, 0, cl/2 + hl/2); this.scene.add(hallGroup);
+        const hFloor = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.hallWall); hFloor.position.y = -t/2; hallGroup.add(hFloor);
+        const hCeil = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.hallWall); hCeil.position.y = hh + t/2; hallGroup.add(hCeil);
+        const hL = new THREE.Mesh(new THREE.BoxGeometry(t, hh, hl), this.mats.hallWall); hL.position.set(-hw/2-t/2, hh/2, 0); hallGroup.add(hL);
+        const hR = new THREE.Mesh(new THREE.BoxGeometry(t, hh, hl), this.mats.hallWall); hR.position.set(hw/2+t/2, hh/2, 0); hallGroup.add(hR);
     }
 
-    buildFrontBars(W, H, L, T) {
-        const frontZ = L/2;
-        const barGeo = new THREE.CylinderGeometry(0.05, 0.05, H, 8);
-        const barSpacing = 0.3;
-        const numBars = Math.floor(W / barSpacing);
+    buildLighting() {
+        this.ambient = new THREE.AmbientLight(0x222222); this.scene.add(this.ambient);
         
-        const staticBarsGroup = new THREE.Group();
-        for(let i=0; i<numBars; i++) {
-            const xPos = -W/2 + (i * barSpacing);
-            // Leave gap for door in middle
-            if (xPos > -0.6 && xPos < 0.6) continue;
-            const bar = new THREE.Mesh(barGeo, this.materials.bars);
-            bar.position.set(xPos, H/2, frontZ);
-            staticBarsGroup.add(bar);
-        }
-        
-        // Door Frame/Hinge
-        this.doorGroup = new THREE.Group();
-        this.doorGroup.position.set(-0.6, 0, frontZ); // Pivot point left side of door opening
-        
-        // Solid Iron Door Plate
-        const doorPlateGeo = new THREE.BoxGeometry(1.2, H - 0.1, 0.1);
-        this.doorMesh = new THREE.Mesh(doorPlateGeo, this.materials.bars);
-        this.doorMesh.position.set(0.6, H/2, 0); // Offset from pivot
-        this.doorGroup.add(this.doorMesh);
-        
-        // Add Meal Slot
-        const slotGeo = new THREE.BoxGeometry(0.6, 0.1, 0.11);
-        const slotMat = new THREE.MeshBasicMaterial({color: 0x000000});
-        const slot = new THREE.Mesh(slotGeo, slotMat);
-        slot.position.set(0.6, 0.3, 0);
-        this.doorGroup.add(slot);
+        // Window directional (Sun)
+        this.sun = new THREE.DirectionalLight(0xffeedd, 1.0);
+        this.sun.position.set(0, 5, -10); // Angled through back window
+        this.sun.castShadow = true;
+        this.scene.add(this.sun);
 
-        this.cellGroup.add(staticBarsGroup);
-        this.cellGroup.add(this.doorGroup);
-        
-        // Door Collision (dynamic based on state, handled simply as closed by default)
-        this.doorCollisionBox = new THREE.Box3().setFromObject(this.doorMesh);
-        this.collisionBoxes.push(this.doorCollisionBox);
-    }
-
-    buildCot(W, L) {
-        const cotW = 1.0;
-        const cotL = 2.2;
-        const cotH = 0.4;
-        const cotGeo = new THREE.BoxGeometry(cotW, cotH, cotL);
-        const cotMat = new THREE.MeshStandardMaterial({ color: 0x333322, roughness: 1.0 });
-        const cot = new THREE.Mesh(cotGeo, cotMat);
-        
-        cot.position.set(-W/2 + cotW/2 + 0.1, cotH/2, -L/2 + cotL/2 + 0.1);
-        cot.userData = { id: 'cot', action: 'Sit on hard mattress' };
-        
-        this.scene.add(cot);
-        this.interactables.push(cot);
-        this.addCollisionBox(cot);
-    }
-
-    buildToilet(W, L) {
-        const tGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.4, 16);
-        const toilet = new THREE.Mesh(tGeo, this.materials.porcelain);
-        toilet.position.set(W/2 - 0.4, 0.2, -L/2 + 0.4);
-        toilet.userData = { id: 'toilet', action: 'Flush' };
-        
-        const tankGeo = new THREE.BoxGeometry(0.5, 0.4, 0.3);
-        const tank = new THREE.Mesh(tankGeo, this.materials.porcelain);
-        tank.position.set(W/2 - 0.4, 0.6, -L/2 + 0.2);
-        
-        this.scene.add(toilet);
-        this.scene.add(tank);
-        this.interactables.push(toilet);
-        this.addCollisionBox(toilet);
-        this.addCollisionBox(tank);
-    }
-
-    buildYard() {
-        const YW = CONFIG.WORLD.YARD_WIDTH;
-        const YL = CONFIG.WORLD.YARD_LENGTH;
-        const YH = CONFIG.WORLD.YARD_HEIGHT;
-        const offsetZ = CONFIG.WORLD.CELL_LENGTH/2 + YL/2 + 2.0; // Distance from cell
-        
-        this.yardGroup = new THREE.Group();
-        this.yardGroup.position.set(0, 0, offsetZ);
-        this.scene.add(this.yardGroup);
-
-        // High walls enclosing yard
-        const yardWallGeo = new THREE.BoxGeometry(YW, YH, 1.0);
-        const yardWallMat = this.materials.cellWall;
-        
-        const yFront = new THREE.Mesh(yardWallGeo, yardWallMat);
-        yFront.position.set(0, YH/2, YL/2);
-        this.yardGroup.add(yFront);
-        
-        const yBack = new THREE.Mesh(yardWallGeo, yardWallMat);
-        yBack.position.set(0, YH/2, -YL/2);
-        this.yardGroup.add(yBack);
-        
-        const yardSideGeo = new THREE.BoxGeometry(1.0, YH, YL);
-        const yLeft = new THREE.Mesh(yardSideGeo, yardWallMat);
-        yLeft.position.set(-YW/2, YH/2, 0);
-        this.yardGroup.add(yLeft);
-        
-        const yRight = new THREE.Mesh(yardSideGeo, yardWallMat);
-        yRight.position.set(YW/2, YH/2, 0);
-        this.yardGroup.add(yRight);
-        
-        // Yard floor
-        const yFloorGeo = new THREE.BoxGeometry(YW, 0.5, YL);
-        const yFloorMat = new THREE.MeshStandardMaterial({color: 0x222222, roughness: 0.9});
-        const yFloor = new THREE.Mesh(yFloorGeo, yFloorMat);
-        yFloor.position.set(0, -0.25, 0);
-        this.yardGroup.add(yFloor);
-
-        // Only add collision for yard bounds when door is open to save perf
-        this.yardBounds = [
-            new THREE.Box3().setFromObject(yFront),
-            new THREE.Box3().setFromObject(yBack),
-            new THREE.Box3().setFromObject(yLeft),
-            new THREE.Box3().setFromObject(yRight)
-        ];
-    }
-
-    setupLighting() {
-        this.ambient = new THREE.AmbientLight(0x111111);
-        this.scene.add(this.ambient);
-
-        // Slit window light simulation (Directional)
-        this.sunLight = new THREE.DirectionalLight(CONFIG.COLORS.DAY_LIGHT, 2.0);
-        this.sunLight.position.set(-5, 5, -5); // Angled through back wall imaginary slit
-        this.sunLight.castShadow = true;
-        this.scene.add(this.sunLight);
-
-        // Harsh Fluorescent Cell Light
-        this.cellLight = new THREE.PointLight(CONFIG.COLORS.FLUORESCENT, 1.0, 5.0);
-        this.cellLight.position.set(0, CONFIG.WORLD.CELL_HEIGHT - 0.2, 0);
+        // Cell flickering light
+        this.cellLight = new THREE.PointLight(0xaaccff, 0.5, 4.0);
+        this.cellLight.position.set(0, CONFIG.WORLD.CELL_H - 0.2, 0);
         this.scene.add(this.cellLight);
-        
-        // Yard Light
-        this.yardLight = new THREE.DirectionalLight(0xffffff, 0.5);
-        this.yardLight.position.set(0, 20, 20);
-        this.scene.add(this.yardLight);
-    }
 
-    updateLighting(dayRatio) {
-        // Cycle colors
-        const cycleColor = new THREE.Color();
-        if (dayRatio < 0.2 || dayRatio > 0.8) {
-            cycleColor.copy(CONFIG.COLORS.NIGHT_LIGHT);
-            this.cellLight.intensity = 1.5; // Artificial light stronger at night
-            this.sunLight.intensity = 0.1;
-        } else {
-            cycleColor.lerpColors(CONFIG.COLORS.NIGHT_LIGHT, CONFIG.COLORS.DAY_LIGHT, (dayRatio-0.2)*2.0); // Rough lerp logic
-            this.cellLight.intensity = 0.5;
-            this.sunLight.intensity = 2.5;
-            
-            // Move sun angle
-            const angle = Math.PI * dayRatio;
-            this.sunLight.position.x = Math.cos(angle) * 10;
-            this.sunLight.position.y = Math.sin(angle) * 10;
+        // Hallway lights
+        for(let z = CONFIG.WORLD.CELL_L/2 + 2; z < CONFIG.WORLD.CELL_L/2 + CONFIG.WORLD.HALL_L; z+= 5) {
+            const hl = new THREE.PointLight(0xffddaa, 0.3, 6.0);
+            hl.position.set(0, CONFIG.WORLD.HALL_H - 0.2, z);
+            this.scene.add(hl);
         }
-        this.sunLight.color = cycleColor;
-        this.ambient.color.copy(cycleColor).multiplyScalar(0.2);
     }
 
-    animateDoor(open) {
-        const targetAngle = open ? -Math.PI / 2 : 0;
-        new TWEEN.Tween(this.doorGroup.rotation)
-            .to({ y: targetAngle }, 2000)
-            .easing(TWEEN.Easing.Cubic.InOut)
-            .onUpdate(() => {
-                // Update collision box during animation
-                if(!open) this.doorCollisionBox.setFromObject(this.doorMesh);
-            })
-            .onComplete(() => {
-                if(open) {
-                    // Move collision box out of way
-                    this.doorCollisionBox.translate(new THREE.Vector3(0, -100, 0));
-                    // Add yard bounds
-                    this.collisionBoxes.push(...this.yardBounds);
-                } else {
-                    this.doorCollisionBox.setFromObject(this.doorMesh);
-                    // Remove yard bounds to optimize
-                    this.collisionBoxes = this.collisionBoxes.filter(b => !this.yardBounds.includes(b));
-                }
-            })
+    updateLighting(dayConfig, timeRatio) {
+        // timeRatio 0 = Wake (6am), 0.5 = Noon, 1.0 = Sleep (10pm) -> mapped from 24h
+        // Actually, time is continuous 0 to 24.
+        const r = (timeRatio - 6) / 16; // Normalize daylight hours roughly
+        let intensity = 0;
+        if(timeRatio >= 6 && timeRatio <= 18) {
+            intensity = Math.sin(r * Math.PI) * dayConfig.intensityMult * 2.0;
+        }
+        
+        this.sun.color.setHex(dayConfig.sun);
+        this.sun.intensity = Math.max(0.01, intensity);
+        
+        // Move sun arc
+        this.sun.position.x = Math.cos(r * Math.PI) * 10;
+        this.sun.position.y = Math.sin(r * Math.PI) * 5;
+
+        this.ambient.color.setHex(dayConfig.ambient);
+        this.scene.fog = new THREE.FogExp2(dayConfig.fog, dayConfig.fogDens);
+
+        // Cell light flicker
+        if(Math.random() > 0.95) this.cellLight.intensity = Math.random() * 0.5 + 0.2;
+        else this.cellLight.intensity = 0.6;
+    }
+
+    deliverFood(dayNum) {
+        const idx = Math.min(dayNum - 1, FOOD_MATRIX.length - 1);
+        const config = FOOD_MATRIX[idx];
+        
+        if(this.activeTray) {
+            this.scene.remove(this.activeTray);
+            this.interactables = this.interactables.filter(i => i !== this.activeTray);
+        }
+
+        this.activeTray = new FoodTray(config);
+        // Start inside door slot
+        this.activeTray.position.set(0, 0.05, CONFIG.WORLD.CELL_L/2);
+        this.scene.add(this.activeTray);
+        this.interactables.push(this.activeTray);
+
+        // Slide animation
+        new TWEEN.Tween(this.activeTray.position)
+            .to({z: CONFIG.WORLD.CELL_L/2 - 0.5}, 1500)
+            .easing(TWEEN.Easing.Cubic.Out)
             .start();
     }
+}
 
-    spawnMealTray() {
-        if (this.mealMesh) return; // Already exists
+/* ==========================================================================
+   GAME DIRECTOR (LOGIC, STATE, AI)
+   ========================================================================== */
+class GameDirector {
+    constructor(world, ui, audio) {
+        this.world = world; this.ui = ui; this.audio = audio;
         
-        const trayGeo = new THREE.BoxGeometry(0.4, 0.02, 0.25);
-        const trayMat = new THREE.MeshStandardMaterial({color: 0x555555, metalness: 0.8});
-        this.mealMesh = new THREE.Mesh(trayGeo, trayMat);
+        this.day = 1;
+        this.time = CONFIG.TIME.WAKE_HOUR; // Start at 6am
+        this.sanity = 100;
+        this.nutrition = 100;
+        this.state = 'LOCKDOWN'; // LOCKDOWN, MEAL_DELIVERY, SLEEP
         
-        // Slide under door
-        this.mealMesh.position.set(0, 0.01, CONFIG.WORLD.CELL_LENGTH/2 - 0.2);
-        this.mealMesh.userData = { id: 'meal', action: 'Consume Sludge' };
-        
-        this.scene.add(this.mealMesh);
-        this.interactables.push(this.mealMesh);
-        
-        // Animate slide
-        new TWEEN.Tween(this.mealMesh.position)
-            .to({ z: CONFIG.WORLD.CELL_LENGTH/2 - 0.6 }, 1000)
-            .easing(TWEEN.Easing.Quadratic.Out)
-            .start();
+        this.officerSequenceActive = false;
+        this.officerTimer = 0;
     }
 
-    removeMealTray() {
-        if(this.mealMesh) {
-            this.scene.remove(this.mealMesh);
-            this.interactables = this.interactables.filter(i => i !== this.mealMesh);
-            this.mealMesh.geometry.dispose();
-            this.mealMesh = null;
+    update(delta) {
+        if(this.state === 'SLEEP') return; // Time jumps, handled in interaction
+
+        // Time progression
+        const hourStep = delta / CONFIG.TIME.REAL_SEC_PER_GAME_HOUR;
+        this.time += hourStep;
+        
+        if(this.time >= 24) {
+            this.time -= 24;
+            this.day++;
+        }
+
+        // Degradation
+        const starveMult = this.nutrition <= 0 ? CONFIG.STATS.STARVATION_SANITY_MULT : 1.0;
+        this.nutrition -= CONFIG.STATS.NUTRITION_DECAY_RATE * hourStep;
+        this.sanity -= (CONFIG.STATS.SANITY_DECAY_RATE * starveMult) * hourStep;
+        
+        this.nutrition = Math.max(0, Math.min(100, this.nutrition));
+        this.sanity = Math.max(0, Math.min(100, this.sanity));
+
+        // Event Triggers
+        if(this.time >= CONFIG.TIME.MEAL_HOUR && this.time < CONFIG.TIME.MEAL_HOUR + 1 && !this.officerSequenceActive && this.state !== 'MEAL_DELIVERY') {
+            this.triggerMealDelivery();
+        }
+
+        if(this.time >= CONFIG.TIME.SLEEP_HOUR) {
+            this.ui.updateSubtitle("MANDATORY LIGHTS OUT. RETURN TO COT.", 4000);
+        }
+
+        // Officer AI Update
+        if(this.officerSequenceActive) this.updateOfficer(delta);
+
+        // UI & World Sync
+        this.syncSystems();
+    }
+
+    syncSystems() {
+        const hrs = Math.floor(this.time);
+        const mins = Math.floor((this.time - hrs) * 60);
+        const ampm = hrs >= 12 ? 'PM' : 'AM';
+        const h12 = hrs % 12 || 12;
+        const timeStr = `${h12.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')} ${ampm}`;
+
+        this.ui.updateStats(this.day, timeStr, this.state, this.sanity, this.nutrition);
+        
+        const dayConfigIdx = Math.min(this.day - 1, DAY_LIGHTING_MATRIX.length - 1);
+        this.world.updateLighting(DAY_LIGHTING_MATRIX[dayConfigIdx], this.time);
+    }
+
+    triggerMealDelivery() {
+        this.state = 'MEAL_DELIVERY';
+        this.officerSequenceActive = true;
+        this.officerPhase = 0; // 0: Walk up, 1: Deliver, 2: Walk away
+        this.world.officer.position.z = CONFIG.WORLD.CELL_L/2 + CONFIG.WORLD.HALL_L - 1;
+        this.world.officer.rotation.y = Math.PI; // Face cell
+    }
+
+    updateOfficer(delta) {
+        const officer = this.world.officer;
+        const targetZ = CONFIG.WORLD.CELL_L/2 + 0.6; // Right outside door
+
+        if(this.officerPhase === 0) {
+            // Walking to door
+            officer.isWalking = true;
+            officer.position.z -= 2.0 * delta; // Speed
+            const step = officer.animateWalk(delta, 2.0);
+            if(step) this.audio.playFootstep('boot', Math.abs(officer.position.z - targetZ) / CONFIG.WORLD.HALL_L);
+
+            if(officer.position.z <= targetZ) {
+                officer.position.z = targetZ;
+                officer.isWalking = false;
+                officer.animateWalk(delta, 0); // Reset
+                this.officerPhase = 1;
+                this.ui.updateSubtitle("OFFICER: 'Chow time, inmate. Step back.'", 3000);
+                
+                // Trigger delivery animation
+                officer.animateDeliver(() => {
+                    this.world.deliverFood(this.day);
+                    this.audio.playDoorGrind();
+                });
+                
+                setTimeout(() => { this.officerPhase = 2; officer.rotation.y = 0; }, 2000); // Wait, then turn around
+            }
+        } 
+        else if(this.officerPhase === 2) {
+            // Walking away
+            officer.isWalking = true;
+            officer.position.z += 2.0 * delta;
+            const step = officer.animateWalk(delta, 2.0);
+            if(step) this.audio.playFootstep('boot', Math.abs(officer.position.z - targetZ) / CONFIG.WORLD.HALL_L);
+
+            if(officer.position.z > targetZ + CONFIG.WORLD.HALL_L) {
+                officer.isWalking = false;
+                this.officerSequenceActive = false;
+                this.state = 'LOCKDOWN';
+            }
+        }
+    }
+
+    interact(object) {
+        const id = object.userData.id;
+        if(id === 'food_tray') {
+            this.nutrition += object.userData.nutri;
+            this.sanity += object.userData.sanity;
+            this.audio.playEat();
+            this.ui.updateSubtitle(`CONSUMED: ${object.userData.detail}`, 3000);
+            this.world.scene.remove(this.world.activeTray);
+            this.world.interactables = this.world.interactables.filter(i => i !== this.world.activeTray);
+            this.world.activeTray = null;
+        } 
+        else if(id === 'cot') {
+            if(this.time >= CONFIG.TIME.SLEEP_HOUR || this.time < CONFIG.TIME.WAKE_HOUR) {
+                this.ui.doFadeSequence(() => {
+                    this.time = CONFIG.TIME.WAKE_HOUR;
+                    this.day++;
+                    this.sanity -= 5; // Sleep doesn't fully restore sanity in jail
+                });
+            } else {
+                this.ui.updateSubtitle("CANNOT SLEEP. NOT SCHEDULED.", 2000);
+            }
+        }
+        else if(id === 'toilet') {
+            // Fake audio or just deny
+            this.ui.updateSubtitle("WATER MAIN SHUT OFF.", 2000);
         }
     }
 }
 
 /* ==========================================================================
-   PLAYER CONTROLLER (Physics, Input, Collision)
+   UI CONTROLLER
    ========================================================================== */
-
-class Player {
-    constructor(camera, domElement, world) {
-        this.camera = camera;
-        this.world = world;
-        this.controls = new PointerLockControls(camera, domElement);
-        
-        this.velocity = new THREE.Vector3();
-        this.direction = new THREE.Vector3();
-        this.moveState = { forward: false, backward: false, left: false, right: false };
-        
-        this.raycaster = new THREE.Raycaster();
-        this.interactTarget = null;
-        
-        this.isMoving = false;
-        this.footstepTimer = 0;
-
-        // Bounding sphere for simple sliding collision
-        this.collider = new THREE.Sphere(new THREE.Vector3(), CONFIG.PLAYER.RADIUS);
-
-        this.initEventListeners();
+class UIController {
+    constructor() {
+        this.els = {
+            day: document.getElementById('val-day'), time: document.getElementById('val-time'), state: document.getElementById('val-state'),
+            sanity: document.getElementById('fill-sanity'), nutri: document.getElementById('fill-nutrition'),
+            box: document.getElementById('interaction-box'), act: document.getElementById('interact-action'), det: document.getElementById('interact-detail'),
+            cross: document.getElementById('crosshair'), sub: document.getElementById('subtitle-box'), fade: document.getElementById('master-fade'),
+            initScr: document.getElementById('init-screen'), hud: document.getElementById('hud-layer')
+        };
+        this.subTimer = null;
     }
 
-    initEventListeners() {
-        const onKeyDown = (e) => {
-            switch(e.code) {
-                case 'KeyW': this.moveState.forward = true; break;
-                case 'KeyA': this.moveState.left = true; break;
-                case 'KeyS': this.moveState.backward = true; break;
-                case 'KeyD': this.moveState.right = true; break;
-            }
-        };
-        const onKeyUp = (e) => {
-            switch(e.code) {
-                case 'KeyW': this.moveState.forward = false; break;
-                case 'KeyA': this.moveState.left = false; break;
-                case 'KeyS': this.moveState.backward = false; break;
-                case 'KeyD': this.moveState.right = false; break;
-            }
-        };
+    updateStats(day, time, state, sanity, nutri) {
+        this.els.day.innerText = `DAY ${day.toString().padStart(3,'0')}`;
+        this.els.time.innerText = time;
+        this.els.state.innerText = state;
+        
+        this.els.state.className = 'stat-value';
+        if(state==='LOCKDOWN') this.els.state.classList.add('state-lockdown');
+        if(state==='MEAL_DELIVERY') this.els.state.classList.add('state-meal');
+        
+        this.els.sanity.style.width = `${sanity}%`;
+        this.els.nutri.style.width = `${nutri}%`;
 
-        document.addEventListener('keydown', onKeyDown);
-        document.addEventListener('keyup', onKeyUp);
+        // Extreme visual degradation
+        this.els.sanity.classList.remove('sanity-warn', 'sanity-crit');
+        document.body.classList.remove('sanity-break');
+        if(sanity < 30) this.els.sanity.classList.add('sanity-warn');
+        if(sanity < 15) {
+            this.els.sanity.classList.add('sanity-crit');
+            document.body.classList.add('sanity-break');
+        }
+    }
+
+    setInteract(obj) {
+        if(!obj) {
+            this.els.box.classList.remove('show');
+            this.els.cross.classList.remove('active-target');
+            return;
+        }
+        this.els.act.innerText = obj.userData.action || 'EXAMINE';
+        this.els.det.innerText = obj.userData.detail || '';
+        this.els.box.classList.add('show');
+        this.els.cross.classList.add('active-target');
+    }
+
+    updateSubtitle(text, duration) {
+        this.els.sub.innerText = text;
+        this.els.sub.style.opacity = 1;
+        clearTimeout(this.subTimer);
+        this.subTimer = setTimeout(() => { this.els.sub.style.opacity = 0; }, duration);
+    }
+
+    doFadeSequence(midpointCallback) {
+        this.els.fade.style.opacity = 1;
+        setTimeout(() => {
+            if(midpointCallback) midpointCallback();
+            setTimeout(() => { this.els.fade.style.opacity = 0; }, 1000);
+        }, 3000); // 3 sec fade out
+    }
+}
+
+/* ==========================================================================
+   PLAYER CONTROLLER (PHYSICS & RAYCASTING)
+   ========================================================================== */
+class PlayerController {
+    constructor(camera, domElement, world) {
+        this.camera = camera; this.world = world;
+        this.controls = new PointerLockControls(camera, domElement);
+        this.vel = new THREE.Vector3(); this.dir = new THREE.Vector3();
+        this.inputs = { f:false, b:false, l:false, r:false };
+        this.raycaster = new THREE.Raycaster();
+        this.target = null;
+        this.collider = new THREE.Sphere(new THREE.Vector3(), CONFIG.PHYSICS.PLAYER_RADIUS);
+        this.distTraveled = 0;
+
+        document.addEventListener('keydown', e => this.key(e, true));
+        document.addEventListener('keyup', e => this.key(e, false));
+    }
+
+    key(e, isDown) {
+        switch(e.code) {
+            case 'KeyW': this.inputs.f = isDown; break;
+            case 'KeyS': this.inputs.b = isDown; break;
+            case 'KeyA': this.inputs.l = isDown; break;
+            case 'KeyD': this.inputs.r = isDown; break;
+        }
     }
 
     update(delta, audioSys, uiSys) {
-        if (!this.controls.isLocked) return;
+        if(!this.controls.isLocked) return;
 
-        // Input vector
-        this.direction.z = Number(this.moveState.forward) - Number(this.moveState.backward);
-        this.direction.x = Number(this.moveState.right) - Number(this.moveState.left);
-        this.direction.normalize(); // Ensure diagonal isn't faster
+        // Physics/Movement
+        this.dir.z = Number(this.inputs.f) - Number(this.inputs.b);
+        this.dir.x = Number(this.inputs.r) - Number(this.inputs.l);
+        this.dir.normalize();
 
-        // Heavy inertia
-        const deceleration = 10.0;
-        this.velocity.x -= this.velocity.x * deceleration * delta;
-        this.velocity.z -= this.velocity.z * deceleration * delta;
+        const decel = 10.0;
+        this.vel.x -= this.vel.x * decel * delta;
+        this.vel.z -= this.vel.z * decel * delta;
 
-        if (this.moveState.forward || this.moveState.backward) this.velocity.z -= this.direction.z * CONFIG.PLAYER.WALK_SPEED * delta;
-        if (this.moveState.left || this.moveState.right) this.velocity.x -= this.direction.x * CONFIG.PLAYER.WALK_SPEED * delta;
+        if(this.inputs.f || this.inputs.b) this.vel.z -= this.dir.z * CONFIG.PHYSICS.WALK_SPEED * delta;
+        if(this.inputs.l || this.inputs.r) this.vel.x -= this.dir.x * CONFIG.PHYSICS.WALK_SPEED * delta;
 
-        this.isMoving = Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.z) > 0.1;
+        // Apply
+        const startPos = this.controls.object.position.clone();
+        this.controls.moveRight(-this.vel.x * delta);
+        this.controls.moveForward(-this.vel.z * delta);
 
-        // Store old position for collision resolution
-        const oldPosition = this.controls.object.position.clone();
-
-        // Apply movement horizontally
-        this.controls.moveRight(-this.velocity.x * delta);
-        this.controls.moveForward(-this.velocity.z * delta);
-        
-        // Custom AABB Collision detection and resolution (sliding)
+        // Simple Sphere-AABB Collision
         this.collider.center.copy(this.controls.object.position);
-        this.collider.center.y -= CONFIG.PLAYER.HEIGHT / 2; // Check near feet
+        this.collider.center.y -= CONFIG.PHYSICS.PLAYER_HEIGHT * 0.4; // Chest level check
 
-        for (const box of this.world.collisionBoxes) {
-            if (box.intersectsSphere(this.collider)) {
-                // Determine collision normal and resolve
-                const closestPoint = new THREE.Vector3();
-                box.clampPoint(this.collider.center, closestPoint);
-                
-                const pushVector = new THREE.Vector3().subVectors(this.collider.center, closestPoint);
-                const dist = pushVector.length();
-                
-                if (dist < CONFIG.PLAYER.RADIUS) {
-                    pushVector.normalize().multiplyScalar(CONFIG.PLAYER.RADIUS - dist);
-                    // Only push along XZ plane to prevent flying
-                    pushVector.y = 0; 
-                    this.controls.object.position.add(pushVector);
+        for(const box of this.world.colliders) {
+            if(box.intersectsSphere(this.collider)) {
+                const cp = new THREE.Vector3();
+                box.clampPoint(this.collider.center, cp);
+                const push = new THREE.Vector3().subVectors(this.collider.center, cp);
+                const dist = push.length();
+                if(dist < CONFIG.PHYSICS.PLAYER_RADIUS) {
+                    push.normalize().multiplyScalar(CONFIG.PHYSICS.PLAYER_RADIUS - dist);
+                    push.y = 0; // constrain to XZ
+                    this.controls.object.position.add(push);
                 }
             }
         }
 
-        // Head Bobbing
-        if (this.isMoving) {
-            const time = performance.now() * 0.001;
-            this.controls.object.position.y = CONFIG.PLAYER.HEIGHT + Math.sin(time * CONFIG.PLAYER.BOB_FREQ) * CONFIG.PLAYER.BOB_AMP;
+        // Bobbing & Audio
+        const endPos = this.controls.object.position.clone();
+        const moveDist = startPos.distanceTo(endPos);
+        if(moveDist > 0.001) {
+            this.distTraveled += moveDist;
+            this.controls.object.position.y = CONFIG.PHYSICS.PLAYER_HEIGHT + Math.sin(this.distTraveled * CONFIG.PHYSICS.HEAD_BOB_FREQ) * CONFIG.PHYSICS.HEAD_BOB_AMP;
             
-            // Trigger footsteps
-            this.footstepTimer += delta;
-            if (this.footstepTimer > 0.6) {
-                this.footstepTimer = 0;
-                const mat = this.controls.object.position.z > CONFIG.WORLD.CELL_LENGTH ? 'dirt' : 'concrete';
-                audioSys.playFootstep(mat);
+            // Footstep audio trigger
+            if(Math.sin(this.distTraveled * CONFIG.PHYSICS.HEAD_BOB_FREQ) < -0.9 && this.canStep) {
+                audioSys.playFootstep('sock', 0); // Player step is close
+                this.canStep = false;
+            } else if (Math.sin(this.distTraveled * CONFIG.PHYSICS.HEAD_BOB_FREQ) > 0) {
+                this.canStep = true;
             }
         } else {
-            this.controls.object.position.y = Utils.lerp(this.controls.object.position.y, CONFIG.PLAYER.HEIGHT, 0.1);
+            this.controls.object.position.y = THREE.MathUtils.lerp(this.controls.object.position.y, CONFIG.PHYSICS.PLAYER_HEIGHT, 0.1);
         }
 
-        // Interaction Raycasting
-        this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera);
-        const intersects = this.raycaster.intersectObjects(this.world.interactables, false);
-        
-        if (intersects.length > 0 && intersects[0].distance < 2.5) {
-            this.interactTarget = intersects[0].object;
-            uiSys.showPrompt(this.interactTarget.userData.action);
+        // Raycasting
+        this.raycaster.setFromCamera(new THREE.Vector2(0,0), this.camera);
+        const hits = this.raycaster.intersectObjects(this.world.interactables, false);
+        if(hits.length > 0 && hits[0].distance < 2.0) {
+            this.target = hits[0].object;
+            uiSys.setInteract(this.target);
         } else {
-            this.interactTarget = null;
-            uiSys.hidePrompt();
+            this.target = null;
+            uiSys.setInteract(null);
         }
-
-        // Audio spatial update
-        const dir = new THREE.Vector3();
-        this.camera.getWorldDirection(dir);
-        audioSys.updateSpatial(this.camera.position, dir);
-    }
-    
-    resetPosition(posVec) {
-        this.controls.object.position.copy(posVec);
-        this.velocity.set(0,0,0);
-        // Force look forward
-        const euler = new THREE.Euler(0, 0, 0, 'YXZ');
-        this.controls.object.quaternion.setFromEuler(euler);
     }
 }
 
 /* ==========================================================================
-   MAIN SYSTEM LOOP & INITIALIZATION
+   MAIN APPLICATION LOOP
    ========================================================================== */
-
-class GameEngine {
+class App {
     constructor() {
-        this.initDOM();
-        this.initThree();
-        this.initSystems();
-        this.bindEvents();
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 50);
+        this.camera.position.set(0, CONFIG.PHYSICS.PLAYER_HEIGHT, 0);
+        
+        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: false });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+
+        this.ui = new UIController();
+        this.audio = new AudioEngine();
+        this.world = new PrisonWorld(this.scene);
+        this.director = new GameDirector(this.world, this.ui, this.audio);
+        this.player = new PlayerController(this.camera, document.body, this.world);
         
         this.clock = new THREE.Clock();
-        this.isRunning = false;
-    }
+        this.running = false;
 
-    initDOM() {
-        this.canvas = document.getElementById('game-canvas');
-        this.startBtn = document.getElementById('start-btn');
-    }
-
-    initThree() {
-        this.scene = new THREE.Scene();
-        this.scene.fog = new THREE.FogExp2(0x050505, 0.08);
-
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-        this.camera.position.set(0, CONFIG.PLAYER.HEIGHT, 0);
-
-        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: false, powerPreference: "high-performance" });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // optimize
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    }
-
-    initSystems() {
-        this.audio = new AudioSystem(this.camera);
-        this.ui = new UIController();
-        this.world = new PrisonWorld(this.scene);
-        this.player = new Player(this.camera, document.body, this.world);
-        this.director = new GameDirector(this.world, this.ui, this.audio);
-
-        // Wiring Game Director events to actions
-        this.director.onStartRec = () => {
-            this.audio.playMetalSlam();
-            this.world.animateDoor(true);
-        };
+        this.bind();
         
-        this.director.onEndRec = () => {
-            // Teleport sequence
-            this.ui.fadeScreen(true, 1000, () => {
-                this.audio.playMetalSlam();
-                this.world.animateDoor(false);
-                this.player.resetPosition(new THREE.Vector3(0, CONFIG.PLAYER.HEIGHT, 0));
-                
-                setTimeout(() => {
-                    this.ui.fadeScreen(false, 2000);
-                }, 500);
-            });
-        };
+        // Initial setup
+        this.director.syncSystems();
         
-        this.director.onMealSpawn = () => {
-            this.world.spawnMealTray();
-        };
+        requestAnimationFrame(() => this.loop());
     }
 
-    bindEvents() {
+    bind() {
         window.addEventListener('resize', () => {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.aspect = window.innerWidth/window.innerHeight;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Main Menu Start
-        this.startBtn.addEventListener('click', () => {
-            this.audio.init();
+        document.getElementById('btn-init').addEventListener('click', () => {
+            this.audio.init(this.camera);
             this.player.controls.lock();
         });
 
-        // Pointer Lock State Changes
         this.player.controls.addEventListener('lock', () => {
-            this.ui.hideMenu();
-            this.isRunning = true;
-            this.clock.start(); // reset delta accumulation
+            this.ui.els.initScr.style.opacity = 0;
+            setTimeout(()=> { this.ui.els.initScr.style.display='none'; this.ui.els.hud.style.display='block'; }, 1500);
+            this.running = true;
+            this.clock.start();
+            this.ui.els.fade.style.opacity = 0; // Fade in world
         });
 
         this.player.controls.addEventListener('unlock', () => {
-            this.ui.showMenu();
-            this.isRunning = false;
+            this.running = false;
+            this.ui.els.initScr.style.display='flex';
+            setTimeout(()=> { this.ui.els.initScr.style.opacity = 1; }, 50);
+            this.ui.els.hud.style.display='none';
         });
 
-        // Interaction Event
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'KeyE' && this.isRunning && this.player.interactTarget) {
-                const targetId = this.player.interactTarget.userData.id;
-                
-                if (targetId === 'meal') {
-                    this.director.consumeMeal();
-                    this.world.removeMealTray();
-                    this.player.interactTarget = null;
-                    this.ui.hidePrompt();
-                } 
-                else if (targetId === 'toilet') {
-                    this.audio.playToiletFlush();
-                }
-                else if (targetId === 'cot') {
-                    this.director.rest();
-                }
+        document.addEventListener('keydown', e => {
+            if(e.code === 'KeyE' && this.running && this.player.target) {
+                this.director.interact(this.player.target);
             }
         });
     }
 
-    animate() {
-        requestAnimationFrame(() => this.animate());
-        
-        const delta = this.clock.getDelta();
+    loop() {
+        requestAnimationFrame(() => this.loop());
+        const delta = Math.min(this.clock.getDelta(), 0.1);
         TWEEN.update();
 
-        if (this.isRunning) {
-            // Cap delta to prevent huge jumps on tab switch
-            const safeDelta = Math.min(delta, 0.1); 
+        if(this.running) {
+            this.player.update(delta, this.audio, this.ui);
+            this.director.update(delta);
             
-            this.player.update(safeDelta, this.audio, this.ui);
-            this.director.tick(safeDelta);
-            
-            // Dynamic FOV based on Sanity (claustrophobia effect)
-            const targetFOV = Utils.lerp(100, 75, this.director.sanity / 100);
-            this.camera.fov = Utils.lerp(this.camera.fov, targetFOV, 0.05);
+            // Extreme FOV warp based on sanity
+            const targetFov = 70 + (100 - this.director.sanity) * 0.4;
+            this.camera.fov = THREE.MathUtils.lerp(this.camera.fov, targetFov, 0.05);
             this.camera.updateProjectionMatrix();
         }
 
@@ -1714,10 +1406,7 @@ class GameEngine {
 }
 
 // Bootstrap
-window.onload = () => {
-    const engine = new GameEngine();
-    engine.animate();
-};
+window.onload = () => new App();
 
 </script>
 </body>
