@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SQUIRREL: ULTIMATE PARK SIMULATOR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>SQUIRREL: ULTIMATE PARK SIMULATOR - OPTIMIZED EDITION</title>
 <style>
 /* ==========================================================================
    SQUIRREL: ULTIMATE PARK SIMULATOR - CASCADING STYLE SHEETS
    ========================================================================== */
 :root {
-    --ui-primary: rgba(240, 245, 240, 0.9);
-    --ui-bg: rgba(20, 25, 20, 0.85);
-    --ui-border: rgba(100, 150, 100, 0.6);
+    --ui-primary: rgba(240, 245, 240, 0.95);
+    --ui-bg: rgba(15, 20, 15, 0.85);
+    --ui-border: rgba(120, 180, 120, 0.6);
     --ui-accent: #4caf50;
     --ui-accent-glow: #81c784;
     --ui-warn: #ff9800;
@@ -26,10 +26,10 @@
 }
 
 html, body {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    background-color: #000;
+    background-color: #050505;
     font-family: var(--font-main);
     color: var(--ui-primary);
     user-select: none;
@@ -41,21 +41,23 @@ html, body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: 0;
     display: block;
+    outline: none;
 }
 
-/* --- DYNAMIC 3D UI LAYER (FOR FLOATING SQUIRREL BARS) --- */
+/* --- DYNAMIC 3D UI LAYER --- */
 #ui-3d-layer {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: 10;
     pointer-events: none;
+    overflow: hidden; /* Prevents off-screen rendering from causing scrollbars */
 }
 
 .squirrel-tracker {
@@ -65,9 +67,9 @@ html, body {
     flex-direction: column;
     align-items: center;
     opacity: 0;
-    transition: opacity 0.2s ease;
-    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8));
-    will-change: left, top;
+    transition: opacity 0.3s ease;
+    filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.9));
+    will-change: left, top, opacity;
 }
 
 .squirrel-tracker.visible {
@@ -75,37 +77,42 @@ html, body {
 }
 
 .squirrel-name {
-    font-size: 10px;
-    font-weight: bold;
-    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+    color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
 }
 
 .squirrel-trust-bg {
-    width: 40px;
-    height: 6px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 3px;
+    width: 50px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
     overflow: hidden;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
 .squirrel-trust-fill {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, #f44336, #ff9800, #4caf50);
-    background-size: 40px 100%;
+    background-size: 50px 100%;
     transition: width 0.3s ease;
 }
 
 .squirrel-state-lbl {
-    font-size: 9px;
-    color: #ddd;
-    margin-top: 2px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #e0e0e0;
+    margin-top: 3px;
     text-shadow: 1px 1px 2px #000;
+    background: rgba(0,0,0,0.5);
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 /* --- MENU OVERLAYS --- */
@@ -113,97 +120,101 @@ html, body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: 100;
-    background: radial-gradient(circle, rgba(30,40,30,0.85) 0%, rgba(10,15,10,0.98) 100%);
+    background: radial-gradient(circle, rgba(20,30,20,0.9) 0%, rgba(5,10,5,0.98) 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    backdrop-filter: blur(10px);
-    transition: opacity 1s ease;
+    backdrop-filter: blur(12px);
+    transition: opacity 0.8s ease;
 }
 
 .title-container {
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 4vh;
 }
 
 .game-title {
     font-family: var(--font-display);
-    font-size: 110px;
-    color: #fff;
-    text-shadow: 0 5px 20px rgba(0,0,0,0.9), 0 0 50px rgba(100,200,100,0.5);
-    letter-spacing: 18px;
-    margin-bottom: 10px;
+    font-size: clamp(60px, 8vw, 120px);
+    color: #ffffff;
+    text-shadow: 0 5px 25px rgba(0,0,0,1), 0 0 60px rgba(76,175,80,0.6);
+    letter-spacing: 1vw;
+    margin-bottom: 1vh;
+    line-height: 1;
 }
 
 .game-subtitle {
-    font-size: 22px;
-    letter-spacing: 6px;
-    color: #bbb;
+    font-size: clamp(16px, 2vw, 24px);
+    letter-spacing: 0.5vw;
+    color: #cccccc;
     text-transform: uppercase;
 }
 
 .instructions {
     background: var(--ui-bg);
     border: 1px solid var(--ui-border);
-    padding: 35px;
-    border-radius: 12px;
-    max-width: 650px;
-    margin-bottom: 40px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    padding: clamp(20px, 3vh, 40px);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 700px;
+    margin-bottom: 4vh;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
 }
 
 .instructions h3 {
     color: var(--ui-accent);
-    margin-bottom: 20px;
-    font-size: 26px;
+    margin-bottom: 2vh;
+    font-size: clamp(20px, 2.5vw, 28px);
     border-bottom: 2px solid var(--ui-border);
-    padding-bottom: 10px;
+    padding-bottom: 1vh;
 }
 
 .controls-grid {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 15px 30px;
-    font-size: 16px;
+    gap: 1.5vh 2vw;
+    font-size: clamp(14px, 1.5vw, 18px);
+    align-items: center;
 }
 
 .ctrl-key {
-    background: #2a2a2a;
-    padding: 6px 18px;
-    border-radius: 6px;
-    border-bottom: 4px solid #111;
-    font-weight: bold;
+    background: #252525;
+    padding: 8px 20px;
+    border-radius: 8px;
+    border-bottom: 4px solid #000;
+    font-weight: 900;
     text-align: center;
-    color: #fff;
+    color: #ffffff;
     font-family: monospace;
     letter-spacing: 1px;
+    white-space: nowrap;
 }
 
 .ctrl-desc {
-    display: flex;
-    align-items: center;
     color: #e0e0e0;
+    line-height: 1.4;
 }
 
 #start-btn {
     background: linear-gradient(135deg, #4caf50, #2e7d32);
-    color: #fff;
+    color: #ffffff;
     border: none;
-    padding: 18px 60px;
-    font-size: 26px;
-    font-weight: bold;
-    border-radius: 40px;
+    padding: 20px 70px;
+    font-size: clamp(20px, 2.5vw, 30px);
+    font-weight: 900;
+    border-radius: 50px;
     cursor: pointer;
     text-transform: uppercase;
-    letter-spacing: 3px;
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
-    transition: all 0.2s ease;
+    letter-spacing: 4px;
+    box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4), inset 0 2px 5px rgba(255,255,255,0.3);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     overflow: hidden;
+    display: none; /* Hidden until loaded */
 }
 
 #start-btn::after {
@@ -213,9 +224,9 @@ html, body {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.15);
     transform: rotate(45deg);
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
     opacity: 0;
 }
 
@@ -225,20 +236,37 @@ html, body {
 }
 
 #start-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(76, 175, 80, 0.7);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(76, 175, 80, 0.6), inset 0 2px 5px rgba(255,255,255,0.4);
 }
 
 #start-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 10px rgba(76, 175, 80, 0.4);
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.5);
+}
+
+#loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(76, 175, 80, 0.2);
+    border-top-color: var(--ui-accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
 #loading-text {
-    font-size: 22px;
+    font-size: clamp(16px, 2vw, 24px);
     color: var(--ui-accent);
-    letter-spacing: 5px;
-    animation: pulse 1s infinite alternate;
+    letter-spacing: 4px;
+    animation: pulse 1.5s infinite alternate;
+    font-weight: bold;
 }
 
 /* --- IN-GAME HUD --- */
@@ -246,8 +274,8 @@ html, body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: 50;
     pointer-events: none;
     display: none;
@@ -257,53 +285,69 @@ html, body {
     position: absolute;
     background: var(--ui-bg);
     border: 1px solid var(--ui-border);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 20px;
-    backdrop-filter: blur(6px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
 }
 
 #global-stats {
-    top: 30px;
-    left: 30px;
-    width: 300px;
+    top: 20px;
+    left: 20px;
+    width: clamp(250px, 25vw, 320px);
+}
+
+.stat-header {
+    border-bottom: 2px solid var(--ui-border);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    color: var(--ui-accent);
+    letter-spacing: 3px;
+    font-weight: 900;
+    font-size: 16px;
+    text-shadow: 0 0 10px rgba(76,175,80,0.3);
 }
 
 .stat-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    align-items: center;
+    margin-bottom: 12px;
     font-size: 14px;
-    color: #ccc;
+    color: #cccccc;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .stat-val {
-    font-weight: bold;
-    color: #fff;
-    font-size: 16px;
+    font-weight: 900;
+    color: #ffffff;
+    font-size: 18px;
+    background: rgba(0,0,0,0.5);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 #inventory-panel {
-    bottom: 30px;
-    right: 30px;
+    bottom: 20px;
+    right: 20px;
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
 .inv-icon {
-    width: 60px;
-    height: 60px;
-    background: #2a2a2a;
-    border-radius: 10px;
+    width: 64px;
+    height: 64px;
+    background: #202020;
+    border-radius: 12px;
     border: 2px solid var(--ui-accent);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 30px;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+    font-size: 32px;
+    box-shadow: 0 0 25px rgba(76, 175, 80, 0.4), inset 0 0 10px rgba(0,0,0,0.8);
 }
 
 .inv-details {
@@ -312,40 +356,48 @@ html, body {
 }
 
 .inv-name {
-    font-weight: bold;
-    font-size: 20px;
-    color: #fff;
+    font-weight: 900;
+    font-size: 22px;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
 .inv-count {
-    color: #aaa;
+    color: #aaaaaa;
     font-size: 14px;
-    margin-top: 4px;
+    margin-top: 5px;
+    background: rgba(0,0,0,0.5);
+    padding: 4px 8px;
+    border-radius: 4px;
 }
 
 #notification-area {
     position: absolute;
-    top: 120px;
+    top: 100px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
+    width: 80%;
+    max-width: 600px;
 }
 
 .notification {
-    background: rgba(10, 15, 10, 0.9);
-    color: #fff;
-    padding: 12px 25px;
-    border-radius: 25px;
-    border: 1px solid var(--ui-accent);
+    background: rgba(15, 25, 15, 0.95);
+    color: #ffffff;
+    padding: 15px 30px;
+    border-radius: 30px;
+    border: 2px solid var(--ui-accent);
     font-size: 16px;
+    font-weight: bold;
     letter-spacing: 1px;
     opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    transform: translateY(-30px) scale(0.9);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.7), 0 0 15px rgba(76,175,80,0.3);
+    text-align: center;
 }
 
 .notification.show {
@@ -358,29 +410,35 @@ html, body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 4px;
-    height: 4px;
-    background: rgba(255,255,255,0.9);
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,0.95);
     border-radius: 50%;
-    box-shadow: 0 0 0 2px rgba(0,0,0,0.5);
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.6), 0 0 10px rgba(255,255,255,0.5);
+    pointer-events: none;
 }
 
 @keyframes pulse {
-    0% { opacity: 0.4; transform: scale(0.98); }
-    100% { opacity: 1; transform: scale(1); }
+    0% { opacity: 0.5; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1.02); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 #fade-overlay {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #000;
+    width: 100%;
+    height: 100%;
+    background: #000000;
     z-index: 200;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 1.5s ease;
+    transition: opacity 2s ease-in-out;
 }
 </style>
 </head>
@@ -396,20 +454,18 @@ html, body {
     <div id="crosshair"></div>
     
     <div class="hud-panel" id="global-stats">
-        <div style="border-bottom: 1px solid var(--ui-border); padding-bottom: 10px; margin-bottom: 15px;">
-            <h4 style="color: var(--ui-accent); letter-spacing: 2px; margin: 0;">PARK OVERVIEW</h4>
-        </div>
+        <div class="stat-header">PARK OVERVIEW</div>
         <div class="stat-row">
             <span>Squirrels Present:</span>
             <span class="stat-val" id="stat-count">0</span>
         </div>
         <div class="stat-row">
-            <span>Peanuts on Ground:</span>
+            <span>Peanuts Active:</span>
             <span class="stat-val" id="stat-peanuts">0</span>
         </div>
         <div class="stat-row">
             <span>Avg Trust Level:</span>
-            <span class="stat-val" id="stat-trust" style="color: var(--ui-accent-glow);">0%</span>
+            <span class="stat-val" id="stat-trust" style="color: var(--ui-accent-glow); border-color: var(--ui-accent);">0%</span>
         </div>
     </div>
 
@@ -417,7 +473,7 @@ html, body {
         <div class="inv-icon">🥜</div>
         <div class="inv-details">
             <span class="inv-name">Roasted Peanuts</span>
-            <span class="inv-count">Infinite Supply | Throw: Left Click</span>
+            <span class="inv-count">Supply: Infinite | Toss: Left Click</span>
         </div>
     </div>
 
@@ -427,33 +483,37 @@ html, body {
 <div id="main-menu">
     <div class="title-container">
         <div class="game-title">SQUIRREL</div>
-        <div class="game-subtitle">Ultimate Park Simulator // Expanded Edition</div>
+        <div class="game-subtitle">Ultimate Park Simulator // v2.0</div>
     </div>
 
     <div class="instructions">
         <h3>HOW TO PLAY</h3>
-        <p style="margin-bottom: 20px; color: #ccc; line-height: 1.6; font-size: 17px;">
-            Welcome to the ultimate realistic park environment. Your goal is to befriend the local wildlife. 
-            There are many squirrels in this park. Approach slowly, drop peanuts, and watch as they cautiously approach to eat. 
-            Sudden movements will scatter the entire scurry!
+        <p style="margin-bottom: 25px; color: #d0d0d0; line-height: 1.6; font-size: 16px;">
+            Enter the simulation. Your objective is to observe and befriend the local wildlife. 
+            There are many unique squirrels inhabiting this procedural park. Approach them slowly and drop peanuts to build trust. 
+            Sudden movements or running will trigger their flight response!
         </p>
         <div class="controls-grid">
             <div class="ctrl-key">W A S D / ARROWS</div>
-            <div class="ctrl-desc">Move Character smoothly through the park</div>
+            <div class="ctrl-desc">Walk and navigate the terrain</div>
             
             <div class="ctrl-key">MOUSE</div>
-            <div class="ctrl-desc">Look Around (3rd Person Orbit Camera)</div>
+            <div class="ctrl-desc">Look around (Orbital 3rd Person Camera)</div>
             
             <div class="ctrl-key">LEFT CLICK</div>
-            <div class="ctrl-desc">Toss a Peanut to the ground</div>
+            <div class="ctrl-desc">Toss a peanut to the ground</div>
             
             <div class="ctrl-key">SHIFT (HOLD)</div>
-            <div class="ctrl-desc">Sneak slowly (Reduces your fright radius)</div>
+            <div class="ctrl-desc">Sneak mode (Reduces your noise/fright radius)</div>
         </div>
     </div>
 
-    <div id="loading-text">GENERATING MULTI-AGENT ENVIRONMENT...</div>
-    <button id="start-btn" style="display: none;">ENTER THE PARK</button>
+    <div id="loading-container">
+        <div class="spinner"></div>
+        <div id="loading-text">INITIALIZING PROCEDURAL ENGINE...</div>
+    </div>
+    
+    <button id="start-btn">ENTER THE PARK</button>
 </div>
 
 <script type="importmap">
@@ -469,22 +529,22 @@ import * as THREE from 'three';
 
 /* ==========================================================================
    MODULE 1: MATH & NOISE UTILITIES
-   Extensive Simplex Noise implementation for procedural generation
+   High-performance Simplex Noise for procedural terrain and textures
    ========================================================================== */
 class SimplexNoise {
-    constructor(seed = 1) {
-        this.grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],[1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],[0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
-        this.p = [];
-        
-        // Simple seeded random
-        let s = seed;
-        const random = () => {
-            const x = Math.sin(s++) * 10000;
-            return x - Math.floor(x);
-        };
-
-        for (let i=0; i<256; i++) this.p[i] = Math.floor(random()*256);
-        this.perm = [];
+    constructor(seed = Math.random()) {
+        this.grad3 = [
+            [1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
+            [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
+            [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]
+        ];
+        this.p = new Uint8Array(256);
+        let s = seed * 10000;
+        for (let i=0; i<256; i++) {
+            s = (s * 9301 + 49297) % 233280;
+            this.p[i] = Math.floor((s / 233280) * 256);
+        }
+        this.perm = new Uint8Array(512);
         for(let i=0; i<512; i++) this.perm[i] = this.p[i & 255];
     }
     
@@ -498,18 +558,13 @@ class SimplexNoise {
         let i = Math.floor(xin+s);
         let j = Math.floor(yin+s);
         let t = (i+j)*G2;
-        let X0 = i-t;
-        let Y0 = j-t;
-        let x0 = xin-X0;
-        let y0 = yin-Y0;
+        let X0 = i-t, Y0 = j-t;
+        let x0 = xin-X0, y0 = yin-Y0;
         let i1, j1;
         if(x0>y0) {i1=1; j1=0;} else {i1=0; j1=1;}
-        let x1 = x0 - i1 + G2;
-        let y1 = y0 - j1 + G2;
-        let x2 = x0 - 1.0 + 2.0 * G2;
-        let y2 = y0 - 1.0 + 2.0 * G2;
-        let ii = i & 255;
-        let jj = j & 255;
+        let x1 = x0 - i1 + G2, y1 = y0 - j1 + G2;
+        let x2 = x0 - 1.0 + 2.0 * G2, y2 = y0 - 1.0 + 2.0 * G2;
+        let ii = i & 255, jj = j & 255;
         let gi0 = this.perm[ii+this.perm[jj]] % 12;
         let gi1 = this.perm[ii+i1+this.perm[jj+j1]] % 12;
         let gi2 = this.perm[ii+1+this.perm[jj+1]] % 12;
@@ -522,11 +577,11 @@ class SimplexNoise {
         return 70.0 * (n0 + n1 + n2);
     }
 }
-const SN = new SimplexNoise(Math.random() * 1000);
+const SN = new SimplexNoise(42); // Fixed seed for consistent terrain mapping
 
 /* ==========================================================================
-   MODULE 2: PROCEDURAL TEXTURE GENERATION
-   Advanced texture synthesis for realistic environments and animals
+   MODULE 2: OPTIMIZED PROCEDURAL TEXTURE GENERATION
+   Using smaller base resolutions + repeats to prevent browser hangs.
    ========================================================================== */
 class TextureLab {
     static getCtx(w, h) {
@@ -535,213 +590,197 @@ class TextureLab {
         return { cvs, ctx: cvs.getContext('2d', { willReadFrequently: true }) };
     }
 
-    static generateFurTexture(w=512, h=512, color1=[110, 90, 70], color2=[60, 50, 40]) {
-        const { cvs, ctx } = this.getCtx(w, h);
-        const imgData = ctx.createImageData(w, h);
-        const d = imgData.data;
-        
-        for(let y=0; y<h; y++) {
-            for(let x=0; x<w; x++) {
-                // Directional noise for fur strands
-                const nx = x * 0.1;
-                const ny = y * 0.01; // stretch vertically
-                
-                let n = SN.noise2D(nx, ny) * 0.5 + SN.noise2D(nx*2, ny*2) * 0.25 + SN.noise2D(nx*4, ny*4) * 0.125;
-                n = (n + 1) / 2; // normalize 0 to 1
-                
-                const r = color1[0] * n + color2[0] * (1-n);
-                const g = color1[1] * n + color2[1] * (1-n);
-                const b = color1[2] * n + color2[2] * (1-n);
-                
-                const idx = (y*w+x)*4;
-                d[idx] = r; d[idx+1] = g; d[idx+2] = b; d[idx+3] = 255;
-            }
-        }
-        ctx.putImageData(imgData, 0, 0);
-        
-        // Add micro-strands
-        ctx.fillStyle = `rgba(${color2[0]-20}, ${color2[1]-20}, ${color2[2]-20}, 0.1)`;
-        for(let i=0; i<20000; i++) {
-            ctx.fillRect(Math.random()*w, Math.random()*h, 1, Math.random()*10+5);
-        }
-
-        const tex = new THREE.CanvasTexture(cvs);
-        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-        return tex;
-    }
-
-    static generateGrassLayer(w=1024, h=1024) {
-        const { cvs, ctx } = this.getCtx(w, h);
-        const imgData = ctx.createImageData(w, h);
-        const d = imgData.data;
-        
-        for(let y=0; y<h; y++) {
-            for(let x=0; x<w; x++) {
-                let n = 0, amp = 1, f = 0.005;
-                for(let i=0; i<5; i++) {
-                    n += SN.noise2D(x*f, y*f) * amp;
-                    amp *= 0.5; f *= 2.0;
+    static async generateFurTexture(w=256, h=256, color1=[110, 90, 70], color2=[60, 50, 40]) {
+        return new Promise(resolve => {
+            const { cvs, ctx } = this.getCtx(w, h);
+            const imgData = ctx.createImageData(w, h);
+            const d = imgData.data;
+            
+            for(let y=0; y<h; y++) {
+                for(let x=0; x<w; x++) {
+                    const nx = x * 0.15;
+                    const ny = y * 0.02; // Vertical stretch for strands
+                    let n = SN.noise2D(nx, ny) * 0.6 + SN.noise2D(nx*2, ny*2) * 0.4;
+                    n = (n + 1) / 2; 
+                    
+                    const idx = (y*w+x)*4;
+                    d[idx] = color1[0] * n + color2[0] * (1-n);
+                    d[idx+1] = color1[1] * n + color2[1] * (1-n);
+                    d[idx+2] = color1[2] * n + color2[2] * (1-n);
+                    d[idx+3] = 255;
                 }
-                
-                const r = 40 + n * 30;
-                const g = 90 + n * 50;
-                const b = 30 + n * 20;
-                
-                const idx = (y*w+x)*4;
-                d[idx] = Math.max(0, Math.min(255, r));
-                d[idx+1] = Math.max(0, Math.min(255, g));
-                d[idx+2] = Math.max(0, Math.min(255, b));
-                d[idx+3] = 255;
             }
-        }
-        ctx.putImageData(imgData, 0, 0);
+            ctx.putImageData(imgData, 0, 0);
+            
+            ctx.fillStyle = `rgba(${color2[0]-10}, ${color2[1]-10}, ${color2[2]-10}, 0.15)`;
+            for(let i=0; i<5000; i++) {
+                ctx.fillRect(Math.random()*w, Math.random()*h, 1, Math.random()*8+4);
+            }
 
-        // Add dirt patches
-        for(let i=0; i<100; i++) {
-            const px = Math.random() * w;
-            const py = Math.random() * h;
-            const r = Math.random() * 50 + 20;
-            const grad = ctx.createRadialGradient(px, py, 0, px, py, r);
-            grad.addColorStop(0, 'rgba(80, 60, 40, 0.4)');
-            grad.addColorStop(1, 'rgba(80, 60, 40, 0)');
-            ctx.fillStyle = grad;
-            ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI*2); ctx.fill();
-        }
-
-        const tex = new THREE.CanvasTexture(cvs);
-        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-        tex.anisotropy = 16;
-        return tex;
+            const tex = new THREE.CanvasTexture(cvs);
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            resolve(tex);
+        });
     }
 
-    static generateBark(w=512, h=1024) {
-        const { cvs, ctx } = this.getCtx(w, h);
-        const imgData = ctx.createImageData(w, h);
-        const d = imgData.data;
-        
-        for(let y=0; y<h; y++) {
-            for(let x=0; x<w; x++) {
-                const nx = x * 0.03;
-                const ny = y * 0.003;
-                let n = SN.noise2D(nx, ny) * 0.6 + SN.noise2D(nx*3, ny*3) * 0.3 + SN.noise2D(nx*10, ny*10) * 0.1;
-                
-                n = Math.abs(n); // Ridges
-                
-                const r = 80 - n * 60;
-                const g = 60 - n * 50;
-                const b = 50 - n * 40;
-                
-                const idx = (y*w+x)*4;
-                d[idx] = Math.max(20, r);
-                d[idx+1] = Math.max(15, g);
-                d[idx+2] = Math.max(10, b);
-                d[idx+3] = 255;
-            }
-        }
-        ctx.putImageData(imgData, 0, 0);
-        const tex = new THREE.CanvasTexture(cvs);
-        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-        return tex;
-    }
-
-    static generateConcrete(w=1024, h=1024) {
-        const { cvs, ctx } = this.getCtx(w, h);
-        const imgData = ctx.createImageData(w, h);
-        const d = imgData.data;
-        
-        for(let y=0; y<h; y++) {
-            for(let x=0; x<w; x++) {
-                let n = 0, amp = 1, f = 0.02;
-                for(let i=0; i<4; i++) {
-                    n += SN.noise2D(x*f, y*f) * amp;
-                    amp *= 0.5; f *= 2.0;
+    static async generateGrassLayer(w=512, h=512) {
+        return new Promise(resolve => {
+            const { cvs, ctx } = this.getCtx(w, h);
+            const imgData = ctx.createImageData(w, h);
+            const d = imgData.data;
+            
+            for(let y=0; y<h; y++) {
+                for(let x=0; x<w; x++) {
+                    let n = SN.noise2D(x*0.02, y*0.02) * 0.5 + SN.noise2D(x*0.05, y*0.05) * 0.25 + SN.noise2D(x*0.1, y*0.1) * 0.125;
+                    n = (n+1)/2;
+                    
+                    const r = 30 + n * 40;
+                    const g = 80 + n * 60;
+                    const b = 25 + n * 30;
+                    
+                    const idx = (y*w+x)*4;
+                    d[idx] = r; d[idx+1] = g; d[idx+2] = b; d[idx+3] = 255;
                 }
-                const v = 140 + n * 25 + (Math.random()*10 - 5); // Base + noise + grain
-                const idx = (y*w+x)*4;
-                d[idx] = d[idx+1] = d[idx+2] = Math.max(0, Math.min(255, v));
-                d[idx+3] = 255;
             }
-        }
-        ctx.putImageData(imgData, 0, 0);
-        
-        // Add cracks
-        ctx.lineWidth = 2;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round';
-        for(let c=0; c<15; c++) {
-            ctx.beginPath();
-            let cx = Math.random()*w, cy = Math.random()*h;
-            ctx.moveTo(cx, cy);
-            for(let s=0; s<30; s++) {
-                cx += (Math.random()-0.5)*40;
-                cy += (Math.random()-0.5)*40;
-                ctx.lineTo(cx, cy);
+            ctx.putImageData(imgData, 0, 0);
+
+            // Add organic dirt patches
+            for(let i=0; i<40; i++) {
+                const px = Math.random() * w, py = Math.random() * h;
+                const r = Math.random() * 40 + 10;
+                const grad = ctx.createRadialGradient(px, py, 0, px, py, r);
+                grad.addColorStop(0, 'rgba(70, 50, 30, 0.5)');
+                grad.addColorStop(1, 'rgba(70, 50, 30, 0)');
+                ctx.fillStyle = grad;
+                ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI*2); ctx.fill();
             }
-            ctx.strokeStyle = `rgba(40,40,40,${Math.random()*0.5 + 0.2})`;
-            ctx.stroke();
-        }
-        const tex = new THREE.CanvasTexture(cvs);
-        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-        return tex;
+
+            const tex = new THREE.CanvasTexture(cvs);
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            tex.anisotropy = 8;
+            resolve(tex);
+        });
     }
 
-    static generateLeafPattern(w=512, h=512) {
-        const { cvs, ctx } = this.getCtx(w, h);
-        ctx.fillStyle = 'rgba(0,0,0,0)';
-        ctx.fillRect(0,0,w,h);
-        
-        for(let i=0; i<400; i++) {
-            const lx = Math.random()*w;
-            const ly = Math.random()*h;
-            const rad = Math.random()*20 + 8;
-            const rot = Math.random() * Math.PI * 2;
+    static async generateBark(w=256, h=512) {
+        return new Promise(resolve => {
+            const { cvs, ctx } = this.getCtx(w, h);
+            const imgData = ctx.createImageData(w, h);
+            const d = imgData.data;
             
-            ctx.save();
-            ctx.translate(lx, ly);
-            ctx.rotate(rot);
+            for(let y=0; y<h; y++) {
+                for(let x=0; x<w; x++) {
+                    let n = SN.noise2D(x*0.05, y*0.01) * 0.7 + SN.noise2D(x*0.2, y*0.04) * 0.3;
+                    n = Math.abs(n); // Deep ridges
+                    
+                    const idx = (y*w+x)*4;
+                    d[idx] = Math.max(20, 80 - n * 70);
+                    d[idx+1] = Math.max(15, 60 - n * 50);
+                    d[idx+2] = Math.max(10, 50 - n * 40);
+                    d[idx+3] = 255;
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+            const tex = new THREE.CanvasTexture(cvs);
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            resolve(tex);
+        });
+    }
+
+    static async generateConcrete(w=512, h=512) {
+        return new Promise(resolve => {
+            const { cvs, ctx } = this.getCtx(w, h);
+            const imgData = ctx.createImageData(w, h);
+            const d = imgData.data;
             
-            const g = Math.floor(Math.random() * 60 + 80);
-            const r = Math.floor(Math.random() * 20 + 20);
-            ctx.fillStyle = `rgba(${r}, ${g}, 20, 0.95)`;
+            for(let y=0; y<h; y++) {
+                for(let x=0; x<w; x++) {
+                    let n = SN.noise2D(x*0.04, y*0.04) * 0.5 + SN.noise2D(x*0.1, y*0.1) * 0.25;
+                    const v = 140 + n * 40 + (Math.random()*15 - 7.5);
+                    const idx = (y*w+x)*4;
+                    d[idx] = d[idx+1] = d[idx+2] = Math.max(0, Math.min(255, v));
+                    d[idx+3] = 255;
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
             
-            // Draw complex leaf shape
-            ctx.beginPath();
-            ctx.ellipse(0, 0, rad, rad*0.4, 0, 0, Math.PI*2);
-            ctx.fill();
+            ctx.lineWidth = 1.5;
+            ctx.lineJoin = 'round';
+            for(let c=0; c<8; c++) {
+                ctx.beginPath();
+                let cx = Math.random()*w, cy = Math.random()*h;
+                ctx.moveTo(cx, cy);
+                for(let s=0; s<20; s++) {
+                    cx += (Math.random()-0.5)*30; cy += (Math.random()-0.5)*30;
+                    ctx.lineTo(cx, cy);
+                }
+                ctx.strokeStyle = `rgba(30,30,30,${Math.random()*0.4 + 0.1})`;
+                ctx.stroke();
+            }
+            const tex = new THREE.CanvasTexture(cvs);
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            resolve(tex);
+        });
+    }
+
+    static async generateLeafPattern(w=256, h=256) {
+        return new Promise(resolve => {
+            const { cvs, ctx } = this.getCtx(w, h);
+            ctx.fillStyle = 'rgba(0,0,0,0)';
+            ctx.fillRect(0,0,w,h);
             
-            // Leaf vein
-            ctx.strokeStyle = `rgba(0, ${g-30}, 0, 0.5)`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(-rad, 0);
-            ctx.lineTo(rad, 0);
-            ctx.stroke();
+            for(let i=0; i<150; i++) {
+                const lx = Math.random()*w, ly = Math.random()*h;
+                const rad = Math.random()*15 + 8;
+                
+                ctx.save();
+                ctx.translate(lx, ly);
+                ctx.rotate(Math.random() * Math.PI * 2);
+                
+                const g = Math.floor(Math.random() * 60 + 70);
+                const r = Math.floor(Math.random() * 20 + 20);
+                ctx.fillStyle = `rgba(${r}, ${g}, 20, 0.95)`;
+                
+                ctx.beginPath();
+                ctx.ellipse(0, 0, rad, rad*0.4, 0, 0, Math.PI*2);
+                ctx.fill();
+                
+                ctx.strokeStyle = `rgba(0, ${Math.max(0, g-40)}, 0, 0.6)`;
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(-rad, 0); ctx.lineTo(rad, 0); ctx.stroke();
+                
+                ctx.restore();
+            }
             
-            ctx.restore();
-        }
-        
-        const tex = new THREE.CanvasTexture(cvs);
-        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-        tex.minFilter = THREE.LinearMipmapLinearFilter;
-        return tex;
+            const tex = new THREE.CanvasTexture(cvs);
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            tex.minFilter = THREE.LinearMipmapLinearFilter;
+            resolve(tex);
+        });
     }
 }
 
 /* ==========================================================================
-   MODULE 3: PHYSICS & UTILS
-   Handles robust ground collision for persistent items (peanuts)
+   MODULE 3: PHYSICS ENGINE
+   Handles persistent items (peanuts) and ground collision logic
    ========================================================================== */
-const PHYSICS = {
-    gravity: -9.81 * 1.5,
-    foodObjects: [],
+class PhysicsEngine {
+    constructor() {
+        this.gravity = -9.81 * 1.5;
+        this.foodObjects = [];
+    }
     
-    update: function(delta, groundMesh) {
+    // Abstract ground lookup function
+    getGroundHeight(x, z) {
+        return SN.noise2D(x*0.04, z*0.04) * 2.5 + 0.05; // Matches ParkGenerator displacement + slight offset
+    }
+
+    update(delta) {
         for(let i = this.foodObjects.length - 1; i >= 0; i--) {
             const obj = this.foodObjects[i];
             
             if(obj.eaten) {
-                // If eaten, remove from array to save memory
-                obj.mesh.parent.remove(obj.mesh);
+                if(obj.mesh.parent) obj.mesh.parent.remove(obj.mesh);
                 this.foodObjects.splice(i, 1);
                 continue;
             }
@@ -750,84 +789,78 @@ const PHYSICS = {
                 obj.velocity.y += this.gravity * delta;
                 obj.mesh.position.addScaledVector(obj.velocity, delta);
                 
-                obj.mesh.rotation.x += obj.velocity.z * delta * 3;
-                obj.mesh.rotation.z -= obj.velocity.x * delta * 3;
+                obj.mesh.rotation.x += obj.velocity.z * delta * 4;
+                obj.mesh.rotation.z -= obj.velocity.x * delta * 4;
 
-                // Simple ground collision (assuming ground is roughly y=0 with minor displacement)
-                if(obj.mesh.position.y <= 0.04) {
-                    obj.mesh.position.y = 0.04;
-                    obj.velocity.y *= -0.4; // Bounce
-                    obj.velocity.x *= 0.5;  // Friction
-                    obj.velocity.z *= 0.5;
+                const groundY = this.getGroundHeight(obj.mesh.position.x, obj.mesh.position.z);
+
+                if(obj.mesh.position.y <= groundY) {
+                    obj.mesh.position.y = groundY;
+                    obj.velocity.y *= -0.3; // Low bounce
+                    obj.velocity.x *= 0.6;  // Friction
+                    obj.velocity.z *= 0.6;
                     
                     if(Math.abs(obj.velocity.y) < 0.2 && Math.abs(obj.velocity.x) < 0.2 && Math.abs(obj.velocity.z) < 0.2) {
                         obj.isLanded = true;
                         obj.velocity.set(0,0,0);
-                        // Flatten it out aesthetically
-                        obj.mesh.rotation.x = Math.PI/2;
+                        obj.mesh.rotation.x = Math.PI/2; // Lay flat
                         obj.mesh.rotation.z = Math.random() * Math.PI;
                     }
                 }
             }
         }
     }
-};
+}
+const PHYSICS = new PhysicsEngine();
 
 /* ==========================================================================
    MODULE 4: CHARACTER RIGGING (PLAYER)
-   Detailed procedural Humanoid
+   Responsive procedural humanoid mesh
    ========================================================================== */
 class HumanoidRig extends THREE.Group {
     constructor() {
         super();
-        this.animState = 'idle';
         this.animTime = 0;
         this.walkSpeed = 0;
         this.buildRig();
     }
 
     buildRig() {
-        const skinMat = new THREE.MeshLambertMaterial({color: 0xe0ac69});
-        const shirtMat = new THREE.MeshLambertMaterial({color: 0x1565c0, roughness: 0.8});
-        const pantsMat = new THREE.MeshLambertMaterial({color: 0x37474f, roughness: 0.9});
-        const shoeMat = new THREE.MeshLambertMaterial({color: 0x222222});
+        const skinMat = new THREE.MeshLambertMaterial({color: 0xe0ac69, roughness: 0.6});
+        const shirtMat = new THREE.MeshLambertMaterial({color: 0x1976d2, roughness: 0.9});
+        const pantsMat = new THREE.MeshLambertMaterial({color: 0x263238, roughness: 0.9});
+        const shoeMat = new THREE.MeshLambertMaterial({color: 0x111111});
 
         this.root = new THREE.Group();
-        this.root.position.y = 1.05; // Hip height
+        this.root.position.y = 1.05; 
         this.add(this.root);
 
-        // Torso
         this.torso = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.65, 0.25), shirtMat);
         this.torso.position.y = 0.325;
         this.torso.castShadow = true;
         this.root.add(this.torso);
 
-        // Neck & Head
         const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1), skinMat);
-        neck.position.y = 0.65 + 0.05;
+        neck.position.y = 0.7;
         this.root.add(neck);
 
         this.head = new THREE.Group();
-        this.head.position.y = 0.65 + 0.1 + 0.125;
+        this.head.position.y = 0.875;
         this.root.add(this.head);
         
         const skull = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.25, 0.25), skinMat);
         skull.castShadow = true;
         this.head.add(skull);
         
-        const hairMat = new THREE.MeshLambertMaterial({color: 0x3e2723});
-        const hair = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.08, 0.27), hairMat);
+        const hair = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.08, 0.27), new THREE.MeshLambertMaterial({color: 0x271c19}));
         hair.position.y = 0.125;
         this.head.add(hair);
 
-        // Limbs setup
-        const armGeo = new THREE.BoxGeometry(0.12, 0.55, 0.12);
-        const legGeo = new THREE.BoxGeometry(0.14, 0.55, 0.14);
-        
         // Arms
         this.armL = new THREE.Group(); this.armL.position.set(-0.28, 0.6, 0); this.root.add(this.armL);
         this.armR = new THREE.Group(); this.armR.position.set(0.28, 0.6, 0); this.root.add(this.armR);
         
+        const armGeo = new THREE.BoxGeometry(0.12, 0.55, 0.12);
         const aL = new THREE.Mesh(armGeo, shirtMat); aL.position.y = -0.275; aL.castShadow = true; this.armL.add(aL);
         const aR = new THREE.Mesh(armGeo, shirtMat); aR.position.y = -0.275; aR.castShadow = true; this.armR.add(aR);
         
@@ -839,6 +872,7 @@ class HumanoidRig extends THREE.Group {
         this.legL = new THREE.Group(); this.legL.position.set(-0.13, 0, 0); this.root.add(this.legL);
         this.legR = new THREE.Group(); this.legR.position.set(0.13, 0, 0); this.root.add(this.legR);
         
+        const legGeo = new THREE.BoxGeometry(0.14, 0.55, 0.14);
         const lL = new THREE.Mesh(legGeo, pantsMat); lL.position.y = -0.275; lL.castShadow = true; this.legL.add(lL);
         const lR = new THREE.Mesh(legGeo, pantsMat); lR.position.y = -0.275; lR.castShadow = true; this.legR.add(lR);
 
@@ -850,112 +884,99 @@ class HumanoidRig extends THREE.Group {
     updateAnimation(delta, speed) {
         this.walkSpeed = speed;
         if(this.walkSpeed > 0.1) {
-            this.animState = 'walk';
-            this.animTime += delta * this.walkSpeed * 2.5;
-            
+            this.animTime += delta * this.walkSpeed * 2.8;
             const stride = Math.sin(this.animTime);
             
             this.legL.rotation.x = stride * 0.7;
             this.legR.rotation.x = -stride * 0.7;
-            
             this.armL.rotation.x = -stride * 0.5;
             this.armR.rotation.x = stride * 0.5;
             
-            this.root.position.y = 1.05 + Math.abs(Math.sin(this.animTime * 2)) * 0.06;
-            this.torso.rotation.y = stride * 0.15;
-            this.head.rotation.y = -stride * 0.1;
+            this.root.position.y = 1.05 + Math.abs(Math.sin(this.animTime * 2)) * 0.05;
+            this.torso.rotation.y = stride * 0.12;
+            this.head.rotation.y = -stride * 0.08;
         } else {
-            this.animState = 'idle';
             this.animTime += delta;
-            
             this.legL.rotation.x = THREE.MathUtils.lerp(this.legL.rotation.x, 0, 0.1);
             this.legR.rotation.x = THREE.MathUtils.lerp(this.legR.rotation.x, 0, 0.1);
-            
-            this.armL.rotation.x = THREE.MathUtils.lerp(this.armL.rotation.x, Math.sin(this.animTime)*0.03, 0.1);
-            this.armR.rotation.x = THREE.MathUtils.lerp(this.armR.rotation.x, -Math.sin(this.animTime)*0.03, 0.1);
-            
-            this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 1.05 + Math.sin(this.animTime * 2)*0.01, 0.1);
+            this.armL.rotation.x = THREE.MathUtils.lerp(this.armL.rotation.x, Math.sin(this.animTime)*0.04, 0.1);
+            this.armR.rotation.x = THREE.MathUtils.lerp(this.armR.rotation.x, -Math.sin(this.animTime)*0.04, 0.1);
+            this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 1.05 + Math.sin(this.animTime * 2)*0.015, 0.1);
             this.torso.rotation.y = THREE.MathUtils.lerp(this.torso.rotation.y, 0, 0.1);
             this.head.rotation.y = THREE.MathUtils.lerp(this.head.rotation.y, 0, 0.1);
         }
     }
 
     playThrowAnimation() {
-        this.armR.rotation.x = -Math.PI + 0.5; // Wind up
-        this.torso.rotation.y = 0.3;
+        this.armR.rotation.x = -Math.PI + 0.6; // Wind up
+        this.torso.rotation.y = 0.35;
         setTimeout(() => {
             const throwInterval = setInterval(() => {
-                this.armR.rotation.x += 0.3;
-                this.torso.rotation.y -= 0.05;
+                this.armR.rotation.x += 0.35;
+                this.torso.rotation.y -= 0.06;
                 if(this.armR.rotation.x >= 0.2) clearInterval(throwInterval);
             }, 16);
-        }, 150);
+        }, 120);
     }
 }
 
 /* ==========================================================================
-   MODULE 5: ADVANCED SQUIRREL AI & PROCEDURAL RIGGING
-   Highly realistic models, varied textures, burst movement, individual trust
+   MODULE 5: MULTI-AGENT SQUIRREL AI
+   Handles behavior, UI projection, and animations per agent
    ========================================================================== */
 class SquirrelAI extends THREE.Group {
     static nextId = 1;
     static sharedMats = null;
 
-    constructor(uiManager) {
+    constructor(uiManager, matDict) {
         super();
         this.id = SquirrelAI.nextId++;
         this.uiManager = uiManager;
         
-        if(!SquirrelAI.sharedMats) {
+        if(!SquirrelAI.sharedMats && matDict) {
             SquirrelAI.sharedMats = {
-                greyFur: new THREE.MeshLambertMaterial({map: TextureLab.generateFurTexture(256, 256, [140, 140, 140], [90, 90, 90]), roughness: 0.9}),
-                brownFur: new THREE.MeshLambertMaterial({map: TextureLab.generateFurTexture(256, 256, [160, 110, 70], [100, 60, 30]), roughness: 0.9}),
-                redFur: new THREE.MeshLambertMaterial({map: TextureLab.generateFurTexture(256, 256, [180, 80, 40], [120, 40, 20]), roughness: 0.9}),
-                belly: new THREE.MeshLambertMaterial({color: 0xeeeeee, roughness: 0.8}),
-                eye: new THREE.MeshStandardMaterial({color: 0x0a0a0a, roughness: 0.1, metalness: 0.8}),
-                nose: new THREE.MeshLambertMaterial({color: 0x111111})
+                grey: new THREE.MeshLambertMaterial({map: matDict.greyFur, roughness: 0.9}),
+                brown: new THREE.MeshLambertMaterial({map: matDict.brownFur, roughness: 0.9}),
+                red: new THREE.MeshLambertMaterial({map: matDict.redFur, roughness: 0.9}),
+                belly: new THREE.MeshLambertMaterial({color: 0xeaeaea, roughness: 0.8}),
+                eye: new THREE.MeshStandardMaterial({color: 0x050505, roughness: 0.1, metalness: 0.9}),
+                nose: new THREE.MeshLambertMaterial({color: 0x1a1a1a})
             };
         }
 
-        // Randomize appearance
         const r = Math.random();
-        this.furMat = r > 0.6 ? SquirrelAI.sharedMats.brownFur : (r > 0.3 ? SquirrelAI.sharedMats.greyFur : SquirrelAI.sharedMats.redFur);
+        this.furMat = r > 0.7 ? SquirrelAI.sharedMats.brown : (r > 0.3 ? SquirrelAI.sharedMats.grey : SquirrelAI.sharedMats.red);
         
         this.buildRig();
         this.createUIElement();
         
-        // AI State
+        // Logical state
         this.state = 'IDLE'; 
-        this.trust = Math.random() * 5; // Start near 0
+        this.trust = Math.random() * 8; // Random baseline
         this.targetFood = null;
         this.wanderTarget = new THREE.Vector3();
         this.fleeTarget = new THREE.Vector3();
         
-        // Movement & Logic Timers
         this.timer = 0;
-        this.animTime = 0;
-        this.isMoving = false; // For burst movement
+        this.animTime = Math.random() * 100; // Offset animation phases
+        this.isMoving = false; 
         this.burstTimer = 0;
         
-        // Tunables
-        this.walkSpeed = 1.5 + Math.random()*1.0;
-        this.runSpeed = 7.0 + Math.random()*2.0;
-        this.frightenDist = 10.0 + Math.random()*5.0; 
-        this.smellDist = 18.0; 
+        // Behavioral genetics
+        this.walkSpeed = 1.8 + Math.random()*1.2;
+        this.runSpeed = 8.0 + Math.random()*3.0;
+        this.frightenDist = 12.0 + Math.random()*6.0; 
+        this.smellDist = 20.0; 
     }
 
     createUIElement() {
         this.uiElem = document.createElement('div');
         this.uiElem.className = 'squirrel-tracker';
-        
         this.uiElem.innerHTML = `
-            <div class="squirrel-name">Squirrel #${this.id}</div>
-            <div class="squirrel-trust-bg">
-                <div class="squirrel-trust-fill" id="fill-${this.id}"></div>
-            </div>
+            <div class="squirrel-name">SQ-${this.id.toString().padStart(3, '0')}</div>
+            <div class="squirrel-trust-bg"><div class="squirrel-trust-fill" id="fill-${this.id}"></div></div>
             <div class="squirrel-state-lbl" id="state-${this.id}">WANDERING</div>
         `;
-        
         document.getElementById('ui-3d-layer').appendChild(this.uiElem);
         this.fillElem = document.getElementById(`fill-${this.id}`);
         this.stateElem = document.getElementById(`state-${this.id}`);
@@ -969,7 +990,6 @@ class SquirrelAI extends THREE.Group {
         this.bodyGrp = new THREE.Group();
         this.root.add(this.bodyGrp);
         
-        // More shaped body (Pear like)
         const torsoGeo = new THREE.SphereGeometry(0.1, 16, 16);
         torsoGeo.scale(1, 1.5, 1);
         const torso = new THREE.Mesh(torsoGeo, this.furMat);
@@ -981,12 +1001,11 @@ class SquirrelAI extends THREE.Group {
         const belly = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), SquirrelAI.sharedMats.belly);
         belly.scale.set(1, 1.4, 0.9);
         belly.rotation.x = Math.PI / 2;
-        belly.position.set(0, 0.06, 0.01);
+        belly.position.set(0, 0.06, 0.015);
         this.bodyGrp.add(belly);
 
-        // Head
         this.headGrp = new THREE.Group();
-        this.headGrp.position.set(0, 0.14, 0.16);
+        this.headGrp.position.set(0, 0.15, 0.16);
         this.bodyGrp.add(this.headGrp);
         
         const skull = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), this.furMat);
@@ -994,7 +1013,6 @@ class SquirrelAI extends THREE.Group {
         skull.castShadow = true;
         this.headGrp.add(skull);
         
-        // Detailed Snout
         const snout = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.09, 16), this.furMat);
         snout.rotation.x = Math.PI / 2;
         snout.position.set(0, -0.01, 0.08);
@@ -1004,48 +1022,31 @@ class SquirrelAI extends THREE.Group {
         nose.position.set(0, -0.01, 0.12);
         this.headGrp.add(nose);
         
-        // Bulbous Eyes
-        const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.018, 16, 16), SquirrelAI.sharedMats.eye);
-        eyeR.position.set(0.055, 0.02, 0.03);
-        this.headGrp.add(eyeR);
-        const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.018, 16, 16), SquirrelAI.sharedMats.eye);
-        eyeL.position.set(-0.055, 0.02, 0.03);
-        this.headGrp.add(eyeL);
+        const eyeGeo = new THREE.SphereGeometry(0.018, 16, 16);
+        const eyeR = new THREE.Mesh(eyeGeo, SquirrelAI.sharedMats.eye); eyeR.position.set(0.055, 0.02, 0.03); this.headGrp.add(eyeR);
+        const eyeL = new THREE.Mesh(eyeGeo, SquirrelAI.sharedMats.eye); eyeL.position.set(-0.055, 0.02, 0.03); this.headGrp.add(eyeL);
         
-        // Ears
         const earGeo = new THREE.ConeGeometry(0.025, 0.06, 8);
-        const earR = new THREE.Mesh(earGeo, this.furMat);
-        earR.position.set(0.045, 0.07, -0.02);
-        earR.rotation.set(-0.2, 0, -0.3);
-        this.headGrp.add(earR);
-        const earL = new THREE.Mesh(earGeo, this.furMat);
-        earL.position.set(-0.045, 0.07, -0.02);
-        earL.rotation.set(-0.2, 0, 0.3);
-        this.headGrp.add(earL);
+        const earR = new THREE.Mesh(earGeo, this.furMat); earR.position.set(0.045, 0.07, -0.02); earR.rotation.set(-0.2, 0, -0.3); this.headGrp.add(earR);
+        const earL = new THREE.Mesh(earGeo, this.furMat); earL.position.set(-0.045, 0.07, -0.02); earL.rotation.set(-0.2, 0, 0.3); this.headGrp.add(earL);
 
-        // Bushy Tail (Complex Geometry)
+        // Procedural Fluffy Tail
         this.tailGrp = new THREE.Group();
         this.tailGrp.position.set(0, 0.1, -0.15);
         this.bodyGrp.add(this.tailGrp);
         
-        const tailCurve = new THREE.Group();
-        this.tailGrp.add(tailCurve);
-        
-        for(let i=0; i<16; i++) {
-            // Tail gets thicker then thinner
-            const size = 0.03 + Math.sin(i/15 * Math.PI) * 0.05;
+        for(let i=0; i<15; i++) {
+            const size = 0.03 + Math.sin(i/14 * Math.PI) * 0.055;
             const tSeg = new THREE.Mesh(new THREE.SphereGeometry(size, 12, 12), this.furMat);
-            // S-Curve
-            const tx = 0;
-            const ty = i * 0.02;
-            const tz = -Math.sin(i/15 * Math.PI) * 0.15;
-            tSeg.position.set(tx, ty, tz);
+            const ty = i * 0.022;
+            const tz = -Math.sin(i/14 * Math.PI) * 0.14;
+            tSeg.position.set(0, ty, tz);
             tSeg.castShadow = true;
-            tailCurve.add(tSeg);
+            this.tailGrp.add(tSeg);
         }
 
-        // Limbs with distinct paws
-        const legGeo = new THREE.CapsuleGeometry(0.02, 0.05, 8, 8);
+        // Limbs
+        const legGeo = new THREE.CapsuleGeometry(0.022, 0.05, 8, 8);
         const pawGeo = new THREE.BoxGeometry(0.03, 0.015, 0.04);
         
         this.legFL = new THREE.Group(); this.legFL.position.set(-0.07, 0.06, 0.12); this.root.add(this.legFL);
@@ -1072,11 +1073,9 @@ class SquirrelAI extends THREE.Group {
         this.animTime += delta;
         const distToPlayer = this.position.distanceTo(player.position);
         
-        // Update UI projection
-        this.updateUIOverlay(camera, distToPlayer);
+        this.updateUIProjection(camera, distToPlayer);
 
-        // Fright logic
-        const currentFrightDist = this.frightenDist - (this.trust / 100) * 6.0 + (player.isSneaking ? -3.0 : player.currentSpeed * 1.5);
+        const currentFrightDist = this.frightenDist - (this.trust / 100) * 8.0 + (player.isSneaking ? -4.0 : player.currentSpeed * 1.5);
 
         switch(this.state) {
             case 'IDLE':
@@ -1093,7 +1092,7 @@ class SquirrelAI extends THREE.Group {
             case 'WANDER':
                 this.burstMovementLogic(delta, this.wanderTarget, this.walkSpeed, () => {
                     this.state = 'IDLE';
-                    this.timer = Math.random() * 4 + 1;
+                    this.timer = Math.random() * 3 + 1.5;
                 });
                 this.checkThreatsAndFood(distToPlayer, currentFrightDist);
                 break;
@@ -1104,7 +1103,7 @@ class SquirrelAI extends THREE.Group {
                 if(distToPlayer < currentFrightDist) {
                     this.state = 'FLEE';
                     this.pickFleeTarget(player.position, parkBounds);
-                } else if (distToPlayer > currentFrightDist + 4.0) {
+                } else if (distToPlayer > currentFrightDist + 5.0) {
                     this.state = 'IDLE';
                     this.timer = 1.0;
                 }
@@ -1115,14 +1114,12 @@ class SquirrelAI extends THREE.Group {
                     this.state = 'IDLE';
                     break;
                 }
-                
-                const approachSpeed = this.walkSpeed * (0.6 + (this.trust/100)*0.8);
+                const approachSpeed = this.walkSpeed * (0.5 + (this.trust/100)*0.7);
                 this.burstMovementLogic(delta, this.targetFood.mesh.position, approachSpeed, () => {
                     this.state = 'EAT';
-                    this.timer = 4.0; 
+                    this.timer = 3.5; 
                 });
-                
-                if(distToPlayer < currentFrightDist * 0.8) {
+                if(distToPlayer < currentFrightDist * 0.75) {
                     this.state = 'FLEE';
                     this.pickFleeTarget(player.position, parkBounds);
                 }
@@ -1134,17 +1131,15 @@ class SquirrelAI extends THREE.Group {
                 if(this.timer <= 0) {
                     if(this.targetFood && !this.targetFood.eaten) {
                         this.targetFood.eaten = true;
-                        
-                        this.trust = Math.min(100, this.trust + 10 + Math.random()*10);
-                        this.uiManager.showNotification(`Squirrel #${this.id} ate a peanut! Trust grew.`);
-                        
+                        this.trust = Math.min(100, this.trust + 12 + Math.random()*8);
+                        this.uiManager.showNotification(`Squirrel #${this.id} accepted your offering! Trust +`);
                         this.state = 'IDLE';
                         this.timer = 2.0;
                     } else {
                         this.state = 'IDLE';
                     }
                 }
-                if(distToPlayer < currentFrightDist * 0.4) {
+                if(distToPlayer < currentFrightDist * 0.3) {
                     this.state = 'FLEE';
                     this.pickFleeTarget(player.position, parkBounds);
                 }
@@ -1152,59 +1147,64 @@ class SquirrelAI extends THREE.Group {
 
             case 'FLEE':
                 this.moveToTarget(this.fleeTarget, this.runSpeed, delta);
-                if(this.position.distanceTo(this.fleeTarget) < 1.0) {
+                if(this.position.distanceTo(this.fleeTarget) < 1.5) {
                     this.state = 'IDLE';
-                    this.timer = 1.0;
+                    this.timer = 2.0;
                 }
                 break;
         }
 
-        // Clamp to ground
-        this.position.y = 0; 
+        // Clamp height to procedural ground
+        this.position.y = PHYSICS.getGroundHeight(this.position.x, this.position.z); 
     }
 
-    updateUIOverlay(camera, dist) {
-        // Only show if close enough
-        if(dist > 25) {
+    updateUIProjection(camera, dist) {
+        // Frustum cull UI
+        if(dist > 30) {
             this.uiElem.classList.remove('visible');
             return;
         }
 
         const pos = this.position.clone();
-        pos.y += 0.6; // Above head
+        pos.y += 0.8; 
         pos.project(camera);
 
-        // Check if behind camera
-        if(pos.z > 1) {
+        if(pos.z > 1) { // Behind camera
             this.uiElem.classList.remove('visible');
             return;
         }
 
-        const x = (pos.x * .5 + .5) * window.innerWidth;
-        const y = (pos.y * -.5 + .5) * window.innerHeight;
+        // Correct bounds resolution for full width/height responsive mapping
+        const hw = window.innerWidth / 2;
+        const hh = window.innerHeight / 2;
+        const x = (pos.x * hw) + hw;
+        const y = -(pos.y * hh) + hh;
 
-        this.uiElem.style.left = `${x}px`;
-        this.uiElem.style.top = `${y}px`;
+        this.uiElem.style.transform = `translate(-50%, -100%) translate(${x}px, ${y}px)`;
         this.uiElem.classList.add('visible');
 
-        this.fillElem.style.width = `${this.trust}%`;
+        this.fillElem.style.width = `${Math.floor(this.trust)}%`;
         this.stateElem.innerText = this.state;
+        
+        // Color coding states
+        if(this.state === 'FLEE') this.stateElem.style.color = '#ff5252';
+        else if (this.state === 'ALERT') this.stateElem.style.color = '#ffb74d';
+        else if (this.state === 'APPROACH' || this.state === 'EAT') this.stateElem.style.color = '#81c784';
+        else this.stateElem.style.color = '#e0e0e0';
     }
 
     burstMovementLogic(delta, target, speed, onReachCallback) {
         this.burstTimer -= delta;
         if(this.burstTimer <= 0) {
             this.isMoving = !this.isMoving;
-            this.burstTimer = this.isMoving ? Math.random() * 1.5 + 0.5 : Math.random() * 1.0 + 0.2;
+            this.burstTimer = this.isMoving ? Math.random() * 1.5 + 0.5 : Math.random() * 1.2 + 0.3;
         }
 
         if(this.isMoving) {
             this.moveToTarget(target, speed, delta);
-            if(this.position.distanceTo(target) < 0.5) {
-                onReachCallback();
-            }
+            if(this.position.distanceTo(target) < 0.6) onReachCallback();
         } else {
-            this.animateIdle(); // Stop and look
+            this.animateIdle(); 
         }
     }
 
@@ -1238,21 +1238,21 @@ class SquirrelAI extends THREE.Group {
 
     pickWanderTarget(bounds) {
         const angle = Math.random() * Math.PI * 2;
-        const dist = Math.random() * 10 + 3;
+        const dist = Math.random() * 12 + 4;
         const tx = this.position.x + Math.cos(angle) * dist;
         const tz = this.position.z + Math.sin(angle) * dist;
         
         this.wanderTarget.set(
-            Math.max(-bounds, Math.min(bounds, tx)),
+            Math.max(-bounds+5, Math.min(bounds-5, tx)),
             0,
-            Math.max(-bounds, Math.min(bounds, tz))
+            Math.max(-bounds+5, Math.min(bounds-5, tz))
         );
     }
 
     pickFleeTarget(threatPos, bounds) {
         const dir = new THREE.Vector3().subVectors(this.position, threatPos).normalize();
-        let tx = this.position.x + dir.x * 20 + (Math.random()-0.5)*10;
-        let tz = this.position.z + dir.z * 20 + (Math.random()-0.5)*10;
+        let tx = this.position.x + dir.x * 25 + (Math.random()-0.5)*12;
+        let tz = this.position.z + dir.z * 25 + (Math.random()-0.5)*12;
         
         this.fleeTarget.set(
             Math.max(-bounds+2, Math.min(bounds-2, tx)),
@@ -1263,7 +1263,6 @@ class SquirrelAI extends THREE.Group {
 
     moveToTarget(target, speed, delta) {
         this.animateRun(speed);
-        
         const dir = new THREE.Vector3().subVectors(target, this.position);
         dir.y = 0;
         
@@ -1272,22 +1271,21 @@ class SquirrelAI extends THREE.Group {
             let diff = targetRotation - this.rotation.y;
             while(diff < -Math.PI) diff += Math.PI*2;
             while(diff > Math.PI) diff -= Math.PI*2;
-            this.rotation.y += diff * 12.0 * delta;
+            this.rotation.y += diff * 10.0 * delta; // Smooth turning
             
             dir.normalize();
             this.position.addScaledVector(dir, speed * delta);
         }
     }
 
-    // --- PROCEDURAL ANIMATIONS ---
     animateIdle() {
-        this.bodyGrp.rotation.x = THREE.MathUtils.lerp(this.bodyGrp.rotation.x, 0, 0.1);
-        this.headGrp.rotation.x = THREE.MathUtils.lerp(this.headGrp.rotation.x, Math.sin(this.animTime * 1.5)*0.1, 0.1);
+        this.bodyGrp.rotation.x = THREE.MathUtils.lerp(this.bodyGrp.rotation.x, 0, 0.15);
+        this.headGrp.rotation.x = THREE.MathUtils.lerp(this.headGrp.rotation.x, Math.sin(this.animTime * 1.5)*0.08, 0.1);
         
-        if(Math.random() < 0.01) this.headGrp.rotation.y = (Math.random()-0.5) * 1.5; // Random looking around
-        else this.headGrp.rotation.y = THREE.MathUtils.lerp(this.headGrp.rotation.y, 0, 0.05);
+        if(Math.random() < 0.02) this.headGrp.rotation.y = (Math.random()-0.5) * 1.2; 
+        else this.headGrp.rotation.y = THREE.MathUtils.lerp(this.headGrp.rotation.y, 0, 0.08);
         
-        this.tailGrp.rotation.x = Math.sin(this.animTime * 3) * 0.15; // Twitch
+        this.tailGrp.rotation.x = Math.sin(this.animTime * 4) * 0.15; 
         
         this.legFL.position.y = 0.06; this.legFR.position.y = 0.06;
         this.legBL.position.y = 0.07; this.legBR.position.y = 0.07;
@@ -1297,57 +1295,57 @@ class SquirrelAI extends THREE.Group {
     }
 
     animateRun(speed) {
-        const cycle = this.animTime * speed * 4.0;
+        const cycle = this.animTime * speed * 3.5;
         const bounce = Math.abs(Math.sin(cycle));
         
-        this.root.position.y = 0.12 + bounce * 0.1;
-        this.bodyGrp.rotation.x = Math.sin(cycle) * 0.25;
+        this.root.position.y = 0.12 + bounce * 0.12;
+        this.bodyGrp.rotation.x = Math.sin(cycle) * 0.3;
         this.headGrp.rotation.y = 0;
-        this.headGrp.rotation.x = -Math.sin(cycle) * 0.1; // Keep head level
+        this.headGrp.rotation.x = -Math.sin(cycle) * 0.15; 
         
-        this.legFL.rotation.x = Math.cos(cycle) * 1.0;
-        this.legFR.rotation.x = Math.cos(cycle - 0.3) * 1.0;
-        this.legBL.rotation.x = -Math.cos(cycle) * 1.0;
-        this.legBR.rotation.x = -Math.cos(cycle - 0.3) * 1.0;
+        this.legFL.rotation.x = Math.cos(cycle) * 1.2;
+        this.legFR.rotation.x = Math.cos(cycle - 0.4) * 1.2;
+        this.legBL.rotation.x = -Math.cos(cycle) * 1.2;
+        this.legBR.rotation.x = -Math.cos(cycle - 0.4) * 1.2;
         
-        this.tailGrp.rotation.x = -0.6 + bounce * 0.4; // Tail flattens out
+        this.tailGrp.rotation.x = -0.7 + bounce * 0.5; 
     }
 
     animateAlert() {
-        this.bodyGrp.rotation.x = THREE.MathUtils.lerp(this.bodyGrp.rotation.x, -Math.PI/2.2, 0.1);
-        this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 0.2, 0.1);
-        this.headGrp.rotation.x = THREE.MathUtils.lerp(this.headGrp.rotation.x, Math.PI/2.2, 0.1); // Look forward while standing
+        this.bodyGrp.rotation.x = THREE.MathUtils.lerp(this.bodyGrp.rotation.x, -Math.PI/2.4, 0.15);
+        this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 0.22, 0.15);
+        this.headGrp.rotation.x = THREE.MathUtils.lerp(this.headGrp.rotation.x, Math.PI/2.4, 0.15); 
         
-        this.legFL.rotation.x = -Math.PI/2;
-        this.legFR.rotation.x = -Math.PI/2;
-        this.legFL.position.y = 0.18;
-        this.legFR.position.y = 0.18;
+        this.legFL.rotation.x = -Math.PI/1.8;
+        this.legFR.rotation.x = -Math.PI/1.8;
+        this.legFL.position.y = 0.2;
+        this.legFR.position.y = 0.2;
         
-        this.tailGrp.rotation.x = Math.PI/3; 
+        this.tailGrp.rotation.x = Math.PI/2.5; 
     }
 
     animateEat() {
-        this.bodyGrp.rotation.x = THREE.MathUtils.lerp(this.bodyGrp.rotation.x, Math.PI/3.5, 0.1);
-        this.headGrp.rotation.x = Math.sin(this.animTime * 20) * 0.15; // Fast nibbling
+        this.bodyGrp.rotation.x = THREE.MathUtils.lerp(this.bodyGrp.rotation.x, Math.PI/3.2, 0.15);
+        this.headGrp.rotation.x = Math.sin(this.animTime * 25) * 0.15; // Hyper nibbling
         
-        this.legFL.rotation.x = -Math.PI/2.5;
-        this.legFR.rotation.x = -Math.PI/2.5;
-        this.legFL.position.set(-0.04, 0.15, 0.16);
-        this.legFR.position.set(0.04, 0.15, 0.16);
+        this.legFL.rotation.x = -Math.PI/2.2;
+        this.legFR.rotation.x = -Math.PI/2.2;
+        this.legFL.position.set(-0.04, 0.16, 0.18);
+        this.legFR.position.set(0.04, 0.16, 0.18);
         
-        this.tailGrp.rotation.x = Math.sin(this.animTime * 6) * 0.08; 
+        this.tailGrp.rotation.x = Math.sin(this.animTime * 8) * 0.1; 
     }
 }
 
 /* ==========================================================================
    MODULE 6: ENVIRONMENT GENERATION (PARK)
-   Massive scale, thousands of grass blades, trees, benches
+   Large scale, noise-based terrain, trees, props.
    ========================================================================== */
 class ParkGenerator {
     constructor(scene, materials) {
         this.scene = scene;
         this.mats = materials;
-        this.bounds = 120;
+        this.bounds = 150; 
         
         this.buildGround();
         this.buildPaths();
@@ -1356,13 +1354,15 @@ class ParkGenerator {
     }
 
     buildGround() {
-        const geo = new THREE.PlaneGeometry(this.bounds*2, this.bounds*2, 128, 128);
+        const res = 128;
+        const geo = new THREE.PlaneGeometry(this.bounds*2, this.bounds*2, res, res);
         const pos = geo.attributes.position;
+        
         for(let i=0; i<pos.count; i++) {
             const x = pos.getX(i);
-            const y = pos.getY(i);
-            const z = SN.noise2D(x*0.03, y*0.03) * 2.0 + SN.noise2D(x*0.1, y*0.1) * 0.5;
-            pos.setZ(i, z);
+            const z = pos.getY(i); // Y in 2D plane is Z in 3D
+            const y = PHYSICS.getGroundHeight(x, z);
+            pos.setZ(i, y);
         }
         geo.computeVertexNormals();
 
@@ -1373,61 +1373,81 @@ class ParkGenerator {
     }
 
     buildPaths() {
-        const pathGeo1 = new THREE.PlaneGeometry(this.bounds*2, 8, 32, 1);
-        const pos1 = pathGeo1.attributes.position;
-        for(let i=0; i<pos1.count; i++) { pos1.setZ(i, SN.noise2D(pos1.getX(i)*0.03, 0)*2.0 + 0.05); }
-        
-        const p1 = new THREE.Mesh(pathGeo1, this.mats.concrete);
-        p1.rotation.x = -Math.PI/2;
-        p1.receiveShadow = true;
-        this.scene.add(p1);
+        const createPath = (width, length, rotY, posX, posZ) => {
+            const pathGeo = new THREE.PlaneGeometry(width, length, 8, 32);
+            const pos = pathGeo.attributes.position;
+            
+            // Adjust to terrain
+            for(let i=0; i<pos.count; i++) {
+                // Calculate actual world coordinates for this vertex
+                let wx = pos.getX(i);
+                let wz = pos.getY(i);
+                // Rotate
+                const cosRot = Math.cos(rotY), sinRot = Math.sin(rotY);
+                const rwx = wx * cosRot - wz * sinRot;
+                const rwz = wx * sinRot + wz * cosRot;
+                
+                const finalX = rwx + posX;
+                const finalZ = rwz + posZ;
+                
+                pos.setZ(i, PHYSICS.getGroundHeight(finalX, finalZ) + 0.05); // slight decal offset
+            }
+            pathGeo.computeVertexNormals();
 
-        const pathGeo2 = new THREE.PlaneGeometry(8, this.bounds*2, 1, 32);
-        const pos2 = pathGeo2.attributes.position;
-        for(let i=0; i<pos2.count; i++) { pos2.setZ(i, SN.noise2D(0, pos2.getY(i)*0.03)*2.0 + 0.06); }
+            const pMesh = new THREE.Mesh(pathGeo, this.mats.concrete);
+            pMesh.rotation.x = -Math.PI/2;
+            pMesh.position.set(posX, 0, posZ);
+            pMesh.rotation.z = -rotY; // Plane is rotated X -90, so Z controls yaw
+            pMesh.receiveShadow = true;
+            this.scene.add(pMesh);
+        };
 
-        const p2 = new THREE.Mesh(pathGeo2, this.mats.concrete);
-        p2.rotation.x = -Math.PI/2;
-        p2.receiveShadow = true;
-        this.scene.add(p2);
+        // Cross pattern paths
+        createPath(10, this.bounds*2, 0, 0, 0);
+        createPath(10, this.bounds*2, Math.PI/2, 0, 0);
+        createPath(6, this.bounds*1.5, Math.PI/4, 20, 20);
     }
 
     buildTrees() {
-        const treeCount = 250;
-        const leafGeo = new THREE.SphereGeometry(1, 8, 8); 
+        const treeCount = 350;
+        const leafGeo = new THREE.SphereGeometry(1, 10, 10); 
+
+        // Shared geometry for trunks to save memory
+        const trunkGeo = new THREE.CylinderGeometry(0.8, 1, 1, 12);
+        trunkGeo.translate(0, 0.5, 0); // Origin at bottom
 
         for(let i=0; i<treeCount; i++) {
             const x = (Math.random() - 0.5) * this.bounds * 1.9;
             const z = (Math.random() - 0.5) * this.bounds * 1.9;
             
-            // Keep off central paths
-            if(Math.abs(x) < 6 || Math.abs(z) < 6) continue;
+            // Clearings
+            if(Math.abs(x) < 8 || Math.abs(z) < 8) continue;
+            // Clear diagonal path
+            if(Math.abs(x - z) < 10) continue;
 
-            const tHeight = Math.random() * 12 + 6;
-            const tThick = Math.random() * 0.6 + 0.4;
-            const yOffset = SN.noise2D(x*0.03, z*0.03) * 2.0;
+            const tHeight = Math.random() * 15 + 8;
+            const tThick = Math.random() * 0.7 + 0.4;
+            const yBase = PHYSICS.getGroundHeight(x, z) - 0.2; // sink slightly into ground
 
             const treeGrp = new THREE.Group();
-            treeGrp.position.set(x, yOffset, z);
+            treeGrp.position.set(x, yBase, z);
             
-            // Trunk
-            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(tThick*0.7, tThick, tHeight, 12), this.mats.bark);
-            trunk.position.y = tHeight/2;
+            const trunk = new THREE.Mesh(trunkGeo, this.mats.bark);
+            trunk.scale.set(tThick, tHeight, tThick);
             trunk.castShadow = true;
             trunk.receiveShadow = true;
             treeGrp.add(trunk);
 
-            // Canopy
-            const canopyClusters = Math.floor(Math.random() * 4) + 4;
+            const canopyClusters = Math.floor(Math.random() * 5) + 4;
             for(let c=0; c<canopyClusters; c++) {
                 const leaves = new THREE.Mesh(leafGeo, this.mats.leaves);
-                const scale = Math.random() * 3 + 2.5;
-                leaves.scale.set(scale, scale*0.8, scale);
+                const scale = Math.random() * 3.5 + 2.5;
+                leaves.scale.set(scale, scale*0.75, scale);
                 
                 leaves.position.set(
-                    (Math.random()-0.5)*3,
-                    tHeight - 2 + Math.random()*3,
-                    (Math.random()-0.5)*3
+                    (Math.random()-0.5)*4,
+                    tHeight - 2 + Math.random()*4,
+                    (Math.random()-0.5)*4
                 );
                 
                 leaves.castShadow = true;
@@ -1439,99 +1459,90 @@ class ParkGenerator {
     }
 
     buildProps() {
-        // Benches
-        const woodMat = new THREE.MeshStandardMaterial({color: 0x5d4037, roughness: 0.9});
-        const metalMat = new THREE.MeshStandardMaterial({color: 0x222222, metalness: 0.9, roughness: 0.4});
+        const woodMat = new THREE.MeshStandardMaterial({color: 0x4e342e, roughness: 0.9});
+        const metalMat = new THREE.MeshStandardMaterial({color: 0x111111, metalness: 0.9, roughness: 0.5});
 
-        const benchPositions = [
-            {x: 6, z: 15, rot: -Math.PI/2}, {x: 6, z: -25, rot: -Math.PI/2},
-            {x: -6, z: 30, rot: Math.PI/2}, {x: 20, z: 6, rot: 0},
-            {x: -30, z: -6, rot: Math.PI}, {x: 40, z: -6, rot: Math.PI}
+        const bPos = [
+            {x: 8, z: 20, rot: -Math.PI/2}, {x: 8, z: -30, rot: -Math.PI/2},
+            {x: -8, z: 40, rot: Math.PI/2}, {x: 30, z: 8, rot: 0},
+            {x: -40, z: -8, rot: Math.PI}, {x: 50, z: -8, rot: Math.PI}
         ];
 
-        benchPositions.forEach(p => {
+        bPos.forEach(p => {
             const grp = new THREE.Group();
-            const yOffset = SN.noise2D(p.x*0.03, p.z*0.03) * 2.0;
-            grp.position.set(p.x, yOffset, p.z);
+            const yBase = PHYSICS.getGroundHeight(p.x, p.z);
+            grp.position.set(p.x, yBase, p.z);
             grp.rotation.y = p.rot;
 
-            const seat = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.1, 0.7), woodMat);
-            seat.position.y = 0.5; seat.castShadow = true; grp.add(seat);
+            const seat = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.1, 0.8), woodMat);
+            seat.position.y = 0.55; seat.castShadow = true; grp.add(seat);
 
-            const back = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.5, 0.05), woodMat);
-            back.position.set(0, 0.9, -0.32); back.castShadow = true; grp.add(back);
+            const back = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.5, 0.06), woodMat);
+            back.position.set(0, 1.0, -0.37); back.castShadow = true; grp.add(back);
 
-            const legGeo = new THREE.BoxGeometry(0.1, 0.5, 0.7);
+            const legGeo = new THREE.BoxGeometry(0.12, 0.55, 0.8);
             const legL = new THREE.Mesh(legGeo, metalMat);
-            legL.position.set(-1.0, 0.25, 0); legL.castShadow = true; grp.add(legL);
+            legL.position.set(-1.1, 0.275, 0); legL.castShadow = true; grp.add(legL);
             const legR = new THREE.Mesh(legGeo, metalMat);
-            legR.position.set(1.0, 0.25, 0); legR.castShadow = true; grp.add(legR);
+            legR.position.set(1.1, 0.275, 0); legR.castShadow = true; grp.add(legR);
 
             this.scene.add(grp);
         });
-
-        // Scatter Rocks
-        const rockGeo = new THREE.DodecahedronGeometry(1, 1);
-        const rockMat = new THREE.MeshStandardMaterial({color: 0x777777, roughness: 0.9, map: TextureLab.generateConcrete(256, 256)});
-        
-        for(let i=0; i<40; i++) {
-            const rx = (Math.random()-0.5)*this.bounds*1.5;
-            const rz = (Math.random()-0.5)*this.bounds*1.5;
-            if(Math.abs(rx) < 5 || Math.abs(rz) < 5) continue;
-            
-            const rMesh = new THREE.Mesh(rockGeo, rockMat);
-            const scale = Math.random() * 1.5 + 0.5;
-            rMesh.scale.set(scale, scale*0.6, scale);
-            rMesh.position.set(rx, SN.noise2D(rx*0.03, rz*0.03)*2.0 + scale*0.3, rz);
-            rMesh.rotation.set(Math.random(), Math.random(), Math.random());
-            rMesh.castShadow = true;
-            this.scene.add(rMesh);
-        }
     }
 }
 
 /* ==========================================================================
-   MODULE 7: UI & DOM CONTROLLER
+   MODULE 7: DOM & UI CONTROLLER
+   Handles state transitions and 2D overlays.
    ========================================================================== */
 class UIController {
     constructor() {
         this.dom = {
             menu: document.getElementById('main-menu'),
             startBtn: document.getElementById('start-btn'),
-            loadText: document.getElementById('loading-text'),
+            loadCont: document.getElementById('loading-container'),
             hud: document.getElementById('hud'),
             notifs: document.getElementById('notification-area'),
             fade: document.getElementById('fade-overlay'),
             statCount: document.getElementById('stat-count'),
             statPeanuts: document.getElementById('stat-peanuts'),
-            statTrust: document.getElementById('stat-trust')
+            statTrust: document.getElementById('stat-trust'),
+            ui3dLayer: document.getElementById('ui-3d-layer')
         };
     }
 
     setReady() {
-        this.dom.loadText.style.display = 'none';
+        this.dom.loadCont.style.display = 'none';
         this.dom.startBtn.style.display = 'block';
     }
 
     hideMenu() {
         this.dom.fade.style.opacity = 1;
+        this.dom.ui3dLayer.style.display = 'none'; // Hide markers during fade
         setTimeout(() => {
             this.dom.menu.style.display = 'none';
             this.dom.hud.style.display = 'block';
+            this.dom.ui3dLayer.style.display = 'block';
             setTimeout(() => {
                 this.dom.fade.style.opacity = 0;
-            }, 500);
-        }, 1000);
+            }, 300);
+        }, 800);
     }
 
-    updateGlobalStats(squirrels, peanuts) {
+    showMenu() {
+        this.dom.menu.style.display = 'flex';
+        this.dom.ui3dLayer.style.display = 'none';
+        setTimeout(() => { this.dom.menu.style.opacity = 1; }, 50);
+        this.dom.hud.style.display = 'none';
+    }
+
+    updateGlobalStats(squirrels, activePeanuts) {
         this.dom.statCount.innerText = squirrels.length;
-        this.dom.statPeanuts.innerText = peanuts;
+        this.dom.statPeanuts.innerText = activePeanuts;
         
         if(squirrels.length > 0) {
-            let totalTrust = squirrels.reduce((sum, s) => sum + s.trust, 0);
-            let avg = totalTrust / squirrels.length;
-            this.dom.statTrust.innerText = `${avg.toFixed(1)}%`;
+            let total = squirrels.reduce((sum, s) => sum + s.trust, 0);
+            this.dom.statTrust.innerText = `${(total / squirrels.length).toFixed(1)}%`;
         }
     }
 
@@ -1541,18 +1552,18 @@ class UIController {
         el.innerText = msg;
         this.dom.notifs.appendChild(el);
         
-        void el.offsetWidth; // Trigger reflow
+        void el.offsetWidth; // Force reflow
         el.classList.add('show');
         
         setTimeout(() => {
             el.classList.remove('show');
-            setTimeout(() => el.remove(), 400);
-        }, 4000);
+            setTimeout(() => el.remove(), 500);
+        }, 3500);
     }
 }
 
 /* ==========================================================================
-   MODULE 8: PLAYER CONTROLLER (3RD PERSON ORBIT + ARROW KEYS)
+   MODULE 8: PLAYER CONTROLLER (Responsive WASD + Arrow Keys)
    ========================================================================== */
 class PlayerController {
     constructor(camera, scene) {
@@ -1562,33 +1573,29 @@ class PlayerController {
         this.rig = new HumanoidRig();
         this.scene.add(this.rig);
         
-        this.velocity = new THREE.Vector3();
         this.isSneaking = false;
         this.currentSpeed = 0;
         
-        this.camRadius = 5.0;
+        this.camRadius = 5.5;
         this.camHeight = 1.8;
         this.camTheta = Math.PI; 
         this.camPhi = Math.PI / 2.2; 
         
         this.inputs = { w:false, a:false, s:false, d:false, shift:false, mX:0, mY:0 };
-        
         this.setupInput();
     }
 
     setupInput() {
-        const handle = (e, isDown) => {
-            switch(e.code) {
-                case 'KeyW': case 'ArrowUp': this.inputs.w = isDown; break;
-                case 'KeyS': case 'ArrowDown': this.inputs.s = isDown; break;
-                case 'KeyA': case 'ArrowLeft': this.inputs.a = isDown; break;
-                case 'KeyD': case 'ArrowRight': this.inputs.d = isDown; break;
-                case 'ShiftLeft': case 'ShiftRight': this.inputs.shift = isDown; break;
-            }
+        const setKey = (code, val) => {
+            if(code === 'KeyW' || code === 'ArrowUp') this.inputs.w = val;
+            if(code === 'KeyS' || code === 'ArrowDown') this.inputs.s = val;
+            if(code === 'KeyA' || code === 'ArrowLeft') this.inputs.a = val;
+            if(code === 'KeyD' || code === 'ArrowRight') this.inputs.d = val;
+            if(code === 'ShiftLeft' || code === 'ShiftRight') this.inputs.shift = val;
         };
         
-        document.addEventListener('keydown', e => handle(e, true));
-        document.addEventListener('keyup', e => handle(e, false));
+        document.addEventListener('keydown', e => setKey(e.code, true));
+        document.addEventListener('keyup', e => setKey(e.code, false));
         
         document.addEventListener('mousemove', e => {
             if(document.pointerLockElement === document.body) {
@@ -1600,9 +1607,9 @@ class PlayerController {
 
     update(delta, bounds) {
         if(document.pointerLockElement === document.body) {
-            this.camTheta -= this.inputs.mX * 0.002;
-            this.camPhi -= this.inputs.mY * 0.002;
-            this.camPhi = Math.max(0.1, Math.min(Math.PI - 0.1, this.camPhi)); 
+            this.camTheta -= this.inputs.mX * 0.0025;
+            this.camPhi -= this.inputs.mY * 0.0025;
+            this.camPhi = Math.max(0.15, Math.min(Math.PI - 0.15, this.camPhi)); 
             
             this.inputs.mX = 0;
             this.inputs.mY = 0;
@@ -1615,26 +1622,24 @@ class PlayerController {
         moveDir.applyAxisAngle(new THREE.Vector3(0,1,0), this.camTheta);
         
         this.isSneaking = this.inputs.shift;
-        const targetSpeed = moveDir.length() > 0 ? (this.isSneaking ? 2.0 : 6.0) : 0;
-        
-        this.currentSpeed = THREE.MathUtils.lerp(this.currentSpeed, targetSpeed, 10 * delta);
+        const targetSpeed = moveDir.length() > 0 ? (this.isSneaking ? 2.5 : 6.5) : 0;
+        this.currentSpeed = THREE.MathUtils.lerp(this.currentSpeed, targetSpeed, 12 * delta);
         
         this.rig.position.addScaledVector(moveDir, this.currentSpeed * delta);
         
-        // Terrain following
-        const yOffset = SN.noise2D(this.rig.position.x*0.03, this.rig.position.z*0.03) * 2.0;
-        this.rig.position.y = yOffset;
+        // Terrain clamping
+        this.rig.position.y = PHYSICS.getGroundHeight(this.rig.position.x, this.rig.position.z);
 
-        // Bounds check
-        this.rig.position.x = Math.max(-bounds, Math.min(bounds, this.rig.position.x));
-        this.rig.position.z = Math.max(-bounds, Math.min(bounds, this.rig.position.z));
+        // Bounds clamping
+        this.rig.position.x = Math.max(-bounds+1, Math.min(bounds-1, this.rig.position.x));
+        this.rig.position.z = Math.max(-bounds+1, Math.min(bounds-1, this.rig.position.z));
         
         if(moveDir.lengthSq() > 0.1) {
             const targetRot = Math.atan2(moveDir.x, moveDir.z);
             let diff = targetRot - this.rig.rotation.y;
             while(diff < -Math.PI) diff += Math.PI*2;
             while(diff > Math.PI) diff -= Math.PI*2;
-            this.rig.rotation.y += diff * 12 * delta;
+            this.rig.rotation.y += diff * 10 * delta;
         }
         
         this.rig.updateAnimation(delta, this.currentSpeed);
@@ -1653,66 +1658,86 @@ class PlayerController {
 
 /* ==========================================================================
    MODULE 9: MAIN GAME ENGINE
-   Ties everything together. 10x Squirrels, Persistent items.
+   Initialization, async texture loading, massive AI management.
    ========================================================================== */
 class GameEngine {
     constructor() {
         this.ui = new UIController();
         
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x7ec0ee); // Sky blue
-        this.scene.fog = new THREE.FogExp2(0x7ec0ee, 0.015);
+        this.scene.background = new THREE.Color(0x87CEEB); 
+        this.scene.fog = new THREE.FogExp2(0x87CEEB, 0.012);
 
-        this.camera = new THREE.PerspectiveCamera(65, window.innerWidth/window.innerHeight, 0.1, 300);
+        this.camera = new THREE.PerspectiveCamera(65, window.innerWidth/window.innerHeight, 0.1, 400);
         
-        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: true });
+        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: true, powerPreference: "high-performance" });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1.0;
+        this.renderer.toneMappingExposure = 1.1;
         
         this.squirrels = [];
-        this.maxPeanuts = 150; // Performance limit for persistent items
+        this.maxPeanuts = 200; 
         
-        setTimeout(() => this.initWorld(), 200); // Allow DOM paint
+        // Start async initialization pipeline
+        this.initPipeline();
     }
 
-    initWorld() {
-        const ambient = new THREE.AmbientLight(0xffffff, 0.45);
+    async initPipeline() {
+        try {
+            // Generate materials asynchronously so the UI spinner stays active and responsive
+            const texGrass = await TextureLab.generateGrassLayer(512, 512);
+            const texBark = await TextureLab.generateBark(256, 512);
+            const texConcrete = await TextureLab.generateConcrete(512, 512);
+            const texLeaves = await TextureLab.generateLeafPattern(256, 256);
+            
+            const furGrey = await TextureLab.generateFurTexture(256, 256, [130, 130, 135], [90, 90, 95]);
+            const furBrown = await TextureLab.generateFurTexture(256, 256, [160, 110, 70], [100, 60, 30]);
+            const furRed = await TextureLab.generateFurTexture(256, 256, [190, 85, 40], [130, 45, 20]);
+
+            const mats = {
+                grass: new THREE.MeshStandardMaterial({ map: texGrass, roughness: 0.95 }),
+                bark: new THREE.MeshStandardMaterial({ map: texBark, roughness: 1.0 }),
+                concrete: new THREE.MeshStandardMaterial({ map: texConcrete, roughness: 0.85 }),
+                leaves: new THREE.MeshStandardMaterial({
+                    map: texLeaves, transparent: true, alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.7
+                })
+            };
+
+            const squirrelMats = { greyFur: furGrey, brownFur: furBrown, redFur: furRed };
+
+            this.buildWorld(mats, squirrelMats);
+        } catch (e) {
+            console.error("Initialization failed:", e);
+            document.getElementById('loading-text').innerText = "ERROR INITIALIZING ENGINE";
+        }
+    }
+
+    buildWorld(mats, squirrelMats) {
+        const ambient = new THREE.AmbientLight(0xffffff, 0.4);
         this.scene.add(ambient);
         
         const sun = new THREE.DirectionalLight(0xfffaea, 1.8);
-        sun.position.set(100, 150, 50);
+        sun.position.set(120, 180, 80);
         sun.castShadow = true;
-        sun.shadow.camera.top = 80;
-        sun.shadow.camera.bottom = -80;
-        sun.shadow.camera.left = -80;
-        sun.shadow.camera.right = 80;
-        sun.shadow.camera.near = 10;
-        sun.shadow.camera.far = 300;
-        sun.shadow.mapSize.width = 4096;
-        sun.shadow.mapSize.height = 4096;
+        // Optimized shadow frustum
+        const d = 100;
+        sun.shadow.camera.left = -d; sun.shadow.camera.right = d;
+        sun.shadow.camera.top = d; sun.shadow.camera.bottom = -d;
+        sun.shadow.camera.near = 10; sun.shadow.camera.far = 400;
+        sun.shadow.mapSize.width = 2048; 
+        sun.shadow.mapSize.height = 2048;
         sun.shadow.bias = -0.0005;
         this.scene.add(sun);
-
-        const mats = {
-            grass: new THREE.MeshStandardMaterial({ map: TextureLab.generateGrassLayer(2048, 2048), roughness: 0.9 }),
-            bark: new THREE.MeshStandardMaterial({ map: TextureLab.generateBark(512, 1024), roughness: 1.0 }),
-            concrete: new THREE.MeshStandardMaterial({ map: TextureLab.generateConcrete(1024, 1024), roughness: 0.8 }),
-            leaves: new THREE.MeshStandardMaterial({
-                map: TextureLab.generateLeafPattern(1024, 1024),
-                transparent: true, alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.7
-            })
-        };
 
         this.park = new ParkGenerator(this.scene, mats);
         this.player = new PlayerController(this.camera, this.scene);
         
-        // --- SPAWN 15 SQUIRRELS (10x more than original 1) ---
-        for(let i=0; i<15; i++) {
-            const sq = new SquirrelAI(this.ui);
+        // Spawn 20 Squirrels
+        for(let i=0; i<20; i++) {
+            const sq = new SquirrelAI(this.ui, squirrelMats);
             const rx = (Math.random() - 0.5) * this.park.bounds * 1.5;
             const rz = (Math.random() - 0.5) * this.park.bounds * 1.5;
             sq.position.set(rx, 0, rz);
@@ -1720,33 +1745,7 @@ class GameEngine {
             this.squirrels.push(sq);
         }
 
-        this.ui.dom.startBtn.addEventListener('click', () => { document.body.requestPointerLock(); });
-
-        document.addEventListener('pointerlockchange', () => {
-            if(document.pointerLockElement === document.body) {
-                if(!this.isRunning) {
-                    this.ui.hideMenu();
-                    this.clock.start();
-                    this.ui.showNotification("Explore the park. Toss peanuts to make friends.");
-                }
-                this.isRunning = true;
-            } else {
-                this.isRunning = false;
-                this.ui.dom.menu.style.display = 'flex';
-                this.ui.dom.menu.style.opacity = 1;
-                this.ui.dom.hud.style.display = 'none';
-            }
-        });
-
-        document.addEventListener('mousedown', e => {
-            if(e.button === 0 && this.isRunning) this.throwFood();
-        });
-
-        window.addEventListener('resize', () => {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        this.bindEvents();
 
         this.renderer.render(this.scene, this.camera);
         this.ui.setReady();
@@ -1757,20 +1756,50 @@ class GameEngine {
         this.loop();
     }
 
+    bindEvents() {
+        this.ui.dom.startBtn.addEventListener('click', () => { 
+            document.body.requestPointerLock(); 
+        });
+
+        document.addEventListener('pointerlockchange', () => {
+            if(document.pointerLockElement === document.body) {
+                if(!this.isRunning) {
+                    this.ui.hideMenu();
+                    this.clock.start(); // reset delta
+                    this.ui.showNotification("Simulation started. Try feeding the squirrels.");
+                }
+                this.isRunning = true;
+            } else {
+                this.isRunning = false;
+                this.ui.showMenu();
+            }
+        });
+
+        document.addEventListener('mousedown', e => {
+            if(e.button === 0 && this.isRunning) this.throwFood();
+        });
+
+        // Robust responsive resize
+        window.addEventListener('resize', () => {
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
+
     throwFood() {
         this.player.rig.playThrowAnimation();
         
-        // Realistic Peanut Shape
         const peanutGeo = new THREE.SphereGeometry(0.025, 12, 12);
-        peanutGeo.scale(1, 0.5, 2.0); // Elongate
-        const peanutMat = new THREE.MeshStandardMaterial({color: 0xd2b48c, roughness: 0.9});
+        peanutGeo.scale(1, 0.5, 1.8); 
+        const peanutMat = new THREE.MeshStandardMaterial({color: 0xdca86b, roughness: 0.9, metalness: 0.1});
         const peanut = new THREE.Mesh(peanutGeo, peanutMat);
         
         const spawnPos = this.player.rig.position.clone();
-        spawnPos.y += 1.4;
+        spawnPos.y += 1.4; // Hand height
         
         const camDir = new THREE.Vector3(0,0,-1).applyQuaternion(this.camera.quaternion);
-        camDir.y += 0.25; 
+        camDir.y += 0.3; // Angle upwards
         camDir.normalize();
 
         peanut.position.copy(spawnPos).addScaledVector(camDir, 0.6);
@@ -1778,7 +1807,7 @@ class GameEngine {
         
         this.scene.add(peanut);
         
-        // Manage persistent items limit
+        // Memory management for items
         if(PHYSICS.foodObjects.length > this.maxPeanuts) {
             const oldest = PHYSICS.foodObjects.shift();
             this.scene.remove(oldest.mesh);
@@ -1786,14 +1815,14 @@ class GameEngine {
 
         PHYSICS.foodObjects.push({
             mesh: peanut,
-            velocity: camDir.multiplyScalar(10.0),
+            velocity: camDir.multiplyScalar(12.0),
             isLanded: false,
             eaten: false
         });
         
-        // Alert nearby squirrels
+        // Sensory alert for AI
         this.squirrels.forEach(sq => {
-            if(sq.position.distanceTo(spawnPos) < 25) {
+            if(sq.position.distanceTo(spawnPos) < sq.smellDist * 1.5) {
                 sq.checkThreatsAndFood(sq.position.distanceTo(this.player.rig.position), sq.frightenDist);
             }
         });
@@ -1804,25 +1833,31 @@ class GameEngine {
         
         if(!this.isRunning) return;
 
+        // Cap delta time to prevent physics explosions during lag spikes
         const delta = Math.min(this.clock.getDelta(), 0.1);
         
         this.player.update(delta, this.park.bounds);
         
-        // Update all squirrels
-        this.squirrels.forEach(sq => sq.update(delta, this.player.rig, this.camera, this.park.bounds));
+        for(let i=0; i<this.squirrels.length; i++) {
+            this.squirrels[i].update(delta, this.player.rig, this.camera, this.park.bounds);
+        }
         
         PHYSICS.update(delta);
         
-        // Update global UI
-        if(Math.floor(performance.now() / 100) % 5 === 0) {
-            this.ui.updateGlobalStats(this.squirrels, PHYSICS.foodObjects.filter(f=>!f.eaten).length);
+        // Throttle UI Updates to 5Hz to save performance
+        if(Math.floor(performance.now() / 200) % 2 === 0) {
+            let activeFood = PHYSICS.foodObjects.filter(f=>!f.eaten).length;
+            this.ui.updateGlobalStats(this.squirrels, activeFood);
         }
 
         this.renderer.render(this.scene, this.camera);
     }
 }
 
-window.onload = () => { window.Game = new GameEngine(); };
+// Bootstrap Application
+window.onload = () => { 
+    window.AppInstance = new GameEngine(); 
+};
 </script>
 </body>
 </html>
