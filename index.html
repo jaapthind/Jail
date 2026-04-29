@@ -46,8 +46,8 @@
     --z-hud-base: 40;
     --z-hud-top: 50;
     --z-subtitles: 60;
+    --z-fade: 70;     /* Fixed: Placed below menus so it doesn't block the start button */
     --z-menus: 100;
-    --z-fade: 200;
     --z-debug: 999;
 }
 
@@ -691,8 +691,6 @@ body.insanity-tier-3 { animation: severeGlitch 0.2s infinite; filter: saturate(0
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import * as TWEEN from '@tweenjs/tween.js';
-import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
-import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
 
 /* ==========================================================================
    MODULE 1: CORE CONFIGURATION & CONSTANTS
@@ -752,8 +750,6 @@ const CONFIG = {
 /* ==========================================================================
    MODULE 2: EXTENSIVE DATA ARRAYS (CONTENT INJECTION)
    ========================================================================== */
-
-// 50 Days of procedurally deteriorating food deliveries
 const FOOD_DATABASE = [
     { d:1, t:'BREAD', c:0xddbb99, h:20, s:5, m:"Standard ration. Stale bread and water.", n:"Ration #01" },
     { d:2, t:'SLUDGE', c:0x888888, h:25, s:2, m:"Grey, lukewarm nutrient sludge. Tasteless.", n:"Nutrient Paste" },
@@ -776,7 +772,6 @@ const FOOD_DATABASE = [
     { d:19, t:'BREAD', c:0x887766, h:15, s:-5, m:"Bread so hard it cuts the roof of your mouth.", n:"Hardtack" },
     { d:20, t:'MEAT', c:0x220000, h:10, s:-30, m:"Blackened, foul-smelling flesh. You retch while eating.", n:"Putrid Meat" }
 ];
-// Fill the rest of the 50 days procedurally
 for(let i=21; i<=50; i++) {
     FOOD_DATABASE.push({
         d: i,
@@ -807,8 +802,7 @@ const THOUGHT_DATABASE = [
 ];
 
 /* ==========================================================================
-   MODULE 3: COMPLEX MATH & NOISE GENERATION (No external noise libs)
-   Implementation of Simplex/Perlin noise algorithms for texture gen.
+   MODULE 3: COMPLEX MATH & NOISE GENERATION
    ========================================================================== */
 class PRNG {
     constructor(seed) { this.m = 0x80000000; this.a = 1103515245; this.c = 12345; this.state = seed ? seed : Math.floor(Math.random() * (this.m - 1)); }
@@ -866,7 +860,6 @@ class TextureEngine {
         }
         ctx.putImageData(imgData, 0, 0);
         
-        // Procedural Cracks
         ctx.lineWidth = 1; ctx.lineJoin = 'round';
         for(let c=0; c<15; c++) {
             ctx.beginPath();
@@ -919,7 +912,6 @@ class TextureEngine {
     static generatePorcelain(w=128, h=128) {
         const { cvs, ctx } = this.getCtx(w, h);
         ctx.fillStyle = '#e8e8e0'; ctx.fillRect(0,0,w,h);
-        // Stains
         for(let i=0; i<10; i++) {
             ctx.fillStyle = `rgba(100,90,50,${Math.random()*0.1})`;
             ctx.beginPath(); ctx.arc(Math.random()*w, Math.random()*h, Math.random()*30+5, 0, Math.PI*2); ctx.fill();
@@ -929,8 +921,7 @@ class TextureEngine {
 }
 
 /* ==========================================================================
-   MODULE 5: ADVANCED AUDIO SYNTHESIS (WEB AUDIO API)
-   Generates all sound effects algorithmically to save file size.
+   MODULE 5: ADVANCED AUDIO SYNTHESIS
    ========================================================================== */
 class AudioEngine {
     constructor() {
@@ -943,7 +934,6 @@ class AudioEngine {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         this.ctx = new AudioContext();
         
-        // Master Gain
         this.master = this.ctx.createGain();
         this.master.gain.value = 0.8;
         this.master.connect(this.ctx.destination);
@@ -968,12 +958,11 @@ class AudioEngine {
     }
 
     buildAmbientDrone() {
-        // Complex existential hum using detuned oscillators and LFOs
-        const osc1 = this.ctx.createOscillator(); osc1.type = 'sine'; osc1.frequency.value = 40; // Sub
-        const osc2 = this.ctx.createOscillator(); osc2.type = 'triangle'; osc2.frequency.value = 40.5; // Beating
-        const osc3 = this.ctx.createOscillator(); osc3.type = 'sawtooth'; osc3.frequency.value = 120; // Harmonic grit
+        const osc1 = this.ctx.createOscillator(); osc1.type = 'sine'; osc1.frequency.value = 40;
+        const osc2 = this.ctx.createOscillator(); osc2.type = 'triangle'; osc2.frequency.value = 40.5;
+        const osc3 = this.ctx.createOscillator(); osc3.type = 'sawtooth'; osc3.frequency.value = 120;
         
-        const lfo = this.ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.05; // Very slow sweep
+        const lfo = this.ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.05;
         const lfoGain = this.ctx.createGain(); lfoGain.gain.value = 5;
         lfo.connect(lfoGain); lfoGain.connect(osc2.frequency);
 
@@ -1011,7 +1000,6 @@ class AudioEngine {
 
     updateSanityModulation(sanityRatio) {
         if(!this.ready) return;
-        // As sanity drops, drone gets louder and higher pitched filter
         const targetVol = 0.08 + (1.0 - sanityRatio) * 0.15;
         const targetFreq = 150 + (1.0 - sanityRatio) * 400;
         this.nodes.droneGain.gain.setTargetAtTime(targetVol, this.ctx.currentTime, 1.0);
@@ -1033,8 +1021,8 @@ class AudioEngine {
         src.buffer = this.createNoiseBuffer(0.15);
         
         const filter = this.ctx.createBiquadFilter();
-        if(type === 'boot') { filter.type = 'lowpass'; filter.frequency.value = 250; } // Heavy guard boot
-        else { filter.type = 'bandpass'; filter.frequency.value = 400; filter.Q.value = 0.8; } // Barefoot/sock
+        if(type === 'boot') { filter.type = 'lowpass'; filter.frequency.value = 250; }
+        else { filter.type = 'bandpass'; filter.frequency.value = 400; filter.Q.value = 0.8; }
         
         const gain = this.ctx.createGain();
         gain.gain.setValueAtTime(vol, t);
@@ -1054,11 +1042,9 @@ class AudioEngine {
         if(!this.ready) return;
         const t = this.ctx.currentTime;
         
-        // Massive low-end thud
         const osc1 = this.ctx.createOscillator(); osc1.type = 'square';
         osc1.frequency.setValueAtTime(120, t); osc1.frequency.exponentialRampToValueAtTime(10, t+0.5);
         
-        // Metallic clatter
         const src = this.ctx.createBufferSource(); src.buffer = this.createNoiseBuffer(0.6);
         const filter = this.ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1200; filter.Q.value = 5.0;
 
@@ -1102,13 +1088,13 @@ class AudioEngine {
 }
 
 /* ==========================================================================
-   MODULE 6: PROCEDURAL ENTITIES (GUARD, FOOD, CELL OBJECTS)
+   MODULE 6: PROCEDURAL ENTITIES
    ========================================================================== */
 class GuardAI extends THREE.Group {
     constructor(materials) {
         super();
         this.mats = materials;
-        this.state = 'IDLE'; // IDLE, PATROL, DELIVER
+        this.state = 'IDLE';
         this.animCycle = 0;
         this.buildRig();
     }
@@ -1116,46 +1102,38 @@ class GuardAI extends THREE.Group {
     buildRig() {
         this.root = new THREE.Group(); this.root.position.y = 1.05; this.add(this.root);
         
-        // Torso
         this.torso = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.7, 0.35), this.mats.fabricDark);
         this.torso.position.y = 0.35; this.root.add(this.torso);
         
-        // Head
         this.head = new THREE.Group(); this.head.position.y = 0.85; this.root.add(this.head);
         const headMesh = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.3, 0.25), this.mats.skin);
         this.head.add(headMesh);
         
-        // Featureless void face to simulate existential dread
         const faceVoid = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.2), new THREE.MeshBasicMaterial({color:0x000000}));
         faceVoid.position.set(0, 0.0, 0.126); this.head.add(faceVoid);
         
-        // Officer Hat
         const hatBase = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.1, 16), new THREE.MeshStandardMaterial({color:0x111111}));
         hatBase.position.y = 0.2; this.head.add(hatBase);
         const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.02, 16), new THREE.MeshStandardMaterial({color:0x000000}));
         hatBrim.position.set(0, -0.05, 0.05); hatBase.add(hatBrim);
 
-        // Arms
         this.armL = new THREE.Group(); this.armL.position.set(-0.35, 0.65, 0); this.root.add(this.armL);
         this.armR = new THREE.Group(); this.armR.position.set(0.35, 0.65, 0); this.root.add(this.armR);
         const armGeo = new THREE.BoxGeometry(0.15, 0.6, 0.15);
         const armMeshL = new THREE.Mesh(armGeo, this.mats.fabricDark); armMeshL.position.y = -0.3; this.armL.add(armMeshL);
         const armMeshR = new THREE.Mesh(armGeo, this.mats.fabricDark); armMeshR.position.y = -0.3; this.armR.add(armMeshR);
 
-        // Legs
         this.legL = new THREE.Group(); this.legL.position.set(-0.15, 0, 0); this.root.add(this.legL);
         this.legR = new THREE.Group(); this.legR.position.set(0.15, 0, 0); this.root.add(this.legR);
         const legGeo = new THREE.BoxGeometry(0.22, 0.9, 0.22);
         const legMeshL = new THREE.Mesh(legGeo, this.mats.fabricDark); legMeshL.position.y = -0.45; this.legL.add(legMeshL);
         const legMeshR = new THREE.Mesh(legGeo, this.mats.fabricDark); legMeshR.position.y = -0.45; this.legR.add(legMeshR);
 
-        // Boots
         const bootMat = new THREE.MeshStandardMaterial({color:0x050505, roughness:0.2});
         const bootGeo = new THREE.BoxGeometry(0.24, 0.15, 0.3);
         const bootL = new THREE.Mesh(bootGeo, bootMat); bootL.position.set(0, -0.9, 0.04); this.legL.add(bootL);
         const bootR = new THREE.Mesh(bootGeo, bootMat); bootR.position.set(0, -0.9, 0.04); this.legR.add(bootR);
 
-        // Chest Flashlight
         const fl = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1), new THREE.MeshBasicMaterial({color:0x333333}));
         fl.rotation.x = Math.PI/2; fl.position.set(0, 0.4, 0.18); this.root.add(fl);
         
@@ -1167,13 +1145,12 @@ class GuardAI extends THREE.Group {
 
     animateWalk(delta, speedMultiplier) {
         if(speedMultiplier <= 0) {
-            // Decay to idle
             this.armL.rotation.x = THREE.MathUtils.lerp(this.armL.rotation.x, 0, 0.1);
             this.armR.rotation.x = THREE.MathUtils.lerp(this.armR.rotation.x, 0, 0.1);
             this.legL.rotation.x = THREE.MathUtils.lerp(this.legL.rotation.x, 0, 0.1);
             this.legR.rotation.x = THREE.MathUtils.lerp(this.legR.rotation.x, 0, 0.1);
             this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 1.05, 0.1);
-            this.head.rotation.y = Math.sin(performance.now()*0.001)*0.2; // Idle look around
+            this.head.rotation.y = Math.sin(performance.now()*0.001)*0.2;
             return false;
         }
 
@@ -1185,9 +1162,8 @@ class GuardAI extends THREE.Group {
         this.legR.rotation.x = Math.sin(this.animCycle) * 0.6;
         
         this.root.position.y = 1.05 + Math.abs(Math.sin(this.animCycle * 2)) * 0.06;
-        this.head.rotation.y = 0; // Look straight when walking
+        this.head.rotation.y = 0;
 
-        // Return true on footfall
         const cycleMod = this.animCycle % Math.PI;
         return (cycleMod < 0.15);
     }
@@ -1216,20 +1192,17 @@ class FoodTray extends THREE.Group {
     }
 
     build() {
-        // Tray
         const tray = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.02, 0.35), new THREE.MeshStandardMaterial({color:0x333333, metalness:0.7, roughness:0.5}));
         this.add(tray);
 
-        // Cup
         const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.03, 0.1, 16), new THREE.MeshStandardMaterial({color:0xdddddd, roughness:0.2}));
         cup.position.set(0.15, 0.06, -0.1); this.add(cup);
 
-        // Food Item generator based on type
         const fMat = new THREE.MeshStandardMaterial({color: this.data.c, roughness: 0.8});
         let fGeo;
         switch(this.data.t) {
             case 'BREAD': fGeo = new THREE.BoxGeometry(0.15, 0.08, 0.15); break;
-            case 'SLUDGE': fGeo = new THREE.CylinderGeometry(0.12, 0.1, 0.05, 16); fMat.roughness = 0.2; break; // Wet look
+            case 'SLUDGE': fGeo = new THREE.CylinderGeometry(0.12, 0.1, 0.05, 16); fMat.roughness = 0.2; break;
             case 'MEAT': fGeo = new THREE.BoxGeometry(0.14, 0.06, 0.12); fMat.roughness = 0.4; break;
             case 'CHEESE': fGeo = new THREE.ConeGeometry(0.08, 0.08, 3); fGeo.rotateX(Math.PI/2); break;
             case 'MUSH': fGeo = new THREE.SphereGeometry(0.09, 16, 16); fGeo.scale(1, 0.4, 0.8); break;
@@ -1257,10 +1230,9 @@ class FoodTray extends THREE.Group {
             const fMesh = new THREE.Mesh(fGeo, fMat);
             fMesh.position.set(-0.05, 0.04, 0.05);
             this.add(fMesh);
-            this.foodMesh = fMesh; // ref for anim
+            this.foodMesh = fMesh;
         }
 
-        // Interaction Data
         this.userData = {
             id: 'food_tray',
             action: `CONSUME: ${this.data.n}`,
@@ -1272,14 +1244,12 @@ class FoodTray extends THREE.Group {
 
     update(time) {
         if(this.data.t === 'EYE' && this.eyeObj) {
-            // Eye looks around erratically
             if(Math.random() > 0.95) {
                 this.eyeObj.rotation.x = (Math.random()-0.5)*1.5;
                 this.eyeObj.rotation.y = (Math.random()-0.5)*1.5;
             }
         }
         if(this.data.t === 'MOLD' || this.data.t === 'MEAT') {
-            // Slight breathing/pulsing
             const s = 1.0 + Math.sin(time * 4.0) * 0.03;
             if(this.foodMesh) this.foodMesh.scale.set(s,s,s);
         }
@@ -1297,18 +1267,14 @@ class PrisonEnvironment {
         this.dynamicLights = [];
         this.activeTray = null;
 
-        // Init Uniforms for RectAreaLights
-        RectAreaLightUniformsLib.init();
-
         this.generateMaterials();
         this.buildArchitecture();
         this.buildCellFurniture();
         this.buildLighting();
 
-        // Spawn Guard in Hallway
         this.guard = new GuardAI(this.mats);
         this.guard.position.set(0, 0, CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH - 2);
-        this.guard.rotation.y = Math.PI; // Face cell
+        this.guard.rotation.y = Math.PI;
         this.scene.add(this.guard);
     }
 
@@ -1333,54 +1299,45 @@ class PrisonEnvironment {
     buildArchitecture() {
         const { CELL_WIDTH: cw, CELL_LENGTH: cl, CELL_HEIGHT: ch, WALL_THICKNESS: t, HALL_WIDTH: hw, HALL_LENGTH: hl, HALL_HEIGHT: hh } = CONFIG.WORLD;
 
-        // --- THE CELL ---
         const cellGrp = new THREE.Group(); this.scene.add(cellGrp);
 
-        // Floor / Ceiling
         const flr = new THREE.Mesh(new THREE.BoxGeometry(cw, t, cl), this.mats.concreteCell); flr.position.y = -t/2; cellGrp.add(flr);
         const ceil = new THREE.Mesh(new THREE.BoxGeometry(cw, t, cl), this.mats.concreteCell); ceil.position.y = ch + t/2; cellGrp.add(ceil);
 
-        // Walls (Left, Right, Back)
         const wLR = new THREE.BoxGeometry(t, ch, cl);
         const wallL = new THREE.Mesh(wLR, this.mats.concreteCell); wallL.position.set(-cw/2-t/2, ch/2, 0); cellGrp.add(wallL); this.addCollider(wallL);
         const wallR = new THREE.Mesh(wLR, this.mats.concreteCell); wallR.position.set(cw/2+t/2, ch/2, 0); cellGrp.add(wallR); this.addCollider(wallR);
         
         const wB = new THREE.Mesh(new THREE.BoxGeometry(cw, ch, t), this.mats.concreteCell); wB.position.set(0, ch/2, -cl/2-t/2); cellGrp.add(wB); this.addCollider(wB);
 
-        // Back Wall Window Slit (High up)
         const winW = 0.8, winH = 0.3;
-        const voidMat = new THREE.MeshBasicMaterial({color:0x000000}); // Nothingness outside
+        const voidMat = new THREE.MeshBasicMaterial({color:0x000000});
         const win = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, t+0.1), voidMat);
         win.position.set(0, ch - 0.6, -cl/2-t/2); cellGrp.add(win);
-        // Window Bars
         for(let i=-0.2; i<=0.2; i+=0.2) {
             const wb = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, winH, 8), this.mats.ironBars);
             wb.position.set(i, ch-0.6, -cl/2-t/2); cellGrp.add(wb);
         }
 
-        // Front Wall (Bars & Door)
         const frontZ = cl/2;
         const barsGrp = new THREE.Group(); cellGrp.add(barsGrp);
         const bGeo = new THREE.CylinderGeometry(CONFIG.WORLD.BAR_RADIUS, CONFIG.WORLD.BAR_RADIUS, ch, 12);
         
         for(let x = -cw/2 + 0.15; x < cw/2 - 0.1; x += CONFIG.WORLD.BAR_SPACING) {
-            if(x > -0.45 && x < 0.45) continue; // Door frame gap
+            if(x > -0.45 && x < 0.45) continue;
             const bar = new THREE.Mesh(bGeo, this.mats.ironBars); bar.position.set(x, ch/2, frontZ);
             barsGrp.add(bar); this.addCollider(bar);
         }
 
-        // Heavy Iron Door
         this.doorGrp = new THREE.Group(); this.doorGrp.position.set(-0.45, 0, frontZ); cellGrp.add(this.doorGrp);
         this.doorMesh = new THREE.Mesh(new THREE.BoxGeometry(0.9, ch-0.1, 0.06), this.mats.ironDoor);
         this.doorMesh.position.set(0.45, ch/2, 0); this.doorGrp.add(this.doorMesh);
         
-        // Food Slot
         const slot = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.12, 0.08), voidMat);
         slot.position.set(0.45, 0.25, 0); this.doorMesh.add(slot);
         
         this.doorCollider = new THREE.Box3().setFromObject(this.doorMesh); this.colliders.push(this.doorCollider);
 
-        // --- THE HALLWAY ---
         const hallGrp = new THREE.Group(); hallGrp.position.set(0, 0, cl/2 + hl/2); this.scene.add(hallGrp);
         const hFlr = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.concreteHall); hFlr.position.y = -t/2; hallGrp.add(hFlr);
         const hCeil = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.concreteHall); hCeil.position.y = hh + t/2; hallGrp.add(hCeil);
@@ -1391,7 +1348,6 @@ class PrisonEnvironment {
     buildCellFurniture() {
         const cw = CONFIG.WORLD.CELL_WIDTH, cl = CONFIG.WORLD.CELL_LENGTH;
 
-        // Cot (Bed)
         const cotW = 1.0, cotL = 2.1, cotH = 0.4;
         const cotGrp = new THREE.Group(); cotGrp.position.set(-cw/2 + cotW/2 + 0.1, 0, -cl/2 + cotL/2 + 0.1); this.scene.add(cotGrp);
         
@@ -1409,7 +1365,6 @@ class PrisonEnvironment {
         cotHitbox.userData = { id: 'cot', action: 'SLEEP', desc: 'Advance time. Escapism.' };
         this.interactables.push(cotHitbox); this.addCollider(cotHitbox);
 
-        // Toilet / Sink Combo
         const tGrp = new THREE.Group(); tGrp.position.set(cw/2 - 0.4, 0, -cl/2 + 0.4); this.scene.add(tGrp);
         
         const tBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.15, 0.4, 16), this.mats.porcelain); tBowl.position.y = 0.2; tGrp.add(tBowl);
@@ -1426,20 +1381,17 @@ class PrisonEnvironment {
     buildLighting() {
         this.ambientLight = new THREE.AmbientLight(0x1a1a1a); this.scene.add(this.ambientLight);
 
-        // Sun coming through window slit
         this.sunLight = new THREE.DirectionalLight(0xffeedd, 1.5);
         this.sunLight.position.set(0, 5, -15);
         this.sunLight.castShadow = true;
         this.sunLight.shadow.mapSize.width = 1024; this.sunLight.shadow.mapSize.height = 1024;
         this.scene.add(this.sunLight);
 
-        // Harsh Cell Fluorescent
         this.cellLight = new THREE.PointLight(0xaaccff, 0.5, 6.0);
         this.cellLight.position.set(0, CONFIG.WORLD.CELL_HEIGHT - 0.2, 0);
         this.scene.add(this.cellLight);
         this.dynamicLights.push(this.cellLight);
 
-        // Hallway Lights
         for(let z = CONFIG.WORLD.CELL_LENGTH/2 + 3; z < CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH; z+= 6) {
             const hl = new THREE.PointLight(0xffddaa, 0.4, 8.0);
             hl.position.set(0, CONFIG.WORLD.HALL_HEIGHT - 0.2, z);
@@ -1451,35 +1403,31 @@ class PrisonEnvironment {
     }
 
     updateLightingCycle(timeInHours) {
-        // Time logic: 0 to 24.
         const isDay = timeInHours >= 6 && timeInHours <= 18;
         
         if(isDay) {
-            const dayProgress = (timeInHours - 6) / 12; // 0 to 1
+            const dayProgress = (timeInHours - 6) / 12;
             const sunAngle = dayProgress * Math.PI;
             
             this.sunLight.intensity = Math.sin(sunAngle) * 2.5;
             this.sunLight.position.x = Math.cos(sunAngle) * 10;
             this.sunLight.position.y = Math.sin(sunAngle) * 5;
             
-            // Warmth shifts
             this.sunLight.color.setHSL(0.1 + dayProgress*0.05, 0.6, 0.5 + Math.sin(sunAngle)*0.3);
             
             this.ambientLight.color.setHex(0x2a2a2a);
             this.scene.fog.color.setHex(0x0a0a0a);
             this.scene.fog.density = 0.04;
 
-            // Artificial lights off/dim
             this.dynamicLights.forEach(l => l.intensity = 0.1);
         } else {
-            this.sunLight.intensity = 0.02; // Moonlight
+            this.sunLight.intensity = 0.02;
             this.sunLight.color.setHex(0x445588);
             
             this.ambientLight.color.setHex(0x050505);
             this.scene.fog.color.setHex(0x020202);
             this.scene.fog.density = 0.08;
 
-            // Fluorescent flicker at night
             this.dynamicLights.forEach(l => {
                 if(Math.random() > 0.96) l.intensity = Math.random() * 0.5 + 0.1;
                 else l.intensity = 0.6;
@@ -1496,7 +1444,7 @@ class PrisonEnvironment {
                 if(!isOpen) this.doorCollider.setFromObject(this.doorMesh);
             })
             .onComplete(() => {
-                if(isOpen) this.doorCollider.translate(new THREE.Vector3(0,-100,0)); // Move hitbox away
+                if(isOpen) this.doorCollider.translate(new THREE.Vector3(0,-100,0));
                 else this.doorCollider.setFromObject(this.doorMesh);
                 if(callback) callback();
             })
@@ -1509,7 +1457,6 @@ class PrisonEnvironment {
         const fData = FOOD_DATABASE.find(f => f.d === dayNumber) || FOOD_DATABASE[FOOD_DATABASE.length-1];
         this.activeTray = new FoodTray(fData);
         
-        // Slipped under door
         this.activeTray.position.set(0, 0.05, CONFIG.WORLD.CELL_LENGTH/2 + 0.2);
         this.scene.add(this.activeTray);
         this.interactables.push(this.activeTray);
@@ -1571,7 +1518,7 @@ class UIController {
 
     transitionToGame() {
         this.els.menu.style.opacity = 0;
-        this.els.fade.style.opacity = 0; // Fade in world
+        this.els.fade.style.opacity = 0;
         setTimeout(() => {
             this.els.menu.style.display = 'none';
             this.els.hud.style.display = 'block';
@@ -1585,7 +1532,6 @@ class UIController {
     }
 
     updateHUD(data) {
-        // Time Formatting
         this.els.day.innerText = `DAY ${data.day.toString().padStart(4, '0')}`;
         const h = Math.floor(data.time);
         const m = Math.floor((data.time - h) * 60);
@@ -1593,17 +1539,14 @@ class UIController {
         const h12 = h % 12 || 12;
         this.els.time.innerText = `${h12.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')} ${ampm}`;
 
-        // State
         this.els.state.innerText = data.state;
         this.els.state.className = `data-val state-${data.state}`;
 
-        // Metrics
         const sInt = Math.floor(data.san); const nInt = Math.floor(data.nut); const stInt = Math.floor(data.sta);
         this.els.sFill.style.width = `${data.san}%`; this.els.sPct.innerText = `${sInt}%`;
         this.els.nFill.style.width = `${data.nut}%`; this.els.nPct.innerText = `${nInt}%`;
         this.els.stFill.style.width = `${data.sta}%`; this.els.stPct.innerText = `${stInt}%`;
 
-        // Body Classes for Sanity FX
         document.body.className = '';
         this.els.sFill.classList.remove('status-warning', 'status-critical');
         if(data.san < 40) { this.els.sFill.classList.add('status-warning'); document.body.classList.add('insanity-tier-1'); }
@@ -1647,7 +1590,7 @@ class UIController {
 }
 
 /* ==========================================================================
-   MODULE 9: PLAYER CONTROLLER (PHYSICS, MOVEMENT, RAYCASTING)
+   MODULE 9: PLAYER CONTROLLER
    ========================================================================== */
 class PlayerController {
     constructor(camera, domElement, world, ui, audio) {
@@ -1684,7 +1627,6 @@ class PlayerController {
     update(delta) {
         if(!this.controls.isLocked) return;
 
-        // Stamina Logic
         const isTryingToRun = this.inputs.shift && (this.inputs.w || this.inputs.s || this.inputs.a || this.inputs.d);
         if(isTryingToRun && !this.isExhausted) {
             this.stamina -= CONFIG.STATS.STAMINA_DRAIN * delta;
@@ -1696,7 +1638,6 @@ class PlayerController {
 
         const currentSpeed = (isTryingToRun && !this.isExhausted) ? CONFIG.PHYSICS.RUN_SPEED : CONFIG.PHYSICS.WALK_SPEED;
 
-        // Physics Integration
         this.dir.z = this.inputs.w - this.inputs.s;
         this.dir.x = this.inputs.d - this.inputs.a;
         this.dir.normalize();
@@ -1711,9 +1652,8 @@ class PlayerController {
         this.controls.moveRight(-this.vel.x * delta);
         this.controls.moveForward(-this.vel.z * delta);
 
-        // Collision Resolution
         this.collider.center.copy(this.controls.object.position);
-        this.collider.center.y -= CONFIG.PHYSICS.PLAYER_HEIGHT * 0.4; // Mid-body check
+        this.collider.center.y -= CONFIG.PHYSICS.PLAYER_HEIGHT * 0.4; 
 
         for(let box of this.world.colliders) {
             if(box.intersectsSphere(this.collider)) {
@@ -1723,13 +1663,12 @@ class PlayerController {
                 const dist = pushDir.length();
                 if(dist < CONFIG.PHYSICS.PLAYER_RADIUS) {
                     pushDir.normalize().multiplyScalar(CONFIG.PHYSICS.PLAYER_RADIUS - dist);
-                    pushDir.y = 0; // Lock Y
+                    pushDir.y = 0;
                     this.controls.object.position.add(pushDir);
                 }
             }
         }
 
-        // Kinematic Head Bob & Breathing
         const endP = this.controls.object.position.clone();
         const moveDelta = startP.distanceTo(endP);
         
@@ -1738,7 +1677,6 @@ class PlayerController {
             const bob = Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) * CONFIG.PHYSICS.HEAD_BOB_AMP * (currentSpeed/CONFIG.PHYSICS.WALK_SPEED);
             this.controls.object.position.y = CONFIG.PHYSICS.PLAYER_HEIGHT + bob;
             
-            // Audio trigger on downward bob
             if(Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) < -0.9 && this.canStep) {
                 this.audio.playFootstep('sock', 0.15);
                 this.canStep = false;
@@ -1746,12 +1684,10 @@ class PlayerController {
                 this.canStep = true;
             }
         } else {
-            // Idle breathing
             const breath = Math.sin(performance.now() * 0.001 * CONFIG.PHYSICS.BREATH_FREQ) * CONFIG.PHYSICS.BREATH_AMP;
             this.controls.object.position.y = THREE.MathUtils.lerp(this.controls.object.position.y, CONFIG.PHYSICS.PLAYER_HEIGHT + breath, 0.1);
         }
 
-        // Interaction Raycasting
         this.raycaster.setFromCamera(new THREE.Vector2(0,0), this.camera);
         const intersects = this.raycaster.intersectObjects(this.world.interactables, false);
         
@@ -1767,14 +1703,13 @@ class PlayerController {
             }
         }
 
-        // Update Spatial Audio Listener
         const camDir = new THREE.Vector3(); this.camera.getWorldDirection(camDir);
         this.audio.updateSpatial(this.camera.position, camDir);
     }
 }
 
 /* ==========================================================================
-   MODULE 10: GAME DIRECTOR (STATE MACHINE & EVENT TIMELINE)
+   MODULE 10: GAME DIRECTOR
    ========================================================================== */
 class GameDirector {
     constructor(world, ui, audio, player) {
@@ -1786,7 +1721,7 @@ class GameDirector {
             san: CONFIG.STATS.MAX_SANITY,
             nut: CONFIG.STATS.MAX_NUTRI,
             sta: CONFIG.STATS.MAX_STAMINA,
-            state: 'LOCKDOWN' // LOCKDOWN, GUARD_APPROACH, MEAL_DELIVERY, GUARD_LEAVE, YARD, SLEEP
+            state: 'LOCKDOWN' 
         };
 
         this.thoughtTimer = 0;
@@ -1794,9 +1729,8 @@ class GameDirector {
     }
 
     update(delta) {
-        if(this.data.state === 'SLEEP') return; // Time halted during fade transitions
+        if(this.data.state === 'SLEEP') return;
 
-        // Time Progression
         const hourDelta = delta / CONFIG.TIME.REAL_SEC_PER_GAME_HOUR;
         this.data.time += hourDelta;
         
@@ -1805,12 +1739,10 @@ class GameDirector {
             this.data.day++;
         }
 
-        // Biological Degradation
         const starveMult = this.data.nut <= 0 ? CONFIG.STATS.STARVATION_MULTIPLIER : 1.0;
         this.data.nut -= CONFIG.STATS.NUTRI_DECAY_BASE * hourDelta;
         this.data.san -= (CONFIG.STATS.SANITY_DECAY_BASE * starveMult) * hourDelta;
 
-        // Clamp stats
         this.data.nut = Math.max(0, Math.min(CONFIG.STATS.MAX_NUTRI, this.data.nut));
         this.data.san = Math.max(0, Math.min(CONFIG.STATS.MAX_SANITY, this.data.san));
         this.data.sta = this.player.stamina;
@@ -1818,7 +1750,6 @@ class GameDirector {
         this.processEventTimeline(delta);
         this.processThoughts(delta);
 
-        // Sync visual/audio systems
         this.ui.updateHUD(this.data);
         this.world.updateLightingCycle(this.data.time);
         this.audio.updateSanityModulation(this.data.san / 100);
@@ -1829,22 +1760,18 @@ class GameDirector {
     processEventTimeline(delta) {
         const t = this.data.time;
         
-        // Trigger Meal 1
         if(t >= CONFIG.TIME.MEAL_HOUR_1 && t < CONFIG.TIME.MEAL_HOUR_1 + 0.5 && this.data.state === 'LOCKDOWN') {
             this.initiateGuardSequence('MEAL');
         }
         
-        // Trigger Meal 2
         if(t >= CONFIG.TIME.MEAL_HOUR_2 && t < CONFIG.TIME.MEAL_HOUR_2 + 0.5 && this.data.state === 'LOCKDOWN') {
             this.initiateGuardSequence('MEAL');
         }
 
-        // Bedtime warning
         if(t >= CONFIG.TIME.SLEEP_HOUR && t < CONFIG.TIME.SLEEP_HOUR + 0.1 && Math.random()<0.05) {
             this.ui.showSubtitle("MANDATORY LIGHTS OUT. RETURN TO COT.", 'system');
         }
 
-        // Run guard sequence if active
         if(this.data.state.startsWith('GUARD')) {
             this.updateGuardAI(delta);
         }
@@ -1855,7 +1782,6 @@ class GameDirector {
         this.guardPhase = 0;
         this.guardTargetZ = CONFIG.WORLD.CELL_LENGTH/2 + 0.8;
         
-        // Reset guard pos
         this.world.guard.position.z = CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH - 2;
         this.world.guard.rotation.y = Math.PI;
     }
@@ -1864,9 +1790,8 @@ class GameDirector {
         const g = this.world.guard;
         
         if(this.data.state === 'GUARD_APPROACH') {
-            g.position.z -= 2.0 * delta; // Walk speed
+            g.position.z -= 2.0 * delta;
             if(g.animateWalk(delta, 2.0)) {
-                // Play audio based on distance
                 const distSq = Math.abs(g.position.z - this.guardTargetZ);
                 const vol = Math.max(0, 0.4 * (1.0 - (distSq / CONFIG.WORLD.HALL_LENGTH)));
                 this.audio.playFootstep('boot', vol);
@@ -1874,7 +1799,7 @@ class GameDirector {
 
             if(g.position.z <= this.guardTargetZ) {
                 g.position.z = this.guardTargetZ;
-                g.animateWalk(delta, 0); // Stop
+                g.animateWalk(delta, 0); 
                 
                 this.data.state = 'MEAL_DELIVERY';
                 this.ui.showSubtitle("OFFICER: Step back from the bars. Feeding protocol.", 'system');
@@ -1884,9 +1809,8 @@ class GameDirector {
                     this.audio.playDoorGrind(1.5);
                 });
 
-                // Wait then leave
                 setTimeout(() => {
-                    g.rotation.y = 0; // Turn around
+                    g.rotation.y = 0; 
                     this.data.state = 'GUARD_LEAVE';
                 }, 3000);
             }
@@ -1908,8 +1832,7 @@ class GameDirector {
 
     processThoughts(delta) {
         this.thoughtTimer += delta;
-        // Frequency of thoughts increases as sanity decreases
-        const thoughtThreshold = 15.0 + (this.data.san / 100) * 45.0; // 15 to 60 seconds
+        const thoughtThreshold = 15.0 + (this.data.san / 100) * 45.0;
         
         if(this.thoughtTimer > thoughtThreshold) {
             this.thoughtTimer = 0;
@@ -1936,14 +1859,13 @@ class GameDirector {
             }
         }
         else if(id === 'toilet') {
-            this.audio.playMetalDoorSlam(); // Reusing slam as generic clang
+            this.audio.playMetalDoorSlam(); 
             this.ui.showSubtitle("WATER MAIN SHUT OFF. ACCESS DENIED.", 'system');
         }
         else if(id === 'cot') {
             if(this.data.time >= CONFIG.TIME.SLEEP_HOUR || this.data.time < CONFIG.TIME.WAKE_HOUR) {
                 this.data.state = 'SLEEP';
                 this.ui.doFade(true, () => {
-                    // Fast forward time
                     this.data.time = CONFIG.TIME.WAKE_HOUR;
                     this.data.day++;
                     this.data.san = Math.min(CONFIG.STATS.MAX_SANITY, this.data.san + CONFIG.STATS.SLEEP_RESTORE);
@@ -1956,7 +1878,7 @@ class GameDirector {
                 }, 2000);
             } else {
                 this.ui.showSubtitle("NOT AUTHORIZED FOR SLEEP. MAINTAIN WAKEFULNESS.", 'system');
-                this.data.san -= 2; // Punishment for trying to sleep off schedule
+                this.data.san -= 2; 
             }
         }
     }
@@ -1964,17 +1886,15 @@ class GameDirector {
 
 /* ==========================================================================
    MODULE 11: MAIN ENGINE APPLICATION
-   Coordinates rendering, loops, and initialization.
    ========================================================================== */
 class Engine {
     constructor() {
         this.initDOM();
         
-        // Setup Three.js Core
         this.scene = new THREE.Scene();
-          const failSafeLight = new THREE.AmbientLight(0xffffff, 1.0);
-         this.scene.add(failSafeLight);
-       
+        const failSafeLight = new THREE.AmbientLight(0xffffff, 1.0);
+        this.scene.add(failSafeLight);
+        
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.position.set(0, CONFIG.PHYSICS.PLAYER_HEIGHT, 0);
         
@@ -1984,11 +1904,9 @@ class Engine {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-        // Init Sub-systems
         this.audio = new AudioEngine();
         this.ui = new UIController();
         
-        // Async Build (Allows UI to show loading text)
         setTimeout(() => this.buildWorld(), 100);
     }
 
@@ -2008,7 +1926,6 @@ class Engine {
         this.player = new PlayerController(this.camera, document.body, this.world, this.ui, this.audio);
         this.director = new GameDirector(this.world, this.ui, this.audio, this.player);
 
-        // Bind Lock controls to State
         this.player.controls.addEventListener('lock', () => {
             this.ui.transitionToGame();
             this.isRunning = true;
@@ -2020,18 +1937,15 @@ class Engine {
             this.isRunning = false;
         });
 
-        // Bind Interaction Key
         document.addEventListener('keydown', e => {
             if(e.code === 'KeyE' && this.isRunning && this.player.targetObj) {
                 this.director.handleInteraction(this.player.targetObj);
             }
         });
 
-        // Pre-render frame to fill canvas
-        this.director.update(0); // sync states
+        this.director.update(0); 
         this.renderer.render(this.scene, this.camera);
 
-        // Allow start
         this.ui.setReady();
         
         this.clock = new THREE.Clock();
@@ -2050,20 +1964,18 @@ class Engine {
     loop() {
         requestAnimationFrame(() => this.loop());
         
-        const delta = Math.min(this.clock.getDelta(), 0.1); // Cap delta to prevent huge skips
+        const delta = Math.min(this.clock.getDelta(), 0.1); 
         TWEEN.update();
 
         if(this.isRunning) {
             this.player.update(delta);
             this.director.update(delta);
             
-            // Dynamic FOV Warp for Insanity
             const sanityPct = this.director.data.san / 100.0;
-            const targetFOV = 75 + (1.0 - sanityPct) * 35; // FOV stretches up to 110
+            const targetFOV = 75 + (1.0 - sanityPct) * 35; 
             this.camera.fov = THREE.MathUtils.lerp(this.camera.fov, targetFOV, 0.05);
             this.camera.updateProjectionMatrix();
 
-            // Debug Info Update
             if(CONFIG.ENGINE.DEBUG_MODE) {
                 this.frameCount++;
                 const now = performance.now();
@@ -2082,7 +1994,6 @@ class Engine {
     }
 }
 
-// Bootstrap Application
 window.onload = () => {
     window.GameApp = new Engine();
 };
