@@ -1972,7 +1972,10 @@ class Engine {
         
         // Setup Three.js Core
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+          const failSafeLight = new THREE.AmbientLight(0xffffff, 1.0);
+         this.scene.add(failSafeLight);
+       
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.position.set(0, CONFIG.PHYSICS.PLAYER_HEIGHT, 0);
         
         this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: false, powerPreference: "high-performance" });
