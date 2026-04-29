@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jail - Existential Realism</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            user-select: none;
+        }
+        #blocker {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 10;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        #instructions {
+            text-align: center;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+        #ui-layer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 5;
+            pointer-events: none;
+            text-shadow: 1px 1px 2px #000;
+        }
+        .ui-text { margin: 5px 0; font-size: 16px; }
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            pointer-events: none;
+        }
+        /* Post-processing simulation via CSS to save script weight */
+        #vignette {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
+            z-index: 4;
+        }
+        #grain {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 4;
+            mix-blend-mode: overlay;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui-layer">
+        <div class="ui-text" id="ui-day">DAY: 1</div>
+        <div class="ui-text" id="ui-activity">ACTIVITY: LOCKDOWN</div>
+        <div class="ui-text" id="ui-sanity">SANITY: 100%</div>
+        <div class="ui-text" id="ui-timer" style="display:none; color: #ff5555;">YARD TIME REMAINING: 60s</div>
+        <div class="ui-text" id="ui-interaction" style="margin-top: 20px; font-weight: bold; color: #aaa;"></div>
+    </div>
+    
+    <div id="crosshair"></div>
+    <div id="vignette"></div>
+    <div id="grain"></div>
+
+    <div id="blocker">
+        <div id="instructions">
+            <span style="font-size:36px; display:block; margin-bottom: 20px;">J A I L</span>
+            CLICK TO ENTER<br><br>
+            WASD - Move | Mouse - Look | E - Interact<br>
+            Existential Realism.
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+        // --- CORE ARCHITECTURE ---
+
+        class AudioSystem {
+            constructor() {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.humOscillator = null;
+                this.heartbeatOscillator = null;
+                this.initialized = false;
+            }
+
+            init() {
+                if(this.initialized) return;
+                this.initialized = true;
+                
+                // Ambient Drone (Prison Hum)
+                this.humOscillator = this.ctx.createOscillator();
+                const humGain = this.ctx.createGain();
+                this.humOscillator.type = 'sine';
+                this.humOscillator.frequency.setValueAtTime(55, this.ctx.currentTime); // Low freq hum
+                humGain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+                this.humOscillator.connect(humGain);
+                humGain.connect(this.ctx.destination);
+                this.humOscillator.start();
+            }
+
+            playSlam() {
+                if(!this.initialized) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(100, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(10, this.ctx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.5, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.5);
+            }
+
+            playStep() {
+                if(!this.initialized) return;
+                const bufferSize = this.ctx.sampleRate * 0.1;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                const noiseSource = this.ctx.createBufferSource();
+                noiseSource.buffer = buffer;
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 400;
+                const gain = this.ctx.createGain();
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
+                
+                noiseSource.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.ctx.destination);
+                noiseSource.start();
+            }
+        }
+
+        class TimeManager {
+            constructor() {
+                this.dayDuration = 30; // 30 real seconds = 1 day
+                this.timeElapsed = 0;
+                this.currentDay = 1;
+                this.activity = 'LOCKDOWN';
+                this.isRecTime = false;
+                this.recTimer = 0;
+                this.sanity = 100;
+                this.uiDay = document.getElementById('ui-day');
+                this.uiActivity = document.getElementById('ui-activity');
+                this.uiSanity = document.getElementById('ui-sanity');
+                this.uiTimer = document.getElementById('ui-timer');
+                this.onRecStart = null;
+                this.onRecEnd = null;
+                this.onMealSpawn = null;
+            }
+
+            update(delta) {
+                this.timeElapsed += delta;
+                
+                // Sanity decay
+                this.sanity -= delta * 0.5;
+                if(this.sanity < 0) this.sanity = 0;
+                this.uiSanity.innerText = `SANITY: ${Math.floor(this.sanity)}%`;
+
+                if (this.isRecTime) {
+                    this.recTimer -= delta;
+                    this.uiTimer.innerText = `YARD TIME REMAINING: ${Math.floor(this.recTimer)}s`;
+                    if (this.recTimer <= 0) {
+                        this.endRecTime();
+                    }
+                } else {
+                    if (this.timeElapsed >= this.dayDuration) {
+                        this.triggerNewDay();
+                    }
+                }
+
+                // UI Glitch effect at low sanity
+                if(this.sanity < 30 && Math.random() > 0.95) {
+                    this.uiSanity.style.transform = `translate(${Math.random()*4-2}px, ${Math.random()*4-2}px)`;
+                } else {
+                    this.uiSanity.style.transform = 'none';
+                }
+            }
+
+            triggerNewDay() {
+                this.timeElapsed = 0;
+                this.currentDay++;
+                this.uiDay.innerText = `DAY: ${this.currentDay}`;
+                
+                if (this.onMealSpawn) this.onMealSpawn();
+
+                if (this.currentDay % 5 === 0) {
+                    this.startRecTime();
+                }
+            }
+
+            startRecTime() {
+                this.isRecTime = true;
+                this.activity = 'REC TIME';
+                this.recTimer = 60; // 1 minute yard time
+                this.uiActivity.innerText = `ACTIVITY: ${this.activity}`;
+                this.uiTimer.style.display = 'block';
+                if(this.onRecStart) this.onRecStart();
+            }
+
+            endRecTime() {
+                this.isRecTime = false;
+                this.activity = 'LOCKDOWN';
+                this.uiActivity.innerText = `ACTIVITY: ${this.activity}`;
+                this.uiTimer.style.display = 'none';
+                if(this.onRecEnd) this.onRecEnd();
+            }
+
+            getLightColor() {
+                // Returns color based on time of day (0 to dayDuration)
+                const ratio = this.timeElapsed / this.dayDuration;
+                // Night (0-0.3) -> Dawn (0.3-0.5) -> Day (0.5-0.8) -> Dusk (0.8-1.0)
+                if (ratio < 0.3) return new THREE.Color(0x223344); // Cold blue
+                if (ratio < 0.5) return new THREE.Color(0x554433).lerp(new THREE.Color(0x887755), (ratio-0.3)/0.2); // Dawn
+                if (ratio < 0.8) return new THREE.Color(0xaa9988); // Harsh daylight
+                return new THREE.Color(0xaa9988).lerp(new THREE.Color(0x223344), (ratio-0.8)/0.2); // Dusk to night
+            }
+        }
+
+        class PrisonWorld {
+            constructor(scene) {
+                this.scene = scene;
+                this.interactables = [];
+                this.mealTray = null;
+                
+                // Texture Generation
+                this.concreteMat = this.createProceduralMaterial(0x555555, 0.8);
+                this.ironMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.8, roughness: 0.4 });
+                
+                this.buildCell();
+                this.buildYard();
+                this.setupLighting();
+            }
+
+            createProceduralMaterial(baseColor, noiseIntensity) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 512; canvas.height = 512;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#' + new THREE.Color(baseColor).getHexString();
+                ctx.fillRect(0, 0, 512, 512);
+                for(let i=0; i<10000; i++) {
+                    ctx.fillStyle = `rgba(0,0,0,${Math.random() * noiseIntensity})`;
+                    ctx.fillRect(Math.random()*512, Math.random()*512, 2, 2);
+                }
+                const tex = new THREE.CanvasTexture(canvas);
+                tex.wrapS = THREE.RepeatWrapping;
+                tex.wrapT = THREE.RepeatWrapping;
+                tex.repeat.set(4, 4);
+                return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.9, metalness: 0.1 });
+            }
+
+            buildCell() {
+                // Cell Room (Inverted box)
+                const roomGeo = new THREE.BoxGeometry(4, 3, 5);
+                const roomMat = this.concreteMat;
+                roomMat.side = THREE.BackSide;
+                this.cell = new THREE.Mesh(roomGeo, roomMat);
+                this.cell.position.set(0, 1.5, 0);
+                this.scene.add(this.cell);
+
+                // Door frame & Door
+                this.doorGroup = new THREE.Group();
+                this.doorGroup.position.set(0, 0, 2.5);
+                this.scene.add(this.doorGroup);
+
+                const doorGeo = new THREE.BoxGeometry(1.2, 2.5, 0.1);
+                this.doorMesh = new THREE.Mesh(doorGeo, this.ironMat);
+                this.doorMesh.position.set(0, 1.25, 0); // Center pivot
+                this.doorGroup.add(this.doorMesh);
+
+                // Cot
+                const cotGeo = new THREE.BoxGeometry(1, 0.5, 2);
+                const cotMat = new THREE.MeshStandardMaterial({ color: 0x444433, roughness: 1.0 });
+                this.cot = new THREE.Mesh(cotGeo, cotMat);
+                this.cot.position.set(-1.5, 0.25, -1.5);
+                this.cot.userData = { name: "Cot", action: "Sit (Doesn't help much)" };
+                this.scene.add(this.cot);
+                this.interactables.push(this.cot);
+
+                // Toilet
+                const toiletGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.5, 16);
+                const toiletMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.5, roughness: 0.2 });
+                this.toilet = new THREE.Mesh(toiletGeo, toiletMat);
+                this.toilet.position.set(1.5, 0.25, -2);
+                this.toilet.userData = { name: "Toilet", action: "Flush" };
+                this.scene.add(this.toilet);
+                this.interactables.push(this.toilet);
+
+                // Window Slit
+                const slitGeo = new THREE.BoxGeometry(0.8, 0.3, 0.2);
+                const slitMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                const slit = new THREE.Mesh(slitGeo, slitMat);
+                slit.position.set(0, 2.5, -2.55);
+                this.scene.add(slit);
+            }
+
+            buildYard() {
+                // Yard outside cell door
+                const yardGeo = new THREE.BoxGeometry(10, 8, 10);
+                const yardMat = this.createProceduralMaterial(0x666666, 0.5);
+                yardMat.side = THREE.BackSide;
+                this.yard = new THREE.Mesh(yardGeo, yardMat);
+                this.yard.position.set(0, 4, 7.5);
+                this.scene.add(this.yard);
+            }
+
+            setupLighting() {
+                this.ambientLight = new THREE.AmbientLight(0x222222);
+                this.scene.add(this.ambientLight);
+
+                this.cellLight = new THREE.PointLight(0x223344, 2, 10);
+                this.cellLight.position.set(0, 2.8, -1);
+                this.cellLight.castShadow = true;
+                this.scene.add(this.cellLight);
+            }
+
+            spawnMeal() {
+                if (this.mealTray) {
+                    this.scene.remove(this.mealTray);
+                    const idx = this.interactables.indexOf(this.mealTray);
+                    if(idx > -1) this.interactables.splice(idx, 1);
+                }
+
+                const trayGeo = new THREE.BoxGeometry(0.5, 0.05, 0.3);
+                const trayMat = new THREE.MeshStandardMaterial({ color: 0x555555 });
+                this.mealTray = new THREE.Mesh(trayGeo, trayMat);
+                this.mealTray.position.set(0, 0.025, 2.2); // Slipped under door
+                this.mealTray.userData = { name: "Meal Tray", action: "Consume Slop", isMeal: true };
+                this.scene.add(this.mealTray);
+                this.interactables.push(this.mealTray);
+            }
+
+            openDoor(isOpen) {
+                // Simple lerp animation handled in Main update
+                this.targetDoorPos = isOpen ? -1.2 : 0;
+            }
+
+            update(timeManager) {
+                // Update lighting based on time
+                const cycleColor = timeManager.getLightColor();
+                this.cellLight.color.copy(cycleColor);
+                
+                // Door animation
+                if (this.targetDoorPos !== undefined) {
+                    this.doorMesh.position.x += (this.targetDoorPos - this.doorMesh.position.x) * 0.05;
+                }
+            }
+        }
+
+        class PlayerController {
+            constructor(camera, document) {
+                this.controls = new PointerLockControls(camera, document.body);
+                this.velocity = new THREE.Vector3();
+                this.direction = new THREE.Vector3();
+                this.moveForward = false;
+                this.moveBackward = false;
+                this.moveLeft = false;
+                this.moveRight = false;
+                this.canMove = true;
+                this.speed = 15.0; // Slow, heavy movement
+                this.raycaster = new THREE.Raycaster();
+
+                document.addEventListener('keydown', (e) => this.onKeyDown(e));
+                document.addEventListener('keyup', (e) => this.onKeyUp(e));
+                
+                const blocker = document.getElementById('blocker');
+                blocker.addEventListener('click', () => {
+                    this.controls.lock();
+                });
+
+                this.controls.addEventListener('lock', () => {
+                    blocker.style.display = 'none';
+                });
+
+                this.controls.addEventListener('unlock', () => {
+                    blocker.style.display = 'flex';
+                });
+            }
+
+            onKeyDown(event) {
+                switch (event.code) {
+                    case 'ArrowUp': case 'KeyW': this.moveForward = true; break;
+                    case 'ArrowLeft': case 'KeyA': this.moveLeft = true; break;
+                    case 'ArrowDown': case 'KeyS': this.moveBackward = true; break;
+                    case 'ArrowRight': case 'KeyD': this.moveRight = true; break;
+                }
+            }
+
+            onKeyUp(event) {
+                switch (event.code) {
+                    case 'ArrowUp': case 'KeyW': this.moveForward = false; break;
+                    case 'ArrowLeft': case 'KeyA': this.moveLeft = false; break;
+                    case 'ArrowDown': case 'KeyS': this.moveBackward = false; break;
+                    case 'ArrowRight': case 'KeyD': this.moveRight = false; break;
+                }
+            }
+
+            update(delta, collisionBounds, audio) {
+                if (!this.controls.isLocked || !this.canMove) return;
+
+                this.velocity.x -= this.velocity.x * 10.0 * delta;
+                this.velocity.z -= this.velocity.z * 10.0 * delta;
+
+                this.direction.z = Number(this.moveForward) - Number(this.moveBackward);
+                this.direction.x = Number(this.moveRight) - Number(this.moveLeft);
+                this.direction.normalize();
+
+                if (this.moveForward || this.moveBackward) this.velocity.z -= this.direction.z * this.speed * delta;
+                if (this.moveLeft || this.moveRight) this.velocity.x -= this.direction.x * this.speed * delta;
+
+                const nextX = this.controls.object.position.x - (this.velocity.x * delta);
+                const nextZ = this.controls.object.position.z - (this.velocity.z * delta);
+
+                // Simple AABB collision bounds
+                if (nextX > collisionBounds.minX && nextX < collisionBounds.maxX) {
+                    this.controls.moveRight(-this.velocity.x * delta);
+                }
+                if (nextZ > collisionBounds.minZ && nextZ < collisionBounds.maxZ) {
+                    this.controls.moveForward(-this.velocity.z * delta);
+                }
+
+                // Head bob & Footsteps
+                if(this.moveForward || this.moveBackward || this.moveLeft || this.moveRight) {
+                    if (Math.random() < 0.05) audio.playStep();
+                    const bob = Math.sin(performance.now() * 0.005) * 0.02;
+                    this.controls.object.position.y = 1.6 + bob;
+                } else {
+                    this.controls.object.position.y = 1.6;
+                }
+            }
+        }
+
+        // --- MAIN INITIALIZATION ---
+
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x000000, 0.05);
+
+        const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.y = 1.6;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        const audioSys = new AudioSystem();
+        const world = new PrisonWorld(scene);
+        const player = new PlayerController(camera, document);
+        const timeManager = new TimeManager();
+
+        let collisionBounds = { minX: -1.8, maxX: 1.8, minZ: -2.3, maxZ: 2.3 };
+
+        // Interaction Logic
+        const uiInteraction = document.getElementById('ui-interaction');
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyE' && player.controls.isLocked) {
+                player.raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+                const intersects = player.raycaster.intersectObjects(world.interactables);
+                if (intersects.length > 0 && intersects[0].distance < 2) {
+                    const obj = intersects[0].object;
+                    if (obj.userData.isMeal) {
+                        scene.remove(obj);
+                        world.interactables.splice(world.interactables.indexOf(obj), 1);
+                        world.mealTray = null;
+                        timeManager.sanity = Math.min(100, timeManager.sanity + 20); // Regain sanity
+                    }
+                    if (obj.userData.name === "Toilet") {
+                        audioSys.playStep(); // simulated flush noise
+                    }
+                }
+            }
+        });
+
+        // Event Bindings
+        timeManager.onMealSpawn = () => world.spawnMeal();
+        timeManager.onRecStart = () => {
+            world.openDoor(true);
+            collisionBounds = { minX: -4.8, maxX: 4.8, minZ: -2.3, maxZ: 12.3 }; // Expand bounds for yard
+        };
+        timeManager.onRecEnd = () => {
+            // Teleport logic
+            document.body.style.backgroundColor = "black";
+            renderer.domElement.style.opacity = 0;
+            audioSys.playSlam();
+            
+            setTimeout(() => {
+                camera.position.set(0, 1.6, 0); // Reset to cell center
+                world.openDoor(false);
+                collisionBounds = { minX: -1.8, maxX: 1.8, minZ: -2.3, maxZ: 2.3 }; // Lock bounds
+                renderer.domElement.style.opacity = 1;
+            }, 1000);
+        };
+
+        // Initialize Audio on first click
+        document.getElementById('blocker').addEventListener('click', () => {
+            audioSys.init();
+        }, { once: true });
+
+        // Resize handler
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Main Game Loop
+        const clock = new THREE.Clock();
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+
+            if (player.controls.isLocked) {
+                timeManager.update(delta);
+                world.update(timeManager);
+                player.update(delta, collisionBounds, audioSys);
+
+                // UI Raycasting for interaction text
+                player.raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+                const intersects = player.raycaster.intersectObjects(world.interactables);
+                if (intersects.length > 0 && intersects[0].distance < 2) {
+                    uiInteraction.innerText = `[E] ${intersects[0].object.userData.action}`;
+                } else {
+                    uiInteraction.innerText = '';
+                }
+
+                // Dynamic FOV based on sanity
+                camera.fov = THREE.MathUtils.lerp(camera.fov, 70 + (100 - timeManager.sanity) * 0.2, 0.1);
+                camera.updateProjectionMatrix();
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
