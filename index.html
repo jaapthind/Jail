@@ -3,28 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>JAIL: EXISTENTIAL REALISM - ULTIMATE EDITION</title>
+<title>NEON JAIL: VIBRANT EXISTENCE - ULTIMATE EDITION</title>
 <style>
 /* ==========================================================================
-   JAIL: EXISTENTIAL REALISM - CASCADING STYLE SHEETS
-   MODULE: CORE VARIABLES & RESET
+   NEON JAIL - CASCADING STYLE SHEETS
+   MODULE: CORE VARIABLES & RESET (VIBRANT NEON THEME)
    ========================================================================== */
 :root {
-    --bg-void: #030303;
-    --bg-panel: rgba(10, 10, 12, 0.85);
-    --bg-panel-solid: #0a0a0c;
+    --bg-void: #02000a;
+    --bg-panel: rgba(10, 0, 25, 0.85);
+    --bg-panel-solid: #0f0020;
     
-    --color-text-main: #e8e8e8;
-    --color-text-dim: #6b6b6b;
-    --color-text-dark: #333333;
+    --color-text-main: #00ffff;
+    --color-text-dim: #ff00ff;
+    --color-text-dark: #aa00aa;
     
-    --color-alert-high: #ff2a2a;
-    --color-alert-med: #ffaa00;
-    --color-safe: #2aff55;
-    --color-info: #2a88ff;
+    --color-alert-high: #ff003c;
+    --color-alert-med: #ffea00;
+    --color-safe: #00ff55;
+    --color-info: #00eaff;
     
-    --border-thin: 1px solid rgba(255, 255, 255, 0.1);
-    --border-thick: 2px solid rgba(255, 255, 255, 0.2);
+    --border-thin: 1px solid rgba(0, 255, 255, 0.3);
+    --border-thick: 2px solid rgba(255, 0, 255, 0.5);
     --border-alert: 1px solid var(--color-alert-high);
     
     --font-primary: 'Courier New', Courier, monospace;
@@ -46,7 +46,7 @@
     --z-hud-base: 40;
     --z-hud-top: 50;
     --z-subtitles: 60;
-    --z-fade: 70;     /* Fixed: Placed below menus so it doesn't block the start button */
+    --z-fade: 70;
     --z-menus: 100;
     --z-debug: 999;
 }
@@ -75,11 +75,11 @@ html, body {
    MODULE: CANVAS & RENDER TARGET
    ========================================================================== */
 #game-canvas {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: var(--z-canvas);
     outline: none;
     display: block;
@@ -90,66 +90,66 @@ html, body {
    MODULE: POST-PROCESSING PIPELINE (CSS)
    ========================================================================== */
 .fx-layer {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
 }
 
 #fx-crt {
     z-index: var(--z-crt);
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background: linear-gradient(rgba(18, 16, 25, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 128, 0.06), rgba(0, 255, 255, 0.04), rgba(255, 255, 0, 0.06));
     background-size: 100% 3px, 6px 100%;
-    opacity: 0.6;
+    opacity: 0.8;
     mix-blend-mode: overlay;
 }
 
 #fx-vignette {
     z-index: var(--z-vignette);
-    background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.98) 120%);
-    box-shadow: inset 0 0 200px rgba(0,0,0,0.9);
+    background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(20,0,30,0.8) 150%);
+    box-shadow: inset 0 0 150px rgba(255,0,255,0.1);
 }
 
 #fx-noise {
     z-index: var(--z-noise);
-    opacity: 0.15;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    mix-blend-mode: multiply;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    mix-blend-mode: color-dodge;
 }
 
 #fx-flicker {
     z-index: var(--z-crt);
-    background-color: rgba(255,255,255,0.01);
-    animation: crtFlicker 0.15s infinite;
+    background-color: rgba(0,255,255,0.02);
+    animation: crtFlicker 0.12s infinite;
 }
 
 #fx-fade {
     z-index: var(--z-fade);
-    background-color: #000000;
+    background-color: var(--bg-void);
     opacity: 1;
-    transition: opacity 3s cubic-bezier(0.1, 0.7, 0.1, 1);
+    transition: opacity 1.5s cubic-bezier(0.1, 0.7, 0.1, 1);
 }
 
 /* ==========================================================================
    MODULE: MAIN MENU & INITIALIZATION
    ========================================================================== */
 #menu-layer {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: var(--z-menus);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(2, 2, 2, 0.95);
-    backdrop-filter: blur(10px);
-    transition: opacity 2s ease-in-out;
+    background-color: rgba(5, 0, 15, 0.95);
+    backdrop-filter: blur(12px);
+    transition: opacity 1s ease-in-out;
 }
 
 .terminal-box {
@@ -158,7 +158,7 @@ html, body {
     background-color: var(--bg-panel);
     border: var(--border-thick);
     padding: var(--space-xxl);
-    box-shadow: 0 0 50px rgba(0,0,0,1), inset 0 0 30px rgba(0,0,0,0.8);
+    box-shadow: 0 0 60px rgba(255,0,255,0.4), inset 0 0 30px rgba(0,255,255,0.2);
     position: relative;
     overflow: hidden;
 }
@@ -169,29 +169,30 @@ html, body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-    animation: scanlineMenu 4s linear infinite;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, rgba(0,255,255,0.8), transparent);
+    animation: scanlineMenu 3s linear infinite;
 }
 
 .game-title {
     font-size: 84px;
     font-weight: 900;
     letter-spacing: 32px;
-    color: #ffffff;
-    text-shadow: 0 0 15px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.3);
+    color: #fff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #ff00ff, 0 0 80px #ff00ff;
     text-align: center;
     margin-bottom: var(--space-s);
-    animation: titlePulse 5s infinite alternate;
+    animation: titlePulse 3s infinite alternate;
 }
 
 .game-subtitle {
     font-size: 20px;
-    color: var(--color-text-dim);
+    color: var(--color-safe);
     letter-spacing: 12px;
     text-align: center;
     margin-bottom: var(--space-xxl);
     text-transform: uppercase;
+    text-shadow: 0 0 10px var(--color-safe);
 }
 
 .sys-info-grid {
@@ -199,19 +200,19 @@ html, body {
     grid-template-columns: 1fr 1fr;
     gap: var(--space-l);
     margin-bottom: var(--space-xl);
-    border-bottom: 1px dashed rgba(255,255,255,0.1);
+    border-bottom: 2px dashed var(--color-text-dim);
     padding-bottom: var(--space-xl);
 }
 
 .sys-info-item {
-    font-size: 14px;
-    color: var(--color-text-dim);
+    font-size: 16px;
+    color: var(--color-text-main);
     display: flex;
     justify-content: space-between;
 }
 
-.sys-info-item span.lbl { color: #555; }
-.sys-info-item span.val { color: #aaa; font-weight: bold; }
+.sys-info-item span.lbl { color: var(--color-text-dim); }
+.sys-info-item span.val { color: #fff; font-weight: bold; text-shadow: 0 0 5px #fff; }
 
 .controls-wrapper {
     display: flex;
@@ -222,79 +223,85 @@ html, body {
 
 .control-row {
     display: grid;
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 140px 1fr;
     gap: var(--space-l);
     align-items: center;
 }
 
 .ctrl-key {
-    background-color: #111;
-    border: 1px solid #333;
-    color: #fff;
+    background-color: #200040;
+    border: 1px solid #ff00ff;
+    color: #00ffff;
     padding: var(--space-s) var(--space-m);
     text-align: center;
     font-weight: bold;
-    border-radius: 2px;
-    box-shadow: 0 4px 0 #000;
+    border-radius: 4px;
+    box-shadow: 0 4px 0 #880088, 0 0 15px rgba(0,255,255,0.5);
     letter-spacing: 2px;
+    text-shadow: 0 0 5px #00ffff;
 }
 
 .ctrl-desc {
-    color: #888;
+    color: #e0e0e0;
     line-height: 1.5;
-    font-size: 15px;
+    font-size: 16px;
+    text-shadow: 0 0 3px rgba(255,255,255,0.5);
 }
 .ctrl-desc span {
     display: block;
-    color: #444;
-    font-size: 12px;
+    color: var(--color-text-dim);
+    font-size: 13px;
     margin-top: var(--space-xxs);
 }
 
 .action-container {
     text-align: center;
-    min-height: 60px;
+    min-height: 80px;
 }
 
 #btn-init {
     display: none;
-    background-color: transparent;
-    border: 2px solid var(--color-text-dim);
-    color: var(--color-text-main);
+    background-color: rgba(255,0,255,0.1);
+    border: 2px solid #00ffff;
+    color: #fff;
     font-family: var(--font-primary);
-    font-size: 24px;
+    font-size: 26px;
     font-weight: bold;
-    letter-spacing: 6px;
+    letter-spacing: 8px;
     padding: var(--space-m) var(--space-xl);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     text-transform: uppercase;
-    animation: btnBlink 2s infinite;
+    box-shadow: 0 0 20px rgba(0,255,255,0.4), inset 0 0 10px rgba(0,255,255,0.2);
+    text-shadow: 0 0 8px #00ffff;
+    border-radius: 4px;
 }
 
 #btn-init:hover {
-    background-color: var(--color-text-main);
+    background-color: #00ffff;
     color: #000;
-    box-shadow: 0 0 20px rgba(255,255,255,0.4);
-    animation: none;
+    border-color: #fff;
+    box-shadow: 0 0 40px #00ffff, 0 0 20px #ff00ff;
+    text-shadow: none;
 }
 
 #loading-seq {
-    font-size: 18px;
-    color: var(--color-alert-high);
+    font-size: 20px;
+    color: var(--color-alert-med);
     letter-spacing: 4px;
-    animation: btnBlink 1s infinite;
+    animation: btnBlink 0.5s infinite;
+    text-shadow: 0 0 10px var(--color-alert-med);
 }
 
 /* ==========================================================================
    MODULE: IN-GAME HEADS UP DISPLAY (HUD)
    ========================================================================== */
 #hud-layer {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: var(--z-hud-base);
     pointer-events: none;
     display: none;
@@ -302,18 +309,20 @@ html, body {
 
 .hud-group {
     position: absolute;
-    background-color: var(--bg-panel);
+    background-color: rgba(10,0,20,0.6);
     border: var(--border-thin);
     padding: var(--space-m);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 20px rgba(0,255,255,0.1);
 }
 
 /* Top Left: Time & Phase */
 #hud-tl {
     top: var(--space-l);
     left: var(--space-l);
-    border-left: 4px solid var(--color-text-dim);
-    min-width: 280px;
+    border-left: 4px solid var(--color-info);
+    border-radius: 0 10px 10px 0;
+    min-width: 300px;
 }
 
 .hud-data-row {
@@ -322,42 +331,44 @@ html, body {
 .hud-data-row:last-child { margin-bottom: 0; }
 
 .data-lbl {
-    font-size: 10px;
+    font-size: 12px;
     color: var(--color-text-dim);
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     margin-bottom: var(--space-xxs);
     text-transform: uppercase;
 }
 
 .data-val {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
-    color: var(--color-text-main);
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 2px #000;
+    color: #fff;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--color-info), 0 0 20px var(--color-info);
 }
 
-#val-time { color: #aaaaaa; font-size: 20px; }
-#val-state { font-size: 20px; transition: color 1s ease; }
+#val-time { color: var(--color-safe); font-size: 24px; text-shadow: 0 0 10px var(--color-safe); }
+#val-state { font-size: 24px; transition: color 0.5s ease, text-shadow 0.5s ease; }
 
-.state-LOCKDOWN { color: #555555 !important; }
-.state-MEAL { color: #aa8844 !important; text-shadow: 0 0 10px rgba(170,136,68,0.3) !important; }
-.state-YARD { color: #44aa55 !important; }
-.state-SLEEP { color: #444488 !important; }
+.state-LOCKDOWN { color: #ff00ff !important; text-shadow: 0 0 15px #ff00ff !important; }
+.state-MEAL { color: #ffff00 !important; text-shadow: 0 0 15px #ffff00 !important; }
+.state-YARD { color: #00ff00 !important; text-shadow: 0 0 15px #00ff00 !important; }
+.state-SLEEP { color: #0000ff !important; text-shadow: 0 0 15px #0000ff !important; }
 
 /* Top Right: Biological Metrics */
 #hud-tr {
     top: var(--space-l);
     right: var(--space-l);
-    width: 320px;
+    width: 350px;
     border-right: 4px solid var(--color-text-dim);
+    border-radius: 10px 0 0 10px;
 }
 
 .metric-block {
     margin-bottom: var(--space-m);
-    background-color: rgba(0,0,0,0.6);
+    background-color: rgba(0,0,0,0.8);
     padding: var(--space-s);
-    border: 1px solid #1a1a1a;
+    border: 1px solid rgba(255,0,255,0.3);
+    border-radius: 4px;
 }
 .metric-block:last-child { margin-bottom: 0; }
 
@@ -365,42 +376,44 @@ html, body {
     display: flex;
     justify-content: space-between;
     margin-bottom: var(--space-xs);
-    font-size: 11px;
-    letter-spacing: 1px;
+    font-size: 12px;
+    letter-spacing: 2px;
 }
-.metric-hdr span.title { color: var(--color-text-dim); }
-.metric-hdr span.pct { color: #888; font-family: var(--font-secondary); }
+.metric-hdr span.title { color: var(--color-text-main); text-shadow: 0 0 5px var(--color-text-main); }
+.metric-hdr span.pct { color: #fff; font-family: var(--font-secondary); text-shadow: 0 0 5px #fff; }
 
 .metric-track {
     width: 100%;
-    height: 10px;
-    background-color: #050505;
-    border: 1px solid #222;
+    height: 14px;
+    background-color: #110022;
+    border: 1px solid #440088;
     position: relative;
     overflow: hidden;
+    border-radius: 2px;
 }
 
 .metric-fill {
     height: 100%;
     background-color: #ffffff;
-    transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.5s ease;
+    transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.5s ease;
+    box-shadow: 0 0 10px #ffffff;
 }
 
-#fill-sanity { background-color: #cccccc; }
-#fill-nutrition { background-color: #a88844; }
-#fill-stamina { background-color: #4488aa; }
+#fill-sanity { background-color: #00ffff; box-shadow: 0 0 15px #00ffff; }
+#fill-nutrition { background-color: #ff00ff; box-shadow: 0 0 15px #ff00ff; }
+#fill-stamina { background-color: #ffff00; box-shadow: 0 0 15px #ffff00; }
 
-.status-warning { background-color: var(--color-alert-med) !important; animation: warnPulse 1s infinite alternate; }
-.status-critical { background-color: var(--color-alert-high) !important; animation: critFlicker 0.1s infinite; box-shadow: 0 0 10px var(--color-alert-high); }
+.status-warning { background-color: var(--color-alert-med) !important; animation: warnPulse 0.5s infinite alternate; box-shadow: 0 0 20px var(--color-alert-med) !important; }
+.status-critical { background-color: var(--color-alert-high) !important; animation: critFlicker 0.05s infinite; box-shadow: 0 0 30px var(--color-alert-high) !important; }
 
 /* Center: Crosshair */
 #crosshair-container {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     pointer-events: none;
     z-index: var(--z-hud-top);
     display: flex;
@@ -409,47 +422,52 @@ html, body {
 }
 
 .crosshair-dot {
-    width: 4px;
-    height: 4px;
-    background-color: rgba(255, 255, 255, 0.4);
+    width: 6px;
+    height: 6px;
+    background-color: rgba(0, 255, 255, 0.8);
     border-radius: 50%;
     transition: all 0.2s ease;
+    box-shadow: 0 0 10px #00ffff;
 }
 
 .crosshair-ring {
     position: absolute;
-    width: 16px;
-    height: 16px;
-    border: 1px solid rgba(255, 255, 255, 0);
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 0, 255, 0);
     border-radius: 50%;
     transition: all 0.3s ease;
 }
 
 #crosshair-container.active .crosshair-dot {
-    background-color: transparent;
+    background-color: #ff00ff;
+    box-shadow: 0 0 15px #ff00ff;
+    transform: scale(0.5);
 }
 #crosshair-container.active .crosshair-ring {
-    border-color: rgba(255, 255, 255, 0.8);
-    width: 24px;
-    height: 24px;
-    animation: rotateRing 4s linear infinite;
+    border-color: rgba(0, 255, 255, 1);
+    width: 32px;
+    height: 32px;
+    box-shadow: 0 0 15px #00ffff, inset 0 0 15px #00ffff;
+    animation: rotateRing 2s linear infinite;
 }
 
 /* Bottom Center: Interaction Prompt */
 #interaction-prompt {
-    position: absolute;
+    position: fixed;
     bottom: var(--space-max);
     left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background-color: var(--bg-panel-solid);
-    border: 1px solid #333;
+    transform: translateX(-50%) translateY(30px);
+    background-color: rgba(20,0,40,0.9);
+    border: 2px solid #00ffff;
     padding: var(--space-m) var(--space-xl);
     opacity: 0;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     align-items: center;
-    gap: var(--space-m);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+    gap: var(--space-l);
+    box-shadow: 0 0 30px rgba(0,255,255,0.4);
+    border-radius: 8px;
 }
 
 #interaction-prompt.visible {
@@ -458,13 +476,13 @@ html, body {
 }
 
 .prompt-key {
-    background-color: #222;
-    color: #fff;
-    padding: var(--space-xs) var(--space-s);
-    border-radius: 3px;
-    font-weight: bold;
-    border-bottom: 2px solid #000;
-    font-size: 18px;
+    background-color: #00ffff;
+    color: #000;
+    padding: var(--space-s) var(--space-m);
+    border-radius: 4px;
+    font-weight: 900;
+    font-size: 24px;
+    box-shadow: 0 0 15px #00ffff;
 }
 
 .prompt-text-group {
@@ -473,27 +491,29 @@ html, body {
 }
 
 .prompt-action {
-    color: #e0e0e0;
-    font-size: 16px;
-    letter-spacing: 2px;
+    color: #fff;
+    font-size: 20px;
+    letter-spacing: 3px;
     text-transform: uppercase;
     font-weight: bold;
+    text-shadow: 0 0 10px #ff00ff;
 }
 
 .prompt-desc {
-    color: var(--color-text-dim);
-    font-size: 12px;
-    margin-top: 2px;
+    color: #00ffff;
+    font-size: 14px;
+    margin-top: 4px;
+    text-shadow: 0 0 5px #00ffff;
 }
 
 /* Subtitles / Internal Monologue */
 #subtitle-box {
-    position: absolute;
+    position: fixed;
     bottom: var(--space-xl);
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
-    max-width: 800px;
+    max-width: 900px;
     text-align: center;
     z-index: var(--z-subtitles);
     pointer-events: none;
@@ -501,66 +521,78 @@ html, body {
 
 .subtitle-text {
     display: inline-block;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: rgba(0, 0, 0, 0.85);
     color: #ffffff;
-    font-size: 20px;
-    padding: var(--space-s) var(--space-m);
-    border-left: 3px solid #ffffff;
+    font-size: 24px;
+    padding: var(--space-m) var(--space-l);
+    border-left: 4px solid #fff;
+    border-right: 4px solid #fff;
     opacity: 0;
-    transition: opacity 0.3s ease;
-    text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
-    letter-spacing: 1px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    text-shadow: 0 0 10px #fff;
+    letter-spacing: 2px;
+    transform: translateY(20px);
+    border-radius: 4px;
+    box-shadow: 0 0 30px rgba(255,0,255,0.5);
 }
-.subtitle-text.show { opacity: 1; }
+.subtitle-text.show { 
+    opacity: 1; 
+    transform: translateY(0);
+}
 
 .subtitle-thought {
-    border-left: 3px solid var(--color-info);
-    color: #aaddff;
+    border-color: #00ffff;
+    color: #ccffff;
     font-style: italic;
+    text-shadow: 0 0 15px #00ffff;
+    box-shadow: 0 0 30px rgba(0,255,255,0.4);
 }
 
 .subtitle-system {
-    border-left: 3px solid var(--color-alert-high);
-    color: #ffaaaa;
+    border-color: #ff003c;
+    color: #ffcccc;
     font-family: var(--font-secondary);
+    text-shadow: 0 0 15px #ff003c;
+    box-shadow: 0 0 30px rgba(255,0,60,0.5);
 }
 
 /* ==========================================================================
    MODULE: EXTREME BODY GLITCH & INSANITY MODIFIERS
    ========================================================================== */
-body.insanity-tier-1 { animation: minorGlitch 5s infinite; filter: saturate(0.8) contrast(1.1); }
-body.insanity-tier-2 { animation: majorGlitch 2s infinite; filter: saturate(0.5) contrast(1.3) sepia(0.2); }
-body.insanity-tier-3 { animation: severeGlitch 0.2s infinite; filter: saturate(0.2) contrast(1.5) sepia(0.5) hue-rotate(-20deg); }
+body.insanity-tier-1 { animation: minorGlitch 3s infinite; filter: saturate(1.5) contrast(1.2) hue-rotate(15deg); }
+body.insanity-tier-2 { animation: majorGlitch 1s infinite; filter: saturate(2.0) contrast(1.5) hue-rotate(-30deg); }
+body.insanity-tier-3 { animation: severeGlitch 0.1s infinite; filter: saturate(3.0) contrast(2.0) invert(0.1) hue-rotate(90deg); }
 
 /* ==========================================================================
    MODULE: KEYFRAME ANIMATIONS
    ========================================================================== */
-@keyframes crtFlicker { 0% { opacity: 0.01; } 50% { opacity: 0.04; } 100% { opacity: 0.01; } }
+@keyframes crtFlicker { 0% { opacity: 0.02; } 50% { opacity: 0.05; } 100% { opacity: 0.02; } }
 @keyframes scanlineMenu { 0% { top: -10%; } 100% { top: 110%; } }
-@keyframes titlePulse { 0% { opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.2); } 100% { opacity: 1; text-shadow: 0 0 25px rgba(255,255,255,0.7), 0 0 50px rgba(255,255,255,0.3); } }
-@keyframes btnBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-@keyframes warnPulse { 0% { background-color: #664400; } 100% { background-color: #ffaa00; box-shadow: 0 0 10px #ffaa00; } }
-@keyframes critFlicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-@keyframes rotateRing { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+@keyframes titlePulse { 0% { opacity: 0.9; transform: scale(1); } 100% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 80px #ff00ff, 0 0 120px #ff00ff; } }
+@keyframes btnBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes warnPulse { 0% { background-color: #886600; box-shadow: 0 0 10px #ffaa00; } 100% { background-color: #ffea00; box-shadow: 0 0 30px #ffea00; } }
+@keyframes critFlicker { 0%, 100% { opacity: 1; transform: translateX(-2px); } 50% { opacity: 0.2; transform: translateX(2px); } }
+@keyframes rotateRing { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
 
 /* Glitch Kernels */
 @keyframes minorGlitch {
-    0%, 98% { transform: translate(0,0); }
-    99% { transform: translate(2px, -1px); filter: hue-rotate(90deg); }
-    100% { transform: translate(-1px, 1px); filter: none; }
+    0%, 96% { transform: translate(0,0); }
+    97% { transform: translate(3px, -2px); filter: hue-rotate(45deg); }
+    98% { transform: translate(-3px, 2px); filter: hue-rotate(-45deg); }
+    100% { transform: translate(0, 0); filter: none; }
 }
 @keyframes majorGlitch {
     0%, 90% { transform: translate(0,0); }
-    91% { transform: translate(4px, 2px) skewX(2deg); filter: invert(0.1); }
-    93% { transform: translate(-4px, -2px) skewX(-2deg); filter: hue-rotate(-90deg); }
+    91% { transform: translate(8px, 4px) skewX(5deg); filter: invert(0.2); }
+    93% { transform: translate(-8px, -4px) skewX(-5deg); filter: hue-rotate(-90deg); }
     95% { transform: translate(0,0); filter: none; }
 }
 @keyframes severeGlitch {
-    0% { transform: translate(5px, 3px) skewX(5deg); filter: hue-rotate(90deg) invert(0.2); }
-    20% { transform: translate(-5px, -3px) skewX(-5deg); filter: hue-rotate(-90deg); }
-    40% { transform: translate(3px, 5px) skewX(2deg); filter: hue-rotate(180deg); }
-    60% { transform: translate(-3px, -5px) skewX(-2deg); filter: invert(0.4); }
-    80% { transform: translate(5px, -5px) skewX(4deg); filter: none; }
+    0% { transform: translate(10px, 5px) skewX(10deg); filter: hue-rotate(180deg) invert(0.3); }
+    20% { transform: translate(-10px, -5px) skewX(-10deg); filter: hue-rotate(-180deg); }
+    40% { transform: translate(5px, 10px) skewX(5deg); filter: hue-rotate(90deg); }
+    60% { transform: translate(-5px, -10px) skewX(-5deg); filter: invert(0.6); }
+    80% { transform: translate(10px, -10px) skewX(8deg); filter: none; }
     100% { transform: translate(0, 0) skewX(0); filter: none; }
 }
 
@@ -568,15 +600,19 @@ body.insanity-tier-3 { animation: severeGlitch 0.2s infinite; filter: saturate(0
    MODULE: DEBUG / PERFORMANCE
    ========================================================================== */
 #debug-panel {
-    position: absolute;
-    bottom: 5px;
-    left: 5px;
-    font-size: 10px;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 12px;
     color: #00ff00;
     z-index: var(--z-debug);
     font-family: var(--font-secondary);
     pointer-events: none;
-    opacity: 0.5;
+    background: rgba(0,0,0,0.8);
+    padding: 5px 10px;
+    border: 1px solid #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+    text-shadow: 0 0 5px #00ff00;
 }
 </style>
 </head>
@@ -615,7 +651,7 @@ body.insanity-tier-3 { animation: severeGlitch 0.2s infinite; filter: saturate(0
             <div class="metric-hdr"><span class="title">CALORIC RESERVES</span><span class="pct" id="pct-nutrition">100%</span></div>
             <div class="metric-track"><div class="metric-fill" id="fill-nutrition" style="width: 100%;"></div></div>
         </div>
-        <div class="metric-block" style="opacity: 0.5;">
+        <div class="metric-block" style="opacity: 0.7;">
             <div class="metric-hdr"><span class="title">PHYSICAL STAMINA</span><span class="pct" id="pct-stamina">100%</span></div>
             <div class="metric-track"><div class="metric-fill" id="fill-stamina" style="width: 100%;"></div></div>
         </div>
@@ -641,41 +677,41 @@ body.insanity-tier-3 { animation: severeGlitch 0.2s infinite; filter: saturate(0
 
 <div id="menu-layer">
     <div class="terminal-box">
-        <div class="game-title">J A I L</div>
-        <div class="game-subtitle">EXISTENTIAL REALISM // BUILD 9.9.4</div>
+        <div class="game-title">N E O N &nbsp; J A I L</div>
+        <div class="game-subtitle">VIBRANT EXISTENCE // BUILD 10.0.0</div>
         
         <div class="sys-info-grid">
-            <div class="sys-info-item"><span class="lbl">HOST OS:</span><span class="val">PENAL_SYS_V4</span></div>
-            <div class="sys-info-item"><span class="lbl">BLOCK:</span><span class="val">ISOLATION_UNIT_7</span></div>
-            <div class="sys-info-item"><span class="lbl">SUBJECT ID:</span><span class="val">#8472-OMEGA</span></div>
-            <div class="sys-info-item"><span class="lbl">TERM:</span><span class="val">INDEFINITE_HOLD</span></div>
-            <div class="sys-info-item"><span class="lbl">SENSORY DEP:</span><span class="val">ACTIVE</span></div>
+            <div class="sys-info-item"><span class="lbl">HOST OS:</span><span class="val">SYNTH_SYS_VX</span></div>
+            <div class="sys-info-item"><span class="lbl">BLOCK:</span><span class="val">CHROMA_UNIT_9</span></div>
+            <div class="sys-info-item"><span class="lbl">SUBJECT ID:</span><span class="val">#777-NEON</span></div>
+            <div class="sys-info-item"><span class="lbl">TERM:</span><span class="val">ETERNAL_LOOP</span></div>
+            <div class="sys-info-item"><span class="lbl">SENSORY OVERLOAD:</span><span class="val">ACTIVE</span></div>
             <div class="sys-info-item"><span class="lbl">GRAVITY:</span><span class="val">9.81 m/s²</span></div>
         </div>
 
         <div class="controls-wrapper">
             <div class="control-row">
                 <div class="ctrl-key">W A S D</div>
-                <div class="ctrl-desc">AMBULATE<span>Physical mass simulation active. Movement drains stamina.</span></div>
+                <div class="ctrl-desc">AMBULATE<span>Navigate the hyper-grid. Movement drains neon stamina.</span></div>
             </div>
             <div class="control-row">
                 <div class="ctrl-key">MOUSE</div>
-                <div class="ctrl-desc">OBSERVE<span>Head tracking active. Prolonged staring may induce hallucinations.</span></div>
+                <div class="ctrl-desc">OBSERVE<span>Head tracking active. Gaze into the void.</span></div>
             </div>
             <div class="control-row">
                 <div class="ctrl-key">E</div>
-                <div class="ctrl-desc">INTERACT / CONSUME<span>Engage with environment. Accept sustenance when delivered.</span></div>
+                <div class="ctrl-desc">INTERACT / CONSUME<span>Engage with anomalies. Ingest synthetic sustenance.</span></div>
             </div>
         </div>
 
         <div class="action-container">
-            <div id="loading-seq">COMPILING NEURAL PATHWAYS... PLEASE WAIT</div>
-            <button id="btn-init">COMMENCE INCARCERATION</button>
+            <div id="loading-seq">COMPILING SYNTHETIC PATHWAYS... PLEASE WAIT</div>
+            <button id="btn-init">INITIALIZE SEQUENCE</button>
         </div>
     </div>
 </div>
 
-<div id="debug-panel">FPS: 00 | POS: 0.00, 0.00, 0.00 | DIR: 00</div>
+<div id="debug-panel">FPS: 00 | POS: 0.00, 0.00, 0.00 | DIR: 0.00, 0.00</div>
 
 <script type="importmap">
 {
@@ -702,48 +738,48 @@ const CONFIG = {
         DEBUG_MODE: true
     },
     TIME: {
-        REAL_SEC_PER_GAME_HOUR: 12.0, // 12 seconds real time = 1 hour game time. 1 Day = 288 seconds (4.8 mins)
+        REAL_SEC_PER_GAME_HOUR: 10.0, // 10 seconds real time = 1 hour game time. Faster pace for vibrant version.
         WAKE_HOUR: 6.0,
         MEAL_HOUR_1: 12.0,
         MEAL_HOUR_2: 18.0,
         SLEEP_HOUR: 22.0,
-        REC_INTERVAL_DAYS: 5,
-        REC_DURATION_HOURS: 1.5
+        REC_INTERVAL_DAYS: 3,
+        REC_DURATION_HOURS: 2.0
     },
     PHYSICS: {
         GRAVITY: 9.81,
-        MASS: 85.0,
+        MASS: 80.0,
         PLAYER_HEIGHT: 1.75,
         PLAYER_RADIUS: 0.35,
-        WALK_SPEED: 1.6,
-        RUN_SPEED: 2.8,
-        DECELERATION: 12.0,
-        HEAD_BOB_FREQ: 4.5,
-        HEAD_BOB_AMP: 0.035,
-        BREATH_FREQ: 1.5,
-        BREATH_AMP: 0.005
+        WALK_SPEED: 2.2, // Slightly faster for responsive feel
+        RUN_SPEED: 4.0,
+        DECELERATION: 15.0,
+        HEAD_BOB_FREQ: 5.0,
+        HEAD_BOB_AMP: 0.04,
+        BREATH_FREQ: 2.0,
+        BREATH_AMP: 0.01
     },
     STATS: {
         MAX_SANITY: 100.0,
         MAX_NUTRI: 100.0,
         MAX_STAMINA: 100.0,
-        SANITY_DECAY_BASE: 0.8, // Per game hour
-        NUTRI_DECAY_BASE: 1.5,
-        STAMINA_REGEN: 20.0,    // Per real second
-        STAMINA_DRAIN: 15.0,
-        STARVATION_MULTIPLIER: 3.5,
-        SLEEP_RESTORE: 10.0
+        SANITY_DECAY_BASE: 1.2, 
+        NUTRI_DECAY_BASE: 2.0,
+        STAMINA_REGEN: 25.0,    
+        STAMINA_DRAIN: 20.0,
+        STARVATION_MULTIPLIER: 4.0,
+        SLEEP_RESTORE: 15.0
     },
     WORLD: {
-        CELL_WIDTH: 3.2,
-        CELL_LENGTH: 4.5,
-        CELL_HEIGHT: 2.7,
+        CELL_WIDTH: 3.6,
+        CELL_LENGTH: 5.0,
+        CELL_HEIGHT: 3.0,
         WALL_THICKNESS: 0.5,
-        HALL_WIDTH: 2.8,
-        HALL_LENGTH: 30.0,
-        HALL_HEIGHT: 3.0,
-        BAR_SPACING: 0.25,
-        BAR_RADIUS: 0.035
+        HALL_WIDTH: 3.2,
+        HALL_LENGTH: 40.0,
+        HALL_HEIGHT: 3.5,
+        BAR_SPACING: 0.3,
+        BAR_RADIUS: 0.04
     }
 };
 
@@ -751,54 +787,48 @@ const CONFIG = {
    MODULE 2: EXTENSIVE DATA ARRAYS (CONTENT INJECTION)
    ========================================================================== */
 const FOOD_DATABASE = [
-    { d:1, t:'BREAD', c:0xddbb99, h:20, s:5, m:"Standard ration. Stale bread and water.", n:"Ration #01" },
-    { d:2, t:'SLUDGE', c:0x888888, h:25, s:2, m:"Grey, lukewarm nutrient sludge. Tasteless.", n:"Nutrient Paste" },
-    { d:3, t:'MEAT', c:0xaa4444, h:30, s:-5, m:"A gelatinous block of protein. It smells of rust.", n:"Protein Block" },
-    { d:4, t:'CHEESE', c:0xddcc44, h:15, s:10, m:"Hard cheese. A rare comfort, though highly salted.", n:"Hard Cheese" },
-    { d:5, t:'MUSH', c:0x665544, h:20, s:0, m:"Brown oatmeal-like substance. Gritty.", n:"Oat Mush" },
-    { d:6, t:'APPLE', c:0xcc3333, h:10, s:15, m:"A slightly bruised apple. The sweetness is overwhelming.", n:"Fresh Fruit" },
-    { d:7, t:'SLUDGE', c:0x777777, h:25, s:0, m:"More grey sludge. It's colder today.", n:"Nutrient Paste" },
-    { d:8, t:'BONE', c:0xddddcc, h:5, s:-15, m:"A boiled bone with scraps of gristle. Insulting.", n:"Scraps" },
-    { d:9, t:'PILLS', c:0xeeeeee, h:0, s:40, m:"Two white pills instead of food. You feel numb.", n:"Compliance Meds" },
-    { d:10, t:'MEAT', c:0x552222, h:25, s:-10, m:"The meat block is darker today. Hard to chew.", n:"Old Protein" },
-    { d:11, t:'MOLD', c:0x446644, h:10, s:-20, m:"The bread is covered in green fuzz. You have to eat.", n:"Spoiled Ration" },
-    { d:12, t:'SLUDGE', c:0x555555, h:20, s:-5, m:"The sludge has chunks in it today. Best not to look.", n:"Chunky Paste" },
-    { d:13, t:'INSECT', c:0x222222, h:15, s:-25, m:"A bowl of roasted insects. Crunchy, bitter.", n:"Alternative Protein" },
-    { d:14, t:'WATER', c:0xaaddff, h:5, s:0, m:"Just dirty water today. The stomach cramps begin.", n:"Dirty Water" },
-    { d:15, t:'FEAST', c:0xffaa00, h:50, s:50, m:"A hot plate of chicken and potatoes. Is it a mistake?", n:"Mistaken Identity" },
-    { d:16, t:'SLUDGE', c:0x444444, h:20, s:-10, m:"Back to sludge. The memory of yesterday makes it worse.", n:"Nutrient Paste" },
-    { d:17, t:'EYE', c:0xffffff, h:10, s:-40, m:"There is an eyeball in the soup. It stares back.", n:"Visual Soup" },
-    { d:18, t:'PILLS', c:0xffaaaa, h:0, s:30, m:"Red pills this time. The walls seem to breathe less.", n:"Sedatives" },
-    { d:19, t:'BREAD', c:0x887766, h:15, s:-5, m:"Bread so hard it cuts the roof of your mouth.", n:"Hardtack" },
-    { d:20, t:'MEAT', c:0x220000, h:10, s:-30, m:"Blackened, foul-smelling flesh. You retch while eating.", n:"Putrid Meat" }
+    { d:1, t:'CUBE', c:0x00ffff, h:20, s:10, m:"A glowing cyan cube. Tastes like ozone.", n:"Synthetic Ration A" },
+    { d:2, t:'SPHERE', c:0xff00ff, h:25, s:15, m:"Pulsing magenta sphere. Warm and sweet.", n:"Energy Orb" },
+    { d:3, t:'PYRAMID', c:0xffff00, h:30, s:-5, m:"Sharp yellow pyramid. Burns going down.", n:"Acidic Construct" },
+    { d:4, t:'CYLINDER', c:0x00ff00, h:15, s:20, m:"Lime green cylinder. Extremely refreshing.", n:"Bio-Tube" },
+    { d:5, t:'SLUDGE', c:0xaa00ff, h:20, s:0, m:"Violet glowing paste. Viscous.", n:"Nebula Paste" },
+    { d:6, t:'CUBE', c:0xffffff, h:10, s:25, m:"Pure white cube. Tastes like nothing, feels like everything.", n:"Null Block" },
+    { d:7, t:'SPHERE', c:0xff0000, h:25, s:-10, m:"Deep red orb. Smells of copper and iron.", n:"Iron Core" },
+    { d:8, t:'TORUS', c:0x0088ff, h:35, s:5, m:"Blue glowing ring. Chewy texture.", n:"Hydro-Ring" },
+    { d:9, t:'PILLS', c:0x00ffff, h:5, s:50, m:"Two cyan capsules. The grid lines stop moving.", n:"Stabilizers" },
+    { d:10, t:'PYRAMID', c:0xff8800, h:25, s:-15, m:"Orange spike. Tastes like battery acid.", n:"Corrupted Data" }
 ];
-for(let i=21; i<=50; i++) {
+// Procedural fill up to 100 days
+const shapes = ['CUBE', 'SPHERE', 'PYRAMID', 'CYLINDER', 'TORUS', 'SLUDGE'];
+const colors = [0x00ffff, 0xff00ff, 0xffff00, 0x00ff00, 0xff0000, 0x0000ff, 0xff8800, 0x00ff88];
+for(let i=11; i<=100; i++) {
+    const shape = shapes[Math.floor(Math.random()*shapes.length)];
+    const color = colors[Math.floor(Math.random()*colors.length)];
     FOOD_DATABASE.push({
         d: i,
-        t: Math.random() > 0.5 ? 'SLUDGE' : 'MOLD',
-        c: 0x333333 + Math.floor(Math.random()*0x222222),
-        h: Math.floor(Math.random()*15) + 5,
-        s: -Math.floor(Math.random()*20) - 10,
-        m: "Unrecognizable mass of sustenance. You ingest it mechanically.",
-        n: `Bio-Mass #${i}`
+        t: shape,
+        c: color,
+        h: Math.floor(Math.random()*25) + 5,
+        s: Math.floor(Math.random()*40) - 20,
+        m: `A mysterious ${shape.toLowerCase()} emitting strange frequencies.`,
+        n: `Construct #${i}`
     });
 }
 
 const THOUGHT_DATABASE = [
-    "How long has it been?",
-    "The dripping water sounds like a clock.",
-    "Did I hear a scream, or was that in my head?",
-    "I can't remember my mother's face.",
-    "The walls are closing in by a millimeter every day.",
-    "If I stop breathing, will they notice?",
-    "I should count the bars again. Maybe I missed one.",
-    "One, two, three, four... twenty-two. Still twenty-two.",
-    "The guard's footsteps are off rhythm today.",
-    "I am a ghost haunting a concrete box.",
-    "My hands don't look like my own anymore.",
-    "What if I've been dead this whole time?",
-    "They are watching through the cracks.",
-    "I must maintain my routine. Routine is survival."
+    "The neon lights are whispering to me.",
+    "Are the walls made of light or concrete?",
+    "I saw a glitch in the door frame.",
+    "My hands leave glowing trails in the air.",
+    "Is this reality, or a simulation of a simulation?",
+    "The colors are too loud today.",
+    "I must count the grid lines. 1, 2, 3...",
+    "If I stare at the magenta long enough, it turns green.",
+    "The synthetic guard has no face, only a visor.",
+    "I crave the geometry of the outside world.",
+    "There is a pattern in the static.",
+    "My heartbeat syncs with the bass hum of the station.",
+    "I am just a node in this infinite matrix."
 ];
 
 /* ==========================================================================
@@ -835,7 +865,7 @@ class SimplexNoise {
 const SN = new SimplexNoise();
 
 /* ==========================================================================
-   MODULE 4: PROCEDURAL TEXTURE SYNTHESIS (CANVAS DRAWING)
+   MODULE 4: PROCEDURAL TEXTURE SYNTHESIS (VIBRANT CYBERPUNK)
    ========================================================================== */
 class TextureEngine {
     static getCtx(w, h) {
@@ -843,85 +873,98 @@ class TextureEngine {
         return { cvs, ctx: cvs.getContext('2d', { willReadFrequently: true }) };
     }
 
-    static generateConcrete(w=512, h=512, baseCol=[80,80,80], scale=0.02, detail=3) {
+    static generateNeonGrid(w=1024, h=1024, bg=[10,0,20], line1=[0,255,255], line2=[255,0,255]) {
         const { cvs, ctx } = this.getCtx(w, h);
-        const imgData = ctx.createImageData(w, h); const d = imgData.data;
-        for(let y=0; y<h; y++) {
-            for(let x=0; x<w; x++) {
-                let n = 0, amp = 1, f = scale;
-                for(let i=0; i<detail; i++) {
-                    n += SN.noise2D(x*f, y*f) * amp;
-                    amp *= 0.5; f *= 2.0;
-                }
-                const v = Math.max(0, Math.min(255, baseCol[0] + n * 40));
-                const idx = (y*w+x)*4;
-                d[idx]=v; d[idx+1]=v; d[idx+2]=v; d[idx+3]=255;
-            }
-        }
-        ctx.putImageData(imgData, 0, 0);
         
-        ctx.lineWidth = 1; ctx.lineJoin = 'round';
-        for(let c=0; c<15; c++) {
+        // Base dark background
+        ctx.fillStyle = `rgb(${bg[0]},${bg[1]},${bg[2]})`;
+        ctx.fillRect(0,0,w,h);
+        
+        // Add some noise to bg
+        const imgData = ctx.getImageData(0,0,w,h);
+        for(let i=0; i<imgData.data.length; i+=4) {
+            const n = SN.noise2D((i/4%w)*0.01, Math.floor(i/4/w)*0.01) * 15;
+            imgData.data[i] = Math.max(0, imgData.data[i] + n);
+            imgData.data[i+1] = Math.max(0, imgData.data[i+1] + n);
+            imgData.data[i+2] = Math.max(0, imgData.data[i+2] + n);
+        }
+        ctx.putImageData(imgData, 0, 0);
+
+        // Draw primary grid (Cyan)
+        ctx.strokeStyle = `rgba(${line1[0]},${line1[1]},${line1[2]}, 0.8)`;
+        ctx.lineWidth = 4;
+        ctx.shadowColor = `rgb(${line1[0]},${line1[1]},${line1[2]})`;
+        ctx.shadowBlur = 15;
+        
+        const step = 128;
+        for(let x=0; x<=w; x+=step) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+        for(let y=0; y<=h; y+=step) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+
+        // Draw secondary fine grid (Magenta)
+        ctx.strokeStyle = `rgba(${line2[0]},${line2[1]},${line2[2]}, 0.4)`;
+        ctx.lineWidth = 1;
+        ctx.shadowColor = `rgb(${line2[0]},${line2[1]},${line2[2]})`;
+        ctx.shadowBlur = 5;
+        
+        const subStep = 32;
+        for(let x=0; x<=w; x+=subStep) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+        for(let y=0; y<=h; y+=subStep) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+
+        const tex = new THREE.CanvasTexture(cvs); 
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping; 
+        tex.anisotropy = 4;
+        return tex;
+    }
+
+    static generatePlasma(w=512, h=512) {
+        const { cvs, ctx } = this.getCtx(w, h);
+        const imgData = ctx.createImageData(w, h); const d = imgData.data;
+        for(let y=0; y<h; y++) {
+            for(let x=0; x<w; x++) {
+                const n1 = SN.noise2D(x*0.02, y*0.02);
+                const n2 = SN.noise2D(x*0.05 + 100, y*0.05 + 100);
+                
+                const r = Math.floor((Math.sin(n1 * Math.PI) + 1) * 127);
+                const g = Math.floor((Math.cos(n2 * Math.PI) + 1) * 50);
+                const b = Math.floor((Math.sin((n1+n2) * Math.PI) + 1) * 127 + 100);
+                
+                const idx = (y*w+x)*4;
+                d[idx]=r; d[idx+1]=g; d[idx+2]=b; d[idx+3]=255;
+            }
+        }
+        ctx.putImageData(imgData, 0, 0);
+        const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; return tex;
+    }
+
+    static generateTechLines(w=256, h=256) {
+        const { cvs, ctx } = this.getCtx(w, h);
+        ctx.fillStyle = '#050510'; ctx.fillRect(0,0,w,h);
+        
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 2;
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 10;
+        
+        for(let i=0; i<20; i++) {
             ctx.beginPath();
-            let cx = Math.random()*w, cy = Math.random()*h; ctx.moveTo(cx, cy);
-            for(let s=0; s<15; s++) {
-                cx += (Math.random()-0.5)*50; cy += (Math.random()-0.5)*50;
-                ctx.lineTo(cx, cy);
-            }
-            ctx.strokeStyle = `rgba(15,15,15,${Math.random()*0.8})`; ctx.stroke();
+            ctx.moveTo(Math.random()*w, Math.random()*h);
+            ctx.lineTo(Math.random()*w, Math.random()*h);
+            ctx.stroke();
         }
         const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; return tex;
-    }
-
-    static generateRust(w=256, h=256) {
-        const { cvs, ctx } = this.getCtx(w, h);
-        const imgData = ctx.createImageData(w, h); const d = imgData.data;
-        for(let y=0; y<h; y++) {
-            for(let x=0; x<w; x++) {
-                const n = SN.noise2D(x*0.05, y*0.05);
-                const isRust = n > 0.1;
-                const idx = (y*w+x)*4;
-                if(isRust) {
-                    const rVar = Math.random()*30;
-                    d[idx]=80+rVar; d[idx+1]=30+rVar*0.5; d[idx+2]=15; d[idx+3]=255;
-                } else {
-                    const mVar = Math.random()*20;
-                    d[idx]=40+mVar; d[idx+1]=40+mVar; d[idx+2]=40+mVar; d[idx+3]=255;
-                }
-            }
-        }
-        ctx.putImageData(imgData, 0, 0);
-        const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; return tex;
-    }
-
-    static generateFabric(w=256, h=256, r=10, g=15, b=25) {
-        const { cvs, ctx } = this.getCtx(w, h);
-        const imgData = ctx.createImageData(w, h); const d = imgData.data;
-        for(let y=0; y<h; y++) {
-            for(let x=0; x<w; x++) {
-                const idx = (y*w+x)*4;
-                const weave = (x%2===0 && y%2===0) || (x%2!==0 && y%2!==0) ? 15 : -10;
-                const noise = (Math.random()-0.5)*10;
-                d[idx]=Math.max(0,r+weave+noise); d[idx+1]=Math.max(0,g+weave+noise); d[idx+2]=Math.max(0,b+weave+noise); d[idx+3]=255;
-            }
-        }
-        ctx.putImageData(imgData, 0, 0);
-        const tex = new THREE.CanvasTexture(cvs); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; return tex;
-    }
-
-    static generatePorcelain(w=128, h=128) {
-        const { cvs, ctx } = this.getCtx(w, h);
-        ctx.fillStyle = '#e8e8e0'; ctx.fillRect(0,0,w,h);
-        for(let i=0; i<10; i++) {
-            ctx.fillStyle = `rgba(100,90,50,${Math.random()*0.1})`;
-            ctx.beginPath(); ctx.arc(Math.random()*w, Math.random()*h, Math.random()*30+5, 0, Math.PI*2); ctx.fill();
-        }
-        return new THREE.CanvasTexture(cvs);
     }
 }
 
 /* ==========================================================================
-   MODULE 5: ADVANCED AUDIO SYNTHESIS
+   MODULE 5: ADVANCED AUDIO SYNTHESIS (SYNTHWAVE / CYBERPUNK VIBES)
    ========================================================================== */
 class AudioEngine {
     constructor() {
@@ -935,7 +978,7 @@ class AudioEngine {
         this.ctx = new AudioContext();
         
         this.master = this.ctx.createGain();
-        this.master.gain.value = 0.8;
+        this.master.gain.value = 0.7; // Prevent clipping with aggressive synths
         this.master.connect(this.ctx.destination);
         
         this.listener = this.ctx.listener;
@@ -958,17 +1001,19 @@ class AudioEngine {
     }
 
     buildAmbientDrone() {
-        const osc1 = this.ctx.createOscillator(); osc1.type = 'sine'; osc1.frequency.value = 40;
-        const osc2 = this.ctx.createOscillator(); osc2.type = 'triangle'; osc2.frequency.value = 40.5;
-        const osc3 = this.ctx.createOscillator(); osc3.type = 'sawtooth'; osc3.frequency.value = 120;
+        // Sci-fi Bass Hum
+        const osc1 = this.ctx.createOscillator(); osc1.type = 'sawtooth'; osc1.frequency.value = 55; // Low A
+        const osc2 = this.ctx.createOscillator(); osc2.type = 'square'; osc2.frequency.value = 55.5; // Slight detune
+        const osc3 = this.ctx.createOscillator(); osc3.type = 'sine'; osc3.frequency.value = 27.5; // Sub
         
-        const lfo = this.ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.05;
-        const lfoGain = this.ctx.createGain(); lfoGain.gain.value = 5;
+        const lfo = this.ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.1; 
+        const lfoGain = this.ctx.createGain(); lfoGain.gain.value = 10;
         lfo.connect(lfoGain); lfoGain.connect(osc2.frequency);
 
-        const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 150;
+        const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 200;
+        filter.Q.value = 5; // Resonant peak
         
-        const masterDroneGain = this.ctx.createGain(); masterDroneGain.gain.value = 0.08;
+        const masterDroneGain = this.ctx.createGain(); masterDroneGain.gain.value = 0.05;
 
         osc1.connect(filter); osc2.connect(filter); osc3.connect(filter);
         filter.connect(masterDroneGain); masterDroneGain.connect(this.master);
@@ -979,10 +1024,28 @@ class AudioEngine {
     }
 
     buildHeartbeat() {
-        this.nodes.hbOsc = this.ctx.createOscillator(); this.nodes.hbOsc.type = 'sine'; this.nodes.hbOsc.frequency.value = 45;
+        this.nodes.hbOsc = this.ctx.createOscillator(); this.nodes.hbOsc.type = 'sine'; this.nodes.hbOsc.frequency.value = 50;
         this.nodes.hbGain = this.ctx.createGain(); this.nodes.hbGain.gain.value = 0;
-        this.nodes.hbOsc.connect(this.nodes.hbGain); this.nodes.hbGain.connect(this.master);
+        
+        // Add distortion to heartbeat
+        const waveShaper = this.ctx.createWaveShaper();
+        waveShaper.curve = this.makeDistortionCurve(50);
+        waveShaper.oversample = '4x';
+        
+        this.nodes.hbOsc.connect(this.nodes.hbGain); 
+        this.nodes.hbGain.connect(waveShaper);
+        waveShaper.connect(this.master);
+        
         this.nodes.hbOsc.start();
+    }
+
+    makeDistortionCurve(amount) {
+        const k = typeof amount === 'number' ? amount : 50, n_samples = 44100, curve = new Float32Array(n_samples), deg = Math.PI / 180;
+        for (let i = 0; i < n_samples; ++i ) {
+            const x = i * 2 / n_samples - 1;
+            curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
+        }
+        return curve;
     }
 
     triggerHeartbeat() {
@@ -990,18 +1053,18 @@ class AudioEngine {
         const t = this.ctx.currentTime;
         this.nodes.hbGain.gain.cancelScheduledValues(t);
         this.nodes.hbGain.gain.setValueAtTime(0, t);
-        this.nodes.hbGain.gain.linearRampToValueAtTime(0.5, t + 0.05);
+        this.nodes.hbGain.gain.linearRampToValueAtTime(0.6, t + 0.05);
         this.nodes.hbGain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
         
         this.nodes.hbGain.gain.setValueAtTime(0, t + 0.25);
-        this.nodes.hbGain.gain.linearRampToValueAtTime(0.4, t + 0.3);
+        this.nodes.hbGain.gain.linearRampToValueAtTime(0.5, t + 0.3);
         this.nodes.hbGain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
     }
 
     updateSanityModulation(sanityRatio) {
         if(!this.ready) return;
-        const targetVol = 0.08 + (1.0 - sanityRatio) * 0.15;
-        const targetFreq = 150 + (1.0 - sanityRatio) * 400;
+        const targetVol = 0.05 + (1.0 - sanityRatio) * 0.2;
+        const targetFreq = 200 + (1.0 - sanityRatio) * 800; // Filter opens up as sanity drops
         this.nodes.droneGain.gain.setTargetAtTime(targetVol, this.ctx.currentTime, 1.0);
         this.nodes.droneFilter.frequency.setTargetAtTime(targetFreq, this.ctx.currentTime, 1.0);
     }
@@ -1017,79 +1080,146 @@ class AudioEngine {
     playFootstep(type, vol=0.2, pannerNode=null) {
         if(!this.ready) return;
         const t = this.ctx.currentTime;
-        const src = this.ctx.createBufferSource();
-        src.buffer = this.createNoiseBuffer(0.15);
         
-        const filter = this.ctx.createBiquadFilter();
-        if(type === 'boot') { filter.type = 'lowpass'; filter.frequency.value = 250; }
-        else { filter.type = 'bandpass'; filter.frequency.value = 400; filter.Q.value = 0.8; }
+        // Synth footstep
+        const osc = this.ctx.createOscillator();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.1);
         
+        const noiseSrc = this.ctx.createBufferSource();
+        noiseSrc.buffer = this.createNoiseBuffer(0.1);
+        const noiseFilter = this.ctx.createBiquadFilter();
+        noiseFilter.type = 'highpass'; noiseFilter.frequency.value = 1000;
+
         const gain = this.ctx.createGain();
         gain.gain.setValueAtTime(vol, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
 
-        src.connect(filter); filter.connect(gain);
+        osc.connect(gain);
+        noiseSrc.connect(noiseFilter); noiseFilter.connect(gain);
         
         if(pannerNode) {
             gain.connect(pannerNode); pannerNode.connect(this.master);
         } else {
             gain.connect(this.master);
         }
-        src.start(t);
+        
+        osc.start(t); osc.stop(t+0.1);
+        noiseSrc.start(t);
     }
 
     playMetalDoorSlam() {
         if(!this.ready) return;
         const t = this.ctx.currentTime;
         
-        const osc1 = this.ctx.createOscillator(); osc1.type = 'square';
-        osc1.frequency.setValueAtTime(120, t); osc1.frequency.exponentialRampToValueAtTime(10, t+0.5);
+        // Heavy sci-fi boom
+        const osc1 = this.ctx.createOscillator(); osc1.type = 'sawtooth';
+        osc1.frequency.setValueAtTime(100, t); osc1.frequency.exponentialRampToValueAtTime(10, t+0.8);
         
-        const src = this.ctx.createBufferSource(); src.buffer = this.createNoiseBuffer(0.6);
-        const filter = this.ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1200; filter.Q.value = 5.0;
+        const src = this.ctx.createBufferSource(); src.buffer = this.createNoiseBuffer(0.8);
+        const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 800; filter.Q.value = 10.0;
 
         const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(1.0, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.6);
+        gain.gain.setValueAtTime(1.0, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.8);
 
         osc1.connect(gain); src.connect(filter); filter.connect(gain); gain.connect(this.master);
-        osc1.start(t); osc1.stop(t+0.6); src.start(t);
+        osc1.start(t); osc1.stop(t+0.8); src.start(t);
     }
 
     playDoorGrind(duration) {
         if(!this.ready) return;
         const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator(); osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(250, t); osc.frequency.linearRampToValueAtTime(180, t+duration);
+        const osc = this.ctx.createOscillator(); osc.type = 'square';
+        osc.frequency.setValueAtTime(300, t); osc.frequency.linearRampToValueAtTime(100, t+duration);
         
+        // Add a pulsing LFO to the grind
+        const lfo = this.ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 15;
+        const lfoGain = this.ctx.createGain(); lfoGain.gain.value = 50;
+        lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+
         const gain = this.ctx.createGain();
         gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.4, t+0.1);
-        gain.gain.setValueAtTime(0.4, t+duration-0.1);
+        gain.gain.linearRampToValueAtTime(0.3, t+0.1);
+        gain.gain.setValueAtTime(0.3, t+duration-0.1);
         gain.gain.linearRampToValueAtTime(0, t+duration);
 
         osc.connect(gain); gain.connect(this.master);
-        osc.start(t); osc.stop(t+duration);
+        osc.start(t); osc.stop(t+duration); lfo.start(t); lfo.stop(t+duration);
     }
 
     playEatSlop() {
         if(!this.ready) return;
-        for(let i=0; i<4; i++) {
-            setTimeout(() => {
-                const t = this.ctx.currentTime;
-                const osc = this.ctx.createOscillator(); osc.type = 'sine';
-                osc.frequency.setValueAtTime(300, t); osc.frequency.exponentialRampToValueAtTime(80, t+0.15);
-                const gain = this.ctx.createGain();
-                gain.gain.setValueAtTime(0.3, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.15);
-                osc.connect(gain); gain.connect(this.master);
-                osc.start(t); osc.stop(t+0.15);
-            }, i * 180 + Math.random()*50);
-        }
+        // Sci-fi power up sound instead of eating slop
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator(); osc.type = 'sine';
+        osc.frequency.setValueAtTime(200, t); 
+        osc.frequency.exponentialRampToValueAtTime(800, t+0.4);
+        
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0, t); 
+        gain.gain.linearRampToValueAtTime(0.5, t+0.1);
+        gain.gain.exponentialRampToValueAtTime(0.01, t+0.4);
+        
+        osc.connect(gain); gain.connect(this.master);
+        osc.start(t); osc.stop(t+0.4);
     }
 }
 
 /* ==========================================================================
-   MODULE 6: PROCEDURAL ENTITIES
+   MODULE 6: PROCEDURAL ENTITIES & PARTICLES
    ========================================================================== */
+class ParticleSystem {
+    constructor(scene, count=500) {
+        this.scene = scene;
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(count * 3);
+        const vels = [];
+        
+        for(let i=0; i<count; i++) {
+            pos[i*3] = (Math.random() - 0.5) * 15;
+            pos[i*3+1] = Math.random() * 4;
+            pos[i*3+2] = (Math.random() - 0.5) * 15;
+            vels.push({
+                x: (Math.random()-0.5)*0.02,
+                y: (Math.random()-0.5)*0.02,
+                z: (Math.random()-0.5)*0.02
+            });
+        }
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        
+        const mat = new THREE.PointsMaterial({
+            color: 0x00ffff,
+            size: 0.05,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+        
+        this.points = new THREE.Points(geo, mat);
+        this.vels = vels;
+        this.scene.add(this.points);
+    }
+    
+    update() {
+        const pos = this.points.geometry.attributes.position.array;
+        for(let i=0; i<this.vels.length; i++) {
+            pos[i*3] += this.vels[i].x;
+            pos[i*3+1] += this.vels[i].y;
+            pos[i*3+2] += this.vels[i].z;
+            
+            // Wrap bounds
+            if(pos[i*3+1] > 4) pos[i*3+1] = 0;
+            if(pos[i*3+1] < 0) pos[i*3+1] = 4;
+            if(pos[i*3] > 7.5) pos[i*3] = -7.5;
+            if(pos[i*3] < -7.5) pos[i*3] = 7.5;
+            if(pos[i*3+2] > 7.5) pos[i*3+2] = -7.5;
+            if(pos[i*3+2] < -7.5) pos[i*3+2] = 7.5;
+        }
+        this.points.geometry.attributes.position.needsUpdate = true;
+    }
+}
+
 class GuardAI extends THREE.Group {
     constructor(materials) {
         super();
@@ -1102,44 +1232,41 @@ class GuardAI extends THREE.Group {
     buildRig() {
         this.root = new THREE.Group(); this.root.position.y = 1.05; this.add(this.root);
         
-        this.torso = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.7, 0.35), this.mats.fabricDark);
+        // Emissive materials for cyberpunk guard
+        const armorMat = new THREE.MeshStandardMaterial({color: 0x111111, metalness: 0.9, roughness: 0.2});
+        const glowMat = new THREE.MeshStandardMaterial({color: 0x000000, emissive: 0xff00ff, emissiveIntensity: 2.0});
+        
+        this.torso = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.7, 0.35), armorMat);
         this.torso.position.y = 0.35; this.root.add(this.torso);
         
+        // Neon strips on torso
+        const strip = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.6, 0.36), glowMat);
+        strip.position.set(0, 0, 0); this.torso.add(strip);
+        
         this.head = new THREE.Group(); this.head.position.y = 0.85; this.root.add(this.head);
-        const headMesh = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.3, 0.25), this.mats.skin);
+        const headMesh = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.3, 0.25), armorMat);
         this.head.add(headMesh);
         
-        const faceVoid = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.2), new THREE.MeshBasicMaterial({color:0x000000}));
-        faceVoid.position.set(0, 0.0, 0.126); this.head.add(faceVoid);
-        
-        const hatBase = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.1, 16), new THREE.MeshStandardMaterial({color:0x111111}));
-        hatBase.position.y = 0.2; this.head.add(hatBase);
-        const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.02, 16), new THREE.MeshStandardMaterial({color:0x000000}));
-        hatBrim.position.set(0, -0.05, 0.05); hatBase.add(hatBrim);
+        // Glowing Visor
+        const visor = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.08, 0.1), new THREE.MeshStandardMaterial({color: 0x000000, emissive: 0x00ffff, emissiveIntensity: 3.0}));
+        visor.position.set(0, 0.05, 0.1); this.head.add(visor);
 
         this.armL = new THREE.Group(); this.armL.position.set(-0.35, 0.65, 0); this.root.add(this.armL);
         this.armR = new THREE.Group(); this.armR.position.set(0.35, 0.65, 0); this.root.add(this.armR);
         const armGeo = new THREE.BoxGeometry(0.15, 0.6, 0.15);
-        const armMeshL = new THREE.Mesh(armGeo, this.mats.fabricDark); armMeshL.position.y = -0.3; this.armL.add(armMeshL);
-        const armMeshR = new THREE.Mesh(armGeo, this.mats.fabricDark); armMeshR.position.y = -0.3; this.armR.add(armMeshR);
+        const armMeshL = new THREE.Mesh(armGeo, armorMat); armMeshL.position.y = -0.3; this.armL.add(armMeshL);
+        const armMeshR = new THREE.Mesh(armGeo, armorMat); armMeshR.position.y = -0.3; this.armR.add(armMeshR);
 
         this.legL = new THREE.Group(); this.legL.position.set(-0.15, 0, 0); this.root.add(this.legL);
         this.legR = new THREE.Group(); this.legR.position.set(0.15, 0, 0); this.root.add(this.legR);
         const legGeo = new THREE.BoxGeometry(0.22, 0.9, 0.22);
-        const legMeshL = new THREE.Mesh(legGeo, this.mats.fabricDark); legMeshL.position.y = -0.45; this.legL.add(legMeshL);
-        const legMeshR = new THREE.Mesh(legGeo, this.mats.fabricDark); legMeshR.position.y = -0.45; this.legR.add(legMeshR);
+        const legMeshL = new THREE.Mesh(legGeo, armorMat); legMeshL.position.y = -0.45; this.legL.add(legMeshL);
+        const legMeshR = new THREE.Mesh(legGeo, armorMat); legMeshR.position.y = -0.45; this.legR.add(legMeshR);
 
-        const bootMat = new THREE.MeshStandardMaterial({color:0x050505, roughness:0.2});
-        const bootGeo = new THREE.BoxGeometry(0.24, 0.15, 0.3);
-        const bootL = new THREE.Mesh(bootGeo, bootMat); bootL.position.set(0, -0.9, 0.04); this.legL.add(bootL);
-        const bootR = new THREE.Mesh(bootGeo, bootMat); bootR.position.set(0, -0.9, 0.04); this.legR.add(bootR);
-
-        const fl = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1), new THREE.MeshBasicMaterial({color:0x333333}));
-        fl.rotation.x = Math.PI/2; fl.position.set(0, 0.4, 0.18); this.root.add(fl);
-        
-        this.spotLight = new THREE.SpotLight(0xffffee, 5.0, 20.0, Math.PI/6, 0.5, 1);
-        this.spotLight.position.set(0, 0.4, 0.2);
-        this.spotLight.target.position.set(0, 0.4, 1.0);
+        // Guard Light
+        this.spotLight = new THREE.SpotLight(0x00ffff, 10.0, 30.0, Math.PI/5, 0.2, 1);
+        this.spotLight.position.set(0, 0.85, 0.2); // Head mounted
+        this.spotLight.target.position.set(0, 0.85, 1.0);
         this.root.add(this.spotLight); this.root.add(this.spotLight.target);
     }
 
@@ -1150,7 +1277,7 @@ class GuardAI extends THREE.Group {
             this.legL.rotation.x = THREE.MathUtils.lerp(this.legL.rotation.x, 0, 0.1);
             this.legR.rotation.x = THREE.MathUtils.lerp(this.legR.rotation.x, 0, 0.1);
             this.root.position.y = THREE.MathUtils.lerp(this.root.position.y, 1.05, 0.1);
-            this.head.rotation.y = Math.sin(performance.now()*0.001)*0.2;
+            this.head.rotation.y = Math.sin(performance.now()*0.002)*0.3;
             return false;
         }
 
@@ -1161,7 +1288,7 @@ class GuardAI extends THREE.Group {
         this.legL.rotation.x = Math.sin(this.animCycle + Math.PI) * 0.6;
         this.legR.rotation.x = Math.sin(this.animCycle) * 0.6;
         
-        this.root.position.y = 1.05 + Math.abs(Math.sin(this.animCycle * 2)) * 0.06;
+        this.root.position.y = 1.05 + Math.abs(Math.sin(this.animCycle * 2)) * 0.08;
         this.head.rotation.y = 0;
 
         const cycleMod = this.animCycle % Math.PI;
@@ -1169,18 +1296,18 @@ class GuardAI extends THREE.Group {
     }
 
     animateBendDown(callback) {
-        new TWEEN.Tween(this.root.position).to({y: 0.5}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-        new TWEEN.Tween(this.root.rotation).to({x: 0.6}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-        new TWEEN.Tween(this.armR.rotation).to({x: -1.2}, 1000).start();
-        new TWEEN.Tween(this.head.rotation).to({x: -0.4}, 1000).start();
+        new TWEEN.Tween(this.root.position).to({y: 0.5}, 800).easing(TWEEN.Easing.Quadratic.Out).start();
+        new TWEEN.Tween(this.root.rotation).to({x: 0.6}, 800).easing(TWEEN.Easing.Quadratic.Out).start();
+        new TWEEN.Tween(this.armR.rotation).to({x: -1.2}, 800).start();
+        new TWEEN.Tween(this.head.rotation).to({x: -0.4}, 800).start();
 
         setTimeout(() => {
             if(callback) callback();
-            new TWEEN.Tween(this.root.position).to({y: 1.05}, 1200).easing(TWEEN.Easing.Quadratic.In).start();
-            new TWEEN.Tween(this.root.rotation).to({x: 0}, 1200).easing(TWEEN.Easing.Quadratic.In).start();
-            new TWEEN.Tween(this.armR.rotation).to({x: 0}, 1200).start();
-            new TWEEN.Tween(this.head.rotation).to({x: 0}, 1200).start();
-        }, 1500);
+            new TWEEN.Tween(this.root.position).to({y: 1.05}, 1000).easing(TWEEN.Easing.Quadratic.In).start();
+            new TWEEN.Tween(this.root.rotation).to({x: 0}, 1000).easing(TWEEN.Easing.Quadratic.In).start();
+            new TWEEN.Tween(this.armR.rotation).to({x: 0}, 1000).start();
+            new TWEEN.Tween(this.head.rotation).to({x: 0}, 1000).start();
+        }, 1200);
     }
 }
 
@@ -1192,46 +1319,45 @@ class FoodTray extends THREE.Group {
     }
 
     build() {
-        const tray = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.02, 0.35), new THREE.MeshStandardMaterial({color:0x333333, metalness:0.7, roughness:0.5}));
+        const trayMat = new THREE.MeshStandardMaterial({color:0x222222, metalness:0.9, roughness:0.2, emissive:0x111111});
+        const tray = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.02, 0.35), trayMat);
         this.add(tray);
 
-        const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.03, 0.1, 16), new THREE.MeshStandardMaterial({color:0xdddddd, roughness:0.2}));
+        const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.03, 0.1, 16), new THREE.MeshStandardMaterial({color:0x000, emissive:0x00ffff, emissiveIntensity:0.5, transparent:true, opacity:0.8}));
         cup.position.set(0.15, 0.06, -0.1); this.add(cup);
 
-        const fMat = new THREE.MeshStandardMaterial({color: this.data.c, roughness: 0.8});
+        const fMat = new THREE.MeshStandardMaterial({
+            color: this.data.c, 
+            emissive: this.data.c,
+            emissiveIntensity: 0.8,
+            roughness: 0.1,
+            metalness: 0.5
+        });
+        
         let fGeo;
         switch(this.data.t) {
-            case 'BREAD': fGeo = new THREE.BoxGeometry(0.15, 0.08, 0.15); break;
-            case 'SLUDGE': fGeo = new THREE.CylinderGeometry(0.12, 0.1, 0.05, 16); fMat.roughness = 0.2; break;
-            case 'MEAT': fGeo = new THREE.BoxGeometry(0.14, 0.06, 0.12); fMat.roughness = 0.4; break;
-            case 'CHEESE': fGeo = new THREE.ConeGeometry(0.08, 0.08, 3); fGeo.rotateX(Math.PI/2); break;
-            case 'MUSH': fGeo = new THREE.SphereGeometry(0.09, 16, 16); fGeo.scale(1, 0.4, 0.8); break;
-            case 'APPLE': fGeo = new THREE.SphereGeometry(0.06, 16, 16); break;
-            case 'BONE': fGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.18, 8); fGeo.rotateZ(Math.PI/2); break;
+            case 'CUBE': fGeo = new THREE.BoxGeometry(0.12, 0.12, 0.12); break;
+            case 'SPHERE': fGeo = new THREE.SphereGeometry(0.08, 32, 32); break;
+            case 'PYRAMID': fGeo = new THREE.ConeGeometry(0.08, 0.15, 4); break;
+            case 'CYLINDER': fGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.15, 16); break;
+            case 'TORUS': fGeo = new THREE.TorusGeometry(0.06, 0.02, 16, 32); break;
+            case 'SLUDGE': fGeo = new THREE.SphereGeometry(0.1, 16, 16); fGeo.scale(1, 0.3, 1); break;
             case 'PILLS': 
                 fGeo = new THREE.CapsuleGeometry(0.015, 0.02, 4, 8); 
                 const p2 = new THREE.Mesh(fGeo, fMat); p2.position.set(0.03, 0.01, 0.02); p2.rotation.z=Math.PI/4; this.add(p2);
                 break;
-            case 'MOLD': fGeo = new THREE.BoxGeometry(0.14, 0.07, 0.14); fMat.roughness = 1.0; break;
-            case 'INSECT': fGeo = new THREE.TorusGeometry(0.05, 0.02, 8, 16); break;
-            case 'WATER': fGeo = new THREE.CylinderGeometry(0.1, 0.08, 0.02, 16); fMat.transparent=true; fMat.opacity=0.6; break;
-            case 'FEAST': fGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.06, 16); break;
-            case 'EYE': 
-                fGeo = new THREE.SphereGeometry(0.04, 16, 16);
-                const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), new THREE.MeshBasicMaterial({color:0x000}));
-                pupil.position.set(0,0,0.03);
-                this.eyeObj = new THREE.Group(); this.eyeObj.add(new THREE.Mesh(fGeo, fMat)); this.eyeObj.add(pupil);
-                this.eyeObj.position.set(-0.05, 0.04, 0.05); this.add(this.eyeObj);
-                break;
-            default: fGeo = new THREE.SphereGeometry(0.08, 8, 8);
+            default: fGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
         }
 
-        if(this.data.t !== 'EYE') {
-            const fMesh = new THREE.Mesh(fGeo, fMat);
-            fMesh.position.set(-0.05, 0.04, 0.05);
-            this.add(fMesh);
-            this.foodMesh = fMesh;
-        }
+        const fMesh = new THREE.Mesh(fGeo, fMat);
+        fMesh.position.set(-0.05, 0.08, 0.05);
+        
+        // Add point light to glowing food
+        const fLight = new THREE.PointLight(this.data.c, 1.0, 1.0);
+        fMesh.add(fLight);
+        
+        this.add(fMesh);
+        this.foodMesh = fMesh;
 
         this.userData = {
             id: 'food_tray',
@@ -1243,15 +1369,10 @@ class FoodTray extends THREE.Group {
     }
 
     update(time) {
-        if(this.data.t === 'EYE' && this.eyeObj) {
-            if(Math.random() > 0.95) {
-                this.eyeObj.rotation.x = (Math.random()-0.5)*1.5;
-                this.eyeObj.rotation.y = (Math.random()-0.5)*1.5;
-            }
-        }
-        if(this.data.t === 'MOLD' || this.data.t === 'MEAT') {
-            const s = 1.0 + Math.sin(time * 4.0) * 0.03;
-            if(this.foodMesh) this.foodMesh.scale.set(s,s,s);
+        if(this.foodMesh) {
+            this.foodMesh.rotation.y = time;
+            this.foodMesh.rotation.x = time * 0.5;
+            this.foodMesh.position.y = 0.08 + Math.sin(time * 3) * 0.02; // Hover effect
         }
     }
 }
@@ -1276,18 +1397,27 @@ class PrisonEnvironment {
         this.guard.position.set(0, 0, CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH - 2);
         this.guard.rotation.y = Math.PI;
         this.scene.add(this.guard);
+        
+        this.particles = new ParticleSystem(this.scene, 800);
     }
 
     generateMaterials() {
+        // High quality vibrant procedural textures
+        const texGrid1 = TextureEngine.generateNeonGrid(1024, 1024, [5,0,10], [0,255,255], [255,0,255]);
+        texGrid1.repeat.set(4, 4);
+        
+        const texGrid2 = TextureEngine.generateNeonGrid(512, 512, [0,5,10], [0,255,0], [0,0,255]);
+        texGrid2.repeat.set(10, 2);
+
+        const texPlasma = TextureEngine.generatePlasma(512, 512);
+
         this.mats = {
-            concreteCell: new THREE.MeshStandardMaterial({ map: TextureEngine.generateConcrete(1024, 1024, [60,60,60], 0.03, 4), roughness: 0.9, metalness: 0.1 }),
-            concreteHall: new THREE.MeshStandardMaterial({ map: TextureEngine.generateConcrete(512, 512, [40,40,40], 0.05, 3), roughness: 0.8 }),
-            ironBars: new THREE.MeshStandardMaterial({ map: TextureEngine.generateRust(512, 512), metalness: 0.8, roughness: 0.6 }),
-            ironDoor: new THREE.MeshStandardMaterial({ map: TextureEngine.generateRust(1024, 1024), metalness: 0.9, roughness: 0.5 }),
-            porcelain: new THREE.MeshStandardMaterial({ map: TextureEngine.generatePorcelain(256, 256), roughness: 0.2, metalness: 0.1 }),
-            mattress: new THREE.MeshStandardMaterial({ color: 0x3a3d3a, roughness: 1.0 }),
-            fabricDark: new THREE.MeshStandardMaterial({ map: TextureEngine.generateFabric(256, 256, 15, 20, 30), roughness: 0.9 }),
-            skin: new THREE.MeshStandardMaterial({ color: 0xa07a60, roughness: 0.4 })
+            concreteCell: new THREE.MeshStandardMaterial({ map: texGrid1, roughness: 0.1, metalness: 0.8 }),
+            concreteHall: new THREE.MeshStandardMaterial({ map: texGrid2, roughness: 0.2, metalness: 0.7 }),
+            ironBars: new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x00ffff, emissiveIntensity: 0.8, metalness: 1.0, roughness: 0.0 }),
+            ironDoor: new THREE.MeshStandardMaterial({ map: texPlasma, metalness: 0.5, roughness: 0.2 }),
+            porcelain: new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xff00ff, emissiveIntensity: 0.2, roughness: 0.1, metalness: 0.9 }),
+            mattress: new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9, wireframe: true }),
         };
     }
 
@@ -1310,18 +1440,22 @@ class PrisonEnvironment {
         
         const wB = new THREE.Mesh(new THREE.BoxGeometry(cw, ch, t), this.mats.concreteCell); wB.position.set(0, ch/2, -cl/2-t/2); cellGrp.add(wB); this.addCollider(wB);
 
-        const winW = 0.8, winH = 0.3;
-        const voidMat = new THREE.MeshBasicMaterial({color:0x000000});
+        // Neon Window Slit
+        const winW = 1.2, winH = 0.4;
+        const voidMat = new THREE.MeshBasicMaterial({color:0xff00ff}); // Glowing void outside
         const win = new THREE.Mesh(new THREE.BoxGeometry(winW, winH, t+0.1), voidMat);
-        win.position.set(0, ch - 0.6, -cl/2-t/2); cellGrp.add(win);
-        for(let i=-0.2; i<=0.2; i+=0.2) {
+        win.position.set(0, ch - 0.8, -cl/2-t/2); cellGrp.add(win);
+        
+        // Window Bars
+        for(let i=-0.4; i<=0.4; i+=0.2) {
             const wb = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, winH, 8), this.mats.ironBars);
-            wb.position.set(i, ch-0.6, -cl/2-t/2); cellGrp.add(wb);
+            wb.position.set(i, ch-0.8, -cl/2-t/2 + 0.1); cellGrp.add(wb);
         }
 
+        // Front Wall (Bars & Door)
         const frontZ = cl/2;
         const barsGrp = new THREE.Group(); cellGrp.add(barsGrp);
-        const bGeo = new THREE.CylinderGeometry(CONFIG.WORLD.BAR_RADIUS, CONFIG.WORLD.BAR_RADIUS, ch, 12);
+        const bGeo = new THREE.CylinderGeometry(CONFIG.WORLD.BAR_RADIUS, CONFIG.WORLD.BAR_RADIUS, ch, 16);
         
         for(let x = -cw/2 + 0.15; x < cw/2 - 0.1; x += CONFIG.WORLD.BAR_SPACING) {
             if(x > -0.45 && x < 0.45) continue;
@@ -1333,11 +1467,12 @@ class PrisonEnvironment {
         this.doorMesh = new THREE.Mesh(new THREE.BoxGeometry(0.9, ch-0.1, 0.06), this.mats.ironDoor);
         this.doorMesh.position.set(0.45, ch/2, 0); this.doorGrp.add(this.doorMesh);
         
-        const slot = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.12, 0.08), voidMat);
-        slot.position.set(0.45, 0.25, 0); this.doorMesh.add(slot);
+        const slot = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.15, 0.08), new THREE.MeshBasicMaterial({color:0x000}));
+        slot.position.set(0.45, 0.3, 0); this.doorMesh.add(slot);
         
         this.doorCollider = new THREE.Box3().setFromObject(this.doorMesh); this.colliders.push(this.doorCollider);
 
+        // Hallway
         const hallGrp = new THREE.Group(); hallGrp.position.set(0, 0, cl/2 + hl/2); this.scene.add(hallGrp);
         const hFlr = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.concreteHall); hFlr.position.y = -t/2; hallGrp.add(hFlr);
         const hCeil = new THREE.Mesh(new THREE.BoxGeometry(hw, t, hl), this.mats.concreteHall); hCeil.position.y = hh + t/2; hallGrp.add(hCeil);
@@ -1348,7 +1483,8 @@ class PrisonEnvironment {
     buildCellFurniture() {
         const cw = CONFIG.WORLD.CELL_WIDTH, cl = CONFIG.WORLD.CELL_LENGTH;
 
-        const cotW = 1.0, cotL = 2.1, cotH = 0.4;
+        // Cot (Bed)
+        const cotW = 1.0, cotL = 2.1, cotH = 0.5;
         const cotGrp = new THREE.Group(); cotGrp.position.set(-cw/2 + cotW/2 + 0.1, 0, -cl/2 + cotL/2 + 0.1); this.scene.add(cotGrp);
         
         const frame = new THREE.Mesh(new THREE.BoxGeometry(cotW, 0.05, cotL), this.mats.ironBars); frame.position.y = cotH - 0.1; cotGrp.add(frame);
@@ -1362,9 +1498,10 @@ class PrisonEnvironment {
         
         const cotHitbox = new THREE.Mesh(new THREE.BoxGeometry(cotW, cotH+0.2, cotL), new THREE.MeshBasicMaterial({visible:false}));
         cotHitbox.position.y = cotH/2; cotGrp.add(cotHitbox);
-        cotHitbox.userData = { id: 'cot', action: 'SLEEP', desc: 'Advance time. Escapism.' };
+        cotHitbox.userData = { id: 'cot', action: 'ENTER SLEEP MODE', desc: 'Accelerate system cycle.' };
         this.interactables.push(cotHitbox); this.addCollider(cotHitbox);
 
+        // Toilet / Sink
         const tGrp = new THREE.Group(); tGrp.position.set(cw/2 - 0.4, 0, -cl/2 + 0.4); this.scene.add(tGrp);
         
         const tBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.15, 0.4, 16), this.mats.porcelain); tBowl.position.y = 0.2; tGrp.add(tBowl);
@@ -1374,72 +1511,85 @@ class PrisonEnvironment {
 
         const tHitbox = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.0, 0.6), new THREE.MeshBasicMaterial({visible:false}));
         tHitbox.position.y = 0.5; tGrp.add(tHitbox);
-        tHitbox.userData = { id: 'toilet', action: 'FLUSH', desc: 'A meaningless exertion of control over the environment.' };
+        tHitbox.userData = { id: 'toilet', action: 'FLUSH SYSTEM', desc: 'Purge fluid lines.' };
         this.interactables.push(tHitbox); this.addCollider(tHitbox);
     }
 
     buildLighting() {
-        this.ambientLight = new THREE.AmbientLight(0x1a1a1a); this.scene.add(this.ambientLight);
+        this.ambientLight = new THREE.AmbientLight(0x110022, 1.0); this.scene.add(this.ambientLight);
 
-        this.sunLight = new THREE.DirectionalLight(0xffeedd, 1.5);
+        // Window intense light
+        this.sunLight = new THREE.DirectionalLight(0xff00ff, 2.0);
         this.sunLight.position.set(0, 5, -15);
         this.sunLight.castShadow = true;
-        this.sunLight.shadow.mapSize.width = 1024; this.sunLight.shadow.mapSize.height = 1024;
+        this.sunLight.shadow.mapSize.width = 2048; this.sunLight.shadow.mapSize.height = 2048;
         this.scene.add(this.sunLight);
 
-        this.cellLight = new THREE.PointLight(0xaaccff, 0.5, 6.0);
+        // Intense cell overhead
+        this.cellLight = new THREE.PointLight(0x00ffff, 2.0, 10.0);
         this.cellLight.position.set(0, CONFIG.WORLD.CELL_HEIGHT - 0.2, 0);
         this.scene.add(this.cellLight);
         this.dynamicLights.push(this.cellLight);
 
+        // Hallway Neon Lights
+        const colors = [0xff00ff, 0x00ffff, 0xffff00, 0x00ff00];
+        let cIdx = 0;
         for(let z = CONFIG.WORLD.CELL_LENGTH/2 + 3; z < CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH; z+= 6) {
-            const hl = new THREE.PointLight(0xffddaa, 0.4, 8.0);
+            const hl = new THREE.PointLight(colors[cIdx%colors.length], 2.0, 15.0);
             hl.position.set(0, CONFIG.WORLD.HALL_HEIGHT - 0.2, z);
             this.scene.add(hl);
             this.dynamicLights.push(hl);
+            cIdx++;
         }
 
-        this.scene.fog = new THREE.FogExp2(0x050505, 0.06);
+        this.scene.fog = new THREE.FogExp2(0x0a001a, 0.05);
     }
 
     updateLightingCycle(timeInHours) {
+        // Neon lights pulse rapidly
+        const pulse = 1.0 + Math.sin(performance.now() * 0.005) * 0.2;
+        
         const isDay = timeInHours >= 6 && timeInHours <= 18;
         
         if(isDay) {
             const dayProgress = (timeInHours - 6) / 12;
             const sunAngle = dayProgress * Math.PI;
             
-            this.sunLight.intensity = Math.sin(sunAngle) * 2.5;
+            this.sunLight.intensity = Math.sin(sunAngle) * 4.0;
             this.sunLight.position.x = Math.cos(sunAngle) * 10;
             this.sunLight.position.y = Math.sin(sunAngle) * 5;
             
-            this.sunLight.color.setHSL(0.1 + dayProgress*0.05, 0.6, 0.5 + Math.sin(sunAngle)*0.3);
+            // Shift color from Magenta -> Cyan -> Magenta
+            this.sunLight.color.setHSL(0.8 + Math.sin(sunAngle)*0.3, 1.0, 0.5);
             
-            this.ambientLight.color.setHex(0x2a2a2a);
-            this.scene.fog.color.setHex(0x0a0a0a);
-            this.scene.fog.density = 0.04;
+            this.ambientLight.color.setHex(0x220044);
+            this.scene.fog.color.setHex(0x1a0033);
+            this.scene.fog.density = 0.03;
 
-            this.dynamicLights.forEach(l => l.intensity = 0.1);
+            this.dynamicLights.forEach(l => l.intensity = 0.5 * pulse);
         } else {
-            this.sunLight.intensity = 0.02;
-            this.sunLight.color.setHex(0x445588);
+            this.sunLight.intensity = 0.5;
+            this.sunLight.color.setHex(0x00ff00); // Toxic green moon
             
-            this.ambientLight.color.setHex(0x050505);
-            this.scene.fog.color.setHex(0x020202);
-            this.scene.fog.density = 0.08;
+            this.ambientLight.color.setHex(0x050011);
+            this.scene.fog.color.setHex(0x02000a);
+            this.scene.fog.density = 0.06;
 
+            // Intense erratic flickering at night
             this.dynamicLights.forEach(l => {
-                if(Math.random() > 0.96) l.intensity = Math.random() * 0.5 + 0.1;
-                else l.intensity = 0.6;
+                if(Math.random() > 0.9) l.intensity = Math.random() * 3.0;
+                else l.intensity = 1.5 * pulse;
             });
         }
+        
+        if(this.particles) this.particles.update();
     }
 
     animateDoor(isOpen, callback) {
         const targetRot = isOpen ? -Math.PI/2 : 0;
         new TWEEN.Tween(this.doorGrp.rotation)
-            .to({y: targetRot}, 2000)
-            .easing(TWEEN.Easing.Cubic.InOut)
+            .to({y: targetRot}, 1500) // Faster door
+            .easing(TWEEN.Easing.Bounce.Out)
             .onUpdate(() => {
                 if(!isOpen) this.doorCollider.setFromObject(this.doorMesh);
             })
@@ -1462,8 +1612,8 @@ class PrisonEnvironment {
         this.interactables.push(this.activeTray);
 
         new TWEEN.Tween(this.activeTray.position)
-            .to({z: CONFIG.WORLD.CELL_LENGTH/2 - 0.7}, 1500)
-            .easing(TWEEN.Easing.Quadratic.Out)
+            .to({z: CONFIG.WORLD.CELL_LENGTH/2 - 0.7}, 1000)
+            .easing(TWEEN.Easing.Elastic.Out)
             .start();
     }
 
@@ -1522,7 +1672,7 @@ class UIController {
         setTimeout(() => {
             this.els.menu.style.display = 'none';
             this.els.hud.style.display = 'block';
-        }, 2000);
+        }, 1000);
     }
 
     transitionToMenu() {
@@ -1540,7 +1690,7 @@ class UIController {
         this.els.time.innerText = `${h12.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')} ${ampm}`;
 
         this.els.state.innerText = data.state;
-        this.els.state.className = `data-val state-${data.state}`;
+        this.els.state.className = `data-val state-${data.state.split('_')[0]}`;
 
         const sInt = Math.floor(data.san); const nInt = Math.floor(data.nut); const stInt = Math.floor(data.sta);
         this.els.sFill.style.width = `${data.san}%`; this.els.sPct.innerText = `${sInt}%`;
@@ -1576,7 +1726,7 @@ class UIController {
         }, durationMs);
     }
 
-    doFade(fadeIn, callback, duration=3000) {
+    doFade(fadeIn, callback, duration=2000) {
         this.els.fade.style.transition = `opacity ${duration/1000}s cubic-bezier(0.1, 0.7, 0.1, 1)`;
         this.els.fade.style.opacity = fadeIn ? 1 : 0;
         if(callback) setTimeout(callback, duration);
@@ -1590,7 +1740,7 @@ class UIController {
 }
 
 /* ==========================================================================
-   MODULE 9: PLAYER CONTROLLER
+   MODULE 9: PLAYER CONTROLLER (WITH ROBUST COLLISION FIX)
    ========================================================================== */
 class PlayerController {
     constructor(camera, domElement, world, ui, audio) {
@@ -1649,9 +1799,12 @@ class PlayerController {
         if(this.inputs.a || this.inputs.d) this.vel.x -= this.dir.x * currentSpeed * delta;
 
         const startP = this.controls.object.position.clone();
+        
+        // Apply movement
         this.controls.moveRight(-this.vel.x * delta);
         this.controls.moveForward(-this.vel.z * delta);
 
+        // Robust Collision Resolution
         this.collider.center.copy(this.controls.object.position);
         this.collider.center.y -= CONFIG.PHYSICS.PLAYER_HEIGHT * 0.4; 
 
@@ -1661,10 +1814,17 @@ class PlayerController {
                 box.clampPoint(this.collider.center, closePt);
                 const pushDir = new THREE.Vector3().subVectors(this.collider.center, closePt);
                 const dist = pushDir.length();
+                
                 if(dist < CONFIG.PHYSICS.PLAYER_RADIUS) {
-                    pushDir.normalize().multiplyScalar(CONFIG.PHYSICS.PLAYER_RADIUS - dist);
-                    pushDir.y = 0;
-                    this.controls.object.position.add(pushDir);
+                    if (dist > 0.001) {
+                        pushDir.normalize().multiplyScalar(CONFIG.PHYSICS.PLAYER_RADIUS - dist);
+                        pushDir.y = 0;
+                        this.controls.object.position.add(pushDir);
+                    } else {
+                        // Trapped dead center fallback
+                        this.controls.object.position.x = startP.x;
+                        this.controls.object.position.z = startP.z;
+                    }
                 }
             }
         }
@@ -1678,7 +1838,7 @@ class PlayerController {
             this.controls.object.position.y = CONFIG.PHYSICS.PLAYER_HEIGHT + bob;
             
             if(Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) < -0.9 && this.canStep) {
-                this.audio.playFootstep('sock', 0.15);
+                this.audio.playFootstep('sock', 0.2);
                 this.canStep = false;
             } else if(Math.sin(this.distWalked * CONFIG.PHYSICS.HEAD_BOB_FREQ) > 0) {
                 this.canStep = true;
@@ -1688,10 +1848,11 @@ class PlayerController {
             this.controls.object.position.y = THREE.MathUtils.lerp(this.controls.object.position.y, CONFIG.PHYSICS.PLAYER_HEIGHT + breath, 0.1);
         }
 
+        // Raycasting interaction
         this.raycaster.setFromCamera(new THREE.Vector2(0,0), this.camera);
         const intersects = this.raycaster.intersectObjects(this.world.interactables, false);
         
-        if(intersects.length > 0 && intersects[0].distance < 2.5) {
+        if(intersects.length > 0 && intersects[0].distance < 3.0) {
             if(this.targetObj !== intersects[0].object) {
                 this.targetObj = intersects[0].object;
                 this.ui.setPrompt(this.targetObj);
@@ -1725,7 +1886,6 @@ class GameDirector {
         };
 
         this.thoughtTimer = 0;
-        this.guardPhase = 0;
     }
 
     update(delta) {
@@ -1754,7 +1914,7 @@ class GameDirector {
         this.world.updateLightingCycle(this.data.time);
         this.audio.updateSanityModulation(this.data.san / 100);
         
-        if(this.world.activeTray) this.world.activeTray.update(performance.now() * 0.001);
+        if(this.world.activeTray) this.world.activeTray.update(performance.now() * 0.002);
     }
 
     processEventTimeline(delta) {
@@ -1769,7 +1929,7 @@ class GameDirector {
         }
 
         if(t >= CONFIG.TIME.SLEEP_HOUR && t < CONFIG.TIME.SLEEP_HOUR + 0.1 && Math.random()<0.05) {
-            this.ui.showSubtitle("MANDATORY LIGHTS OUT. RETURN TO COT.", 'system');
+            this.ui.showSubtitle("SYSTEM: MANDATORY POWER DOWN. RETURN TO CHARGING PAD.", 'system');
         }
 
         if(this.data.state.startsWith('GUARD')) {
@@ -1779,7 +1939,6 @@ class GameDirector {
 
     initiateGuardSequence(type) {
         this.data.state = 'GUARD_APPROACH';
-        this.guardPhase = 0;
         this.guardTargetZ = CONFIG.WORLD.CELL_LENGTH/2 + 0.8;
         
         this.world.guard.position.z = CONFIG.WORLD.CELL_LENGTH/2 + CONFIG.WORLD.HALL_LENGTH - 2;
@@ -1790,10 +1949,10 @@ class GameDirector {
         const g = this.world.guard;
         
         if(this.data.state === 'GUARD_APPROACH') {
-            g.position.z -= 2.0 * delta;
+            g.position.z -= 2.5 * delta;
             if(g.animateWalk(delta, 2.0)) {
                 const distSq = Math.abs(g.position.z - this.guardTargetZ);
-                const vol = Math.max(0, 0.4 * (1.0 - (distSq / CONFIG.WORLD.HALL_LENGTH)));
+                const vol = Math.max(0, 0.5 * (1.0 - (distSq / CONFIG.WORLD.HALL_LENGTH)));
                 this.audio.playFootstep('boot', vol);
             }
 
@@ -1802,24 +1961,24 @@ class GameDirector {
                 g.animateWalk(delta, 0); 
                 
                 this.data.state = 'MEAL_DELIVERY';
-                this.ui.showSubtitle("OFFICER: Step back from the bars. Feeding protocol.", 'system');
+                this.ui.showSubtitle("SYNTH-GUARD: Step back from the barrier. Energy delivery.", 'system');
                 
                 g.animateBendDown(() => {
                     this.world.deliverTray(this.data.day);
-                    this.audio.playDoorGrind(1.5);
+                    this.audio.playDoorGrind(1.0);
                 });
 
                 setTimeout(() => {
                     g.rotation.y = 0; 
                     this.data.state = 'GUARD_LEAVE';
-                }, 3000);
+                }, 2500);
             }
         } 
         else if (this.data.state === 'GUARD_LEAVE') {
-            g.position.z += 2.0 * delta;
+            g.position.z += 2.5 * delta;
             if(g.animateWalk(delta, 2.0)) {
                 const distSq = Math.abs(g.position.z - this.guardTargetZ);
-                const vol = Math.max(0, 0.4 * (1.0 - (distSq / CONFIG.WORLD.HALL_LENGTH)));
+                const vol = Math.max(0, 0.5 * (1.0 - (distSq / CONFIG.WORLD.HALL_LENGTH)));
                 this.audio.playFootstep('boot', vol);
             }
 
@@ -1832,7 +1991,7 @@ class GameDirector {
 
     processThoughts(delta) {
         this.thoughtTimer += delta;
-        const thoughtThreshold = 15.0 + (this.data.san / 100) * 45.0;
+        const thoughtThreshold = 10.0 + (this.data.san / 100) * 30.0;
         
         if(this.thoughtTimer > thoughtThreshold) {
             this.thoughtTimer = 0;
@@ -1853,14 +2012,14 @@ class GameDirector {
                 this.data.nut += fData.nutri;
                 this.data.san += fData.sanity;
                 this.audio.playEatSlop();
-                this.ui.showSubtitle(`INGESTED: ${fData.desc}`, 'system', 4000);
+                this.ui.showSubtitle(`ASSIMILATED: ${fData.desc}`, 'system', 4000);
                 this.ui.setPrompt(null);
                 this.player.targetObj = null;
             }
         }
         else if(id === 'toilet') {
             this.audio.playMetalDoorSlam(); 
-            this.ui.showSubtitle("WATER MAIN SHUT OFF. ACCESS DENIED.", 'system');
+            this.ui.showSubtitle("FLUID NETWORK OFFLINE. ACCESS DENIED.", 'system');
         }
         else if(id === 'cot') {
             if(this.data.time >= CONFIG.TIME.SLEEP_HOUR || this.data.time < CONFIG.TIME.WAKE_HOUR) {
@@ -1869,36 +2028,36 @@ class GameDirector {
                     this.data.time = CONFIG.TIME.WAKE_HOUR;
                     this.data.day++;
                     this.data.san = Math.min(CONFIG.STATS.MAX_SANITY, this.data.san + CONFIG.STATS.SLEEP_RESTORE);
-                    this.ui.showSubtitle("CONSCIOUSNESS RESUMED. CYCLE INCREMENTED.", 'system', 3000);
+                    this.ui.showSubtitle("SYSTEM REBOOT COMPLETE. CYCLE INCREMENTED.", 'system', 3000);
                     
                     setTimeout(() => {
                         this.ui.doFade(false);
                         this.data.state = 'LOCKDOWN';
                     }, 1000);
-                }, 2000);
+                }, 1500);
             } else {
-                this.ui.showSubtitle("NOT AUTHORIZED FOR SLEEP. MAINTAIN WAKEFULNESS.", 'system');
-                this.data.san -= 2; 
+                this.ui.showSubtitle("INVALID REQUEST. MAINTAIN ACTIVE PROTOCOL.", 'system');
+                this.data.san -= 5; 
             }
         }
     }
 }
 
 /* ==========================================================================
-   MODULE 11: MAIN ENGINE APPLICATION
+   MODULE 11: MAIN ENGINE APPLICATION (RESPONSIVE FIXES)
    ========================================================================== */
 class Engine {
     constructor() {
         this.initDOM();
         
         this.scene = new THREE.Scene();
-        const failSafeLight = new THREE.AmbientLight(0xffffff, 1.0);
+        const failSafeLight = new THREE.AmbientLight(0xffffff, 0.2);
         this.scene.add(failSafeLight);
         
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.position.set(0, CONFIG.PHYSICS.PLAYER_HEIGHT, 0);
         
-        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: false, powerPreference: "high-performance" });
+        this.renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: true, powerPreference: "high-performance" });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.shadowMap.enabled = true;
@@ -1907,18 +2066,21 @@ class Engine {
         this.audio = new AudioEngine();
         this.ui = new UIController();
         
-        setTimeout(() => this.buildWorld(), 100);
+        setTimeout(() => this.buildWorld(), 200);
     }
 
     initDOM() {
         this.btnInit = document.getElementById('btn-init');
         this.btnInit.addEventListener('click', () => this.startGame());
         
-        window.addEventListener('resize', () => {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        // Robust resize listener
+        window.addEventListener('resize', this.onWindowResize.bind(this), false);
+    }
+
+    onWindowResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
     buildWorld() {
@@ -1971,8 +2133,9 @@ class Engine {
             this.player.update(delta);
             this.director.update(delta);
             
+            // Dynamic FOV Warp for Insanity
             const sanityPct = this.director.data.san / 100.0;
-            const targetFOV = 75 + (1.0 - sanityPct) * 35; 
+            const targetFOV = 80 + (1.0 - sanityPct) * 40; 
             this.camera.fov = THREE.MathUtils.lerp(this.camera.fov, targetFOV, 0.05);
             this.camera.updateProjectionMatrix();
 
